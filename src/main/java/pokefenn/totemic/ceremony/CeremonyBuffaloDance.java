@@ -2,13 +2,13 @@ package pokefenn.totemic.ceremony;
 
 import java.util.stream.Stream;
 
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import net.dries007.tfc.objects.entity.animal.EntityAnimalTFC;
+import net.dries007.tfc.objects.entity.animal.EntityCowTFC;
 import pokefenn.totemic.api.TotemicEntityUtil;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
@@ -18,9 +18,9 @@ import pokefenn.totemic.util.EntityUtil;
 
 public class CeremonyBuffaloDance extends Ceremony
 {
-    private static Stream<? extends EntityAnimal> getCows(World world, BlockPos pos, int range)
+    private static Stream<? extends EntityAnimalTFC> getCows(World world, BlockPos pos, int range)
     {
-        return TotemicEntityUtil.getEntitiesInRange(EntityCow.class, world, pos, range, range, entity -> !(entity instanceof EntityBuffalo));
+        return TotemicEntityUtil.getEntitiesInRange(EntityCowTFC.class, world, pos, range, range, entity -> !(entity instanceof EntityBuffalo));
     }
 
     public CeremonyBuffaloDance(String name, int musicNeeded, int maxStartupTime, MusicInstrument... instruments)

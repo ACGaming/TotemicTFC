@@ -1,11 +1,11 @@
 package pokefenn.totemic.ceremony;
 
-import net.minecraft.entity.passive.EntityParrot;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import net.dries007.tfc.objects.entity.animal.EntityParrotTFC;
 import pokefenn.totemic.api.TotemicEntityUtil;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
@@ -26,7 +26,7 @@ public class CeremonyEagleDance extends Ceremony
         if (world.isRemote)
             return;
 
-        TotemicEntityUtil.getEntitiesInRange(EntityParrot.class, world, pos, 8, 8)
+        TotemicEntityUtil.getEntitiesInRange(EntityParrotTFC.class, world, pos, 8, 8)
             .limit(2)
             .forEach(parrot -> {
                 EntityBaldEagle eagle = new EntityBaldEagle(world);

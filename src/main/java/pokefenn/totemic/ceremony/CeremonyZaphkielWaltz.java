@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
@@ -12,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 
+import net.dries007.tfc.objects.entity.animal.EntityChickenTFC;
 import pokefenn.totemic.api.TotemicEntityUtil;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
@@ -37,7 +37,7 @@ public class CeremonyZaphkielWaltz extends Ceremony
                 {
                     if (world.rand.nextInt(4) == 0)
                     {
-                        EntityChicken chicken = new EntityChicken(world);
+                        EntityChickenTFC chicken = new EntityChickenTFC(world);
                         chicken.setPosition(entity.posX, entity.posY, entity.posZ);
                         world.spawnEntity(chicken);
                         if (entity.getItem().getCount() == 1)

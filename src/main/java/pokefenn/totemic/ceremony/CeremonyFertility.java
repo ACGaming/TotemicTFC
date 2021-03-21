@@ -12,13 +12,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.init.Items;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.dries007.tfc.objects.entity.animal.EntityAnimalTFC;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
 import pokefenn.totemic.api.music.MusicInstrument;
@@ -42,11 +42,11 @@ public class CeremonyFertility extends Ceremony
 
         if (!world.isRemote && context.getTime() % 20 == 0)
         {
-            for (Entity entity : EntityUtil.listEntitiesInRange(EntityLiving.class, world, pos, radius, radius, e -> e instanceof EntityAnimal || e instanceof EntityVillager))
+            for (Entity entity : EntityUtil.listEntitiesInRange(EntityLiving.class, world, pos, radius, radius, e -> e instanceof EntityAnimalTFC || e instanceof EntityVillager))
             {
-                if (entity instanceof EntityAnimal)
+                if (entity instanceof EntityAnimalTFC)
                 {
-                    EntityAnimal animal = (EntityAnimal) entity;
+                    EntityAnimalTFC animal = (EntityAnimalTFC) entity;
                     if (animal.getGrowingAge() == 0 && !animal.isInLove() && consumeBreedingItem(world, pos, animal))
                     {
                         animal.setInLove(null);
@@ -95,7 +95,7 @@ public class CeremonyFertility extends Ceremony
         return 6;
     }
 
-    private boolean consumeBreedingItem(World world, BlockPos pos, EntityAnimal animal)
+    private boolean consumeBreedingItem(World world, BlockPos pos, EntityAnimalTFC animal)
     {
         int radius = 8;
         List<EntityItem> breedingItems = EntityUtil.listEntitiesInRange(EntityItem.class, world, pos, radius, radius, e -> animal.isBreedingItem(e.getItem()));
