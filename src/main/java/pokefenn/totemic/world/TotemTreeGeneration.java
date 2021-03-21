@@ -8,6 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
+
 import pokefenn.totemic.init.ModBlocks;
 
 public class TotemTreeGeneration extends WorldGenAbstractTree
@@ -26,24 +27,24 @@ public class TotemTreeGeneration extends WorldGenAbstractTree
     public boolean growTree(World world, Random rand, final BlockPos pos)
     {
         final int treeHeight = rand.nextInt(3) + 7;
-        if(!canTreeGrow(world, pos, treeHeight))
+        if (!canTreeGrow(world, pos, treeHeight))
             return false;
 
         IBlockState state = world.getBlockState(pos.down());
         state.getBlock().onPlantGrow(state, world, pos.down(), pos);
 
-        for(int curY = pos.getY() - 7 + treeHeight; curY <= pos.getY() + treeHeight; ++curY)
+        for (int curY = pos.getY() - 7 + treeHeight; curY <= pos.getY() + treeHeight; ++curY)
         {
             int var12 = curY - (pos.getY() + treeHeight);
             int radius = 1 - var12 / 3;
 
-            for(int curX = pos.getX() - radius; curX <= pos.getX() + radius; ++curX)
+            for (int curX = pos.getX() - radius; curX <= pos.getX() + radius; ++curX)
             {
                 int xOffset = curX - pos.getX();
                 int t = xOffset >> 31;
                 xOffset = (xOffset + t) ^ t;
 
-                for(int curZ = pos.getZ() - radius; curZ <= pos.getZ() + radius; ++curZ)
+                for (int curZ = pos.getZ() - radius; curZ <= pos.getZ() + radius; ++curZ)
                 {
                     int zOffset = curZ - pos.getZ();
                     int u = zOffset >> 31;
@@ -54,8 +55,8 @@ public class TotemTreeGeneration extends WorldGenAbstractTree
                     IBlockState s = world.getBlockState(p);
                     Block block = s.getBlock();
 
-                    if((xOffset != radius || zOffset != radius || rand.nextInt(2) != 0 && var12 != 0)
-                            && (block == null || block.isLeaves(s, world, p) || block.isAir(s, world, p)))
+                    if ((xOffset != radius || zOffset != radius || rand.nextInt(2) != 0 && var12 != 0)
+                        && (block == null || block.isLeaves(s, world, p) || block.isAir(s, world, p)))
                     {
                         setBlockAndNotifyAdequately(world, p, ModBlocks.cedar_leaves.getDefaultState());
                     }
@@ -63,7 +64,7 @@ public class TotemTreeGeneration extends WorldGenAbstractTree
             }
         }
 
-        for(int yOffset = 0; yOffset < treeHeight; ++yOffset)
+        for (int yOffset = 0; yOffset < treeHeight; ++yOffset)
         {
             setBlockAndNotifyAdequately(world, pos.up(yOffset), ModBlocks.cedar_log.getDefaultState());
         }
@@ -73,31 +74,31 @@ public class TotemTreeGeneration extends WorldGenAbstractTree
 
     public boolean canTreeGrow(World world, BlockPos pos, int treeHeight)
     {
-        if(pos.getY() < 1 || pos.getY() + treeHeight + 1 > world.getHeight())
+        if (pos.getY() < 1 || pos.getY() + treeHeight + 1 > world.getHeight())
             return false;
 
         IBlockState state = world.getBlockState(pos.down());
         Block block = state.getBlock();
-        if(block == null || !block.canSustainPlant(state, world, pos.down(), EnumFacing.UP, ModBlocks.cedar_sapling))
+        if (block == null || !block.canSustainPlant(state, world, pos.down(), EnumFacing.UP, ModBlocks.cedar_sapling))
             return false;
 
-        for(int yOffset = pos.getY() + 1; yOffset <= pos.getY() + 1 + treeHeight; ++yOffset)
+        for (int yOffset = pos.getY() + 1; yOffset <= pos.getY() + 1 + treeHeight; ++yOffset)
         {
             int radius = 2;
 
-            if(yOffset >= pos.getY() + 1 + treeHeight - 2)
+            if (yOffset >= pos.getY() + 1 + treeHeight - 2)
             {
                 radius = 1;
             }
 
-            if(yOffset >= 0 && yOffset < world.getHeight())
+            if (yOffset >= 0 && yOffset < world.getHeight())
             {
-                for(int xOffset = pos.getX() - radius; xOffset <= pos.getX() + radius; ++xOffset)
+                for (int xOffset = pos.getX() - radius; xOffset <= pos.getX() + radius; ++xOffset)
                 {
-                    for(int zOffset = pos.getZ() - radius; zOffset <= pos.getZ() + radius; ++zOffset)
+                    for (int zOffset = pos.getZ() - radius; zOffset <= pos.getZ() + radius; ++zOffset)
                     {
                         BlockPos p = new BlockPos(xOffset, yOffset, zOffset);
-                        if(!isReplaceable(world, p))
+                        if (!isReplaceable(world, p))
                         {
                             return false;
                         }
@@ -109,10 +110,7 @@ public class TotemTreeGeneration extends WorldGenAbstractTree
         }
 
         block = world.getBlockState(pos.down()).getBlock();
-        if(block == null)
-            return false;
-
-        return true;
+        return block != null;
     }
 
 }

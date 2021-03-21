@@ -13,6 +13,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.block.tipi.BlockTipi;
 import pokefenn.totemic.init.ModBlocks;
@@ -32,39 +33,39 @@ public class ItemTipi extends ItemBlock
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if(!world.getBlockState(pos).getBlock().isReplaceable(world, pos))
+        if (!world.getBlockState(pos).getBlock().isReplaceable(world, pos))
             pos = pos.offset(facing);
 
         IBlockState state = world.getBlockState(pos.down());
         Block block = state.getBlock();
         String name = block.getRegistryName().getResourcePath();
-        if(state.getMaterial() != Material.GRASS && state.getMaterial() != Material.GROUND && !name.contains("grass") && !name.contains("dirt") || block == Blocks.TALLGRASS)
+        if (state.getMaterial() != Material.GRASS && state.getMaterial() != Material.GROUND && !name.contains("grass") && !name.contains("dirt") || block == Blocks.TALLGRASS)
             return EnumActionResult.FAIL;
 
-        if(!player.canPlayerEdit(pos, facing, player.getHeldItem(hand)))
+        if (!player.canPlayerEdit(pos, facing, player.getHeldItem(hand)))
             return EnumActionResult.FAIL;
 
         final int height = 5;
         final int radius = 2;
 
         //Check if placeable
-        for(int i = -radius; i <= radius; i++)
-            for(int j = 0; j <= height; j++)
-                for(int k = -radius; k <= radius; k++)
+        for (int i = -radius; i <= radius; i++)
+            for (int j = 0; j <= height; j++)
+                for (int k = -radius; k <= radius; k++)
                 {
                     BlockPos p = pos.add(i, j, k);
-                    if(!world.getBlockState(p).getBlock().isReplaceable(world, p))
+                    if (!world.getBlockState(p).getBlock().isReplaceable(world, p))
                         return EnumActionResult.FAIL;
                 }
 
         EnumFacing dir = EnumFacing.fromAngle(player.rotationYaw);
 
         //Place dummy blocks
-        for(int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
         {
-            for(EnumFacing blockDir : EnumFacing.HORIZONTALS)
+            for (EnumFacing blockDir : EnumFacing.HORIZONTALS)
             {
-                if(blockDir == dir.getOpposite())
+                if (blockDir == dir.getOpposite())
                     continue;
                 world.setBlockState(pos.add(blockDir.getDirectionVec()).up(i), ModBlocks.dummy_tipi.getDefaultState(), 10);
             }

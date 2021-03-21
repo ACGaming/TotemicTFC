@@ -2,6 +2,7 @@ package pokefenn.totemic.totem;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+
 import pokefenn.totemic.api.totem.TotemEffectPotion;
 
 public class TotemEffectBlaze extends TotemEffectPotion
@@ -14,7 +15,7 @@ public class TotemEffectBlaze extends TotemEffectPotion
     @Override
     protected void applyTo(boolean isMedicineBag, EntityPlayer player, int time, int amplifier)
     {
-        if(player.isBurning())
+        if (player.isBurning())
             player.heal(2);
         super.applyTo(isMedicineBag, player, time, amplifier);
     }

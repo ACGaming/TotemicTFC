@@ -1,6 +1,7 @@
 package pokefenn.totemic.tileentity;
 
 import net.minecraft.nbt.NBTTagCompound;
+
 import pokefenn.totemic.lib.WoodVariant;
 
 public class TileDecoPillar extends TileTotemic
@@ -40,9 +41,11 @@ public class TileDecoPillar extends TileTotemic
     }
 
     @Override
-    public NBTTagCompound getUpdateTag()
+    public void readFromNBT(NBTTagCompound tag)
     {
-        return writeToNBT(new NBTTagCompound());
+        super.readFromNBT(tag);
+        woodType = WoodVariant.fromID(tag.getByte("wood"));
+        stripped = tag.getBoolean("stripped");
     }
 
     @Override
@@ -55,10 +58,8 @@ public class TileDecoPillar extends TileTotemic
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag)
+    public NBTTagCompound getUpdateTag()
     {
-        super.readFromNBT(tag);
-        woodType = WoodVariant.fromID(tag.getByte("wood"));
-        stripped = tag.getBoolean("stripped");
+        return writeToNBT(new NBTTagCompound());
     }
 }

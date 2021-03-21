@@ -11,28 +11,28 @@ import net.minecraft.util.math.MathHelper;
 
 public class ModelBuffalo extends ModelBase
 {
-    private ModelRenderer head;
-    private ModelRenderer body;
-    private ModelRenderer back;
-    private ModelRenderer udder;
-    private ModelRenderer leg1;
-    private ModelRenderer leg2;
-    private ModelRenderer leg3;
-    private ModelRenderer leg4;
-    private ModelRenderer hoof1;
-    private ModelRenderer hoof2;
-    private ModelRenderer hoof3;
-    private ModelRenderer hoof4;
-    private ModelRenderer tail;
-    private ModelRenderer tailhairs;
-    private ModelRenderer hornbase1;
-    private ModelRenderer hornbase2;
-    private ModelRenderer horn1;
-    private ModelRenderer horn2;
-    private ModelRenderer horn3;
-    private ModelRenderer horn4;
-    private ModelRenderer horn5;
-    private ModelRenderer horn6;
+    private final ModelRenderer head;
+    private final ModelRenderer body;
+    private final ModelRenderer back;
+    private final ModelRenderer udder;
+    private final ModelRenderer leg1;
+    private final ModelRenderer leg2;
+    private final ModelRenderer leg3;
+    private final ModelRenderer leg4;
+    private final ModelRenderer hoof1;
+    private final ModelRenderer hoof2;
+    private final ModelRenderer hoof3;
+    private final ModelRenderer hoof4;
+    private final ModelRenderer tail;
+    private final ModelRenderer tailhairs;
+    private final ModelRenderer hornbase1;
+    private final ModelRenderer hornbase2;
+    private final ModelRenderer horn1;
+    private final ModelRenderer horn2;
+    private final ModelRenderer horn3;
+    private final ModelRenderer horn4;
+    private final ModelRenderer horn5;
+    private final ModelRenderer horn6;
 
     public ModelBuffalo()
     {
@@ -189,7 +189,7 @@ public class ModelBuffalo extends ModelBase
         GlStateManager.scale(1.5F, 1.5F, 1.5F);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
 
-        if(isChild)
+        if (isChild)
         {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0.0F, 6.0F * scale, 4.0F * scale);
@@ -205,7 +205,7 @@ public class ModelBuffalo extends ModelBase
         horn5.render(scale);
         horn6.render(scale);
 
-        if(isChild)
+        if (isChild)
         {
             float childScale = 0.5F;
             GlStateManager.popMatrix();
@@ -230,32 +230,32 @@ public class ModelBuffalo extends ModelBase
         GlStateManager.popMatrix();
     }
 
-    private void setRotation(ModelRenderer model, float x, float y, float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
-    }
-
     @Override
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, Entity entity)
     {
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
 
-        head.rotateAngleX = headPitch / (180F / (float)Math.PI) + ((float)Math.PI / 2F);
+        head.rotateAngleX = headPitch / (180F / (float) Math.PI) + ((float) Math.PI / 2F);
         hornbase1.rotateAngleX = hornbase2.rotateAngleX = horn1.rotateAngleX = horn2.rotateAngleX = horn3.rotateAngleX
-                = horn4.rotateAngleX = horn5.rotateAngleX = horn6.rotateAngleX = head.rotateAngleX;
+            = horn4.rotateAngleX = horn5.rotateAngleX = horn6.rotateAngleX = head.rotateAngleX;
 
         head.rotateAngleY = hornbase1.rotateAngleY = hornbase2.rotateAngleY = horn1.rotateAngleY = horn2.rotateAngleY = horn3.rotateAngleY
-                = horn4.rotateAngleY = horn5.rotateAngleY = horn6.rotateAngleY = netHeadYaw / (180F / (float)Math.PI);
+            = horn4.rotateAngleY = horn5.rotateAngleY = horn6.rotateAngleY = netHeadYaw / (180F / (float) Math.PI);
 
         hoof1.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-        leg1.rotateAngleX = hoof1.rotateAngleX + ((float)Math.PI * 8F / 180F);
-        hoof2.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
-        leg2.rotateAngleX = hoof2.rotateAngleX + ((float)Math.PI * 8F / 180F);
+        leg1.rotateAngleX = hoof1.rotateAngleX + ((float) Math.PI * 8F / 180F);
+        hoof2.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        leg2.rotateAngleX = hoof2.rotateAngleX + ((float) Math.PI * 8F / 180F);
 
-        leg3.rotateAngleX = hoof3.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+        leg3.rotateAngleX = hoof3.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
         leg4.rotateAngleX = hoof4.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+    }
+
+    private void setRotation(ModelRenderer model, float x, float y, float z)
+    {
+        model.rotateAngleX = x;
+        model.rotateAngleY = y;
+        model.rotateAngleZ = z;
     }
 
 }

@@ -4,6 +4,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.api.TotemicEntityUtil;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
@@ -19,7 +20,7 @@ public class CeremonyDepths extends Ceremony
     @Override
     public void effect(World world, BlockPos pos, CeremonyEffectContext context)
     {
-        if(world.isRemote)
+        if (world.isRemote)
             return;
 
         TotemicEntityUtil.getPlayersInRange(world, pos, 8, 8).forEach(entity ->

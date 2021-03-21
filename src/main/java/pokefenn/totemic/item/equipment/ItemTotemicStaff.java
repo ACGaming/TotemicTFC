@@ -1,7 +1,6 @@
 package pokefenn.totemic.item.equipment;
 
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -17,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.api.TotemicStaffUsage;
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.item.ItemTotemic;
@@ -31,6 +31,17 @@ public class ItemTotemicStaff extends ItemTotemic
     }
 
     @Override
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    {
+        Block block = world.getBlockState(pos).getBlock();
+        if (block instanceof TotemicStaffUsage)
+        {
+            return ((TotemicStaffUsage) block).onTotemicStaffRightClick(world, pos, player, hand, facing, hitX, hitY, hitZ);
+        }
+        return EnumActionResult.FAIL;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
     {
@@ -42,17 +53,6 @@ public class ItemTotemicStaff extends ItemTotemic
     public EnumRarity getRarity(ItemStack stack)
     {
         return EnumRarity.UNCOMMON;
-    }
-
-    @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
-        Block block = world.getBlockState(pos).getBlock();
-        if(block instanceof TotemicStaffUsage)
-        {
-            return ((TotemicStaffUsage) block).onTotemicStaffRightClick(world, pos, player, hand, facing, hitX, hitY, hitZ);
-        }
-        return EnumActionResult.FAIL;
     }
 
     @Override

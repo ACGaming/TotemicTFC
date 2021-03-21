@@ -11,6 +11,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.lib.Strings;
@@ -30,39 +31,54 @@ public class BlockCedarStripped extends BlockLog
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random random)
-    {
-        if(!world.isRemote)
-        {
-            if(random.nextInt(20) == 0) //about once every 15-20 minutes
-            {
-                Material mat = world.getBlockState(pos.down()).getMaterial();
-                if(mat == Material.GROUND || mat == Material.GRASS)
-                {
-                    world.setBlockState(pos, ModBlocks.cedar_log.getDefaultState()
-                            .withProperty(LOG_AXIS, state.getValue(LOG_AXIS)));
-                }
-            }
-        }
-    }
-
-    @Override
     public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         return MapColor.PINK;
     }
 
     @Override
-    protected BlockStateContainer createBlockState()
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random random)
     {
-        return new BlockStateContainer(this, LOG_AXIS);
+        if (!world.isRemote)
+        {
+            if (random.nextInt(20) == 0) //about once every 15-20 minutes
+            {
+                Material mat = world.getBlockState(pos.down()).getMaterial();
+                if (mat == Material.GROUND || mat == Material.GRASS)
+                {
+                    world.setBlockState(pos, ModBlocks.cedar_log.getDefaultState()
+                        .withProperty(LOG_AXIS, state.getValue(LOG_AXIS)));
+                }
+            }
+        }
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        IBlockState state = getDefaultState();
+        switch (meta)
+        {
+            case 0:
+                state = state.withProperty(LOG_AXIS, BlockLog.EnumAxis.Y);
+                break;
+            case 4:
+                state = state.withProperty(LOG_AXIS, BlockLog.EnumAxis.X);
+                break;
+            case 8:
+                state = state.withProperty(LOG_AXIS, BlockLog.EnumAxis.Z);
+                break;
+            default:
+                state = state.withProperty(LOG_AXIS, BlockLog.EnumAxis.NONE);
+        }
+        return state;
     }
 
     @Override
     public int getMetaFromState(IBlockState state)
     {
         int meta = 0;
-        switch(state.getValue(LOG_AXIS))
+        switch (state.getValue(LOG_AXIS))
         {
             case Y:
                 break;
@@ -80,23 +96,8 @@ public class BlockCedarStripped extends BlockLog
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta)
+    protected BlockStateContainer createBlockState()
     {
-        IBlockState state = getDefaultState();
-        switch(meta)
-        {
-            case 0:
-                state = state.withProperty(LOG_AXIS, BlockLog.EnumAxis.Y);
-                break;
-            case 4:
-                state = state.withProperty(LOG_AXIS, BlockLog.EnumAxis.X);
-                break;
-            case 8:
-                state = state.withProperty(LOG_AXIS, BlockLog.EnumAxis.Z);
-                break;
-            default:
-                state = state.withProperty(LOG_AXIS, BlockLog.EnumAxis.NONE);
-        }
-        return state;
+        return new BlockStateContainer(this, LOG_AXIS);
     }
 }

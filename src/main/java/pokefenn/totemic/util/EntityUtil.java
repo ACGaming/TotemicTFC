@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.Predicate;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -42,7 +41,7 @@ public class EntityUtil
     public static <T extends TileEntity> List<T> getTileEntitiesInRange(Class<? extends T> clazz, World world, BlockPos pos, int horizontalRadius, int verticalRadius)
     {
         return getTileEntitiesIn(clazz, world, pos.add(-horizontalRadius, -verticalRadius, -horizontalRadius),
-                pos.add(horizontalRadius + 1, verticalRadius + 1, horizontalRadius + 1));
+            pos.add(horizontalRadius + 1, verticalRadius + 1, horizontalRadius + 1));
     }
 
     //This method no longer exists in later Minecraft versions. Had to take it from Minecraft 1.8.9.
@@ -50,22 +49,22 @@ public class EntityUtil
     public static <T extends TileEntity> List<T> getTileEntitiesIn(Class<? extends T> clazz, World world, BlockPos min, BlockPos max)
     {
         List<T> list = new ArrayList<>();
-        for(int x = (min.getX() & ~0x0F); x < max.getX(); x += 16)
-            for(int z = (min.getZ() & ~0x0F); z < max.getZ(); z += 16) // & ~0xF Floors it by 16. Yay bitmath!
+        for (int x = (min.getX() & ~0x0F); x < max.getX(); x += 16)
+            for (int z = (min.getZ() & ~0x0F); z < max.getZ(); z += 16) // & ~0xF Floors it by 16. Yay bitmath!
             {
-                if(!world.isBlockLoaded(new BlockPos(x, 0, z), true))
+                if (!world.isBlockLoaded(new BlockPos(x, 0, z), true))
                     continue; //Prevent loading extra chunks
 
                 Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
-                if(chunk != null && !chunk.isEmpty())
+                if (chunk != null && !chunk.isEmpty())
                 {
-                    for(TileEntity tile : chunk.getTileEntityMap().values())
+                    for (TileEntity tile : chunk.getTileEntityMap().values())
                     {
-                        if(clazz.isInstance(tile) && !tile.isInvalid())
+                        if (clazz.isInstance(tile) && !tile.isInvalid())
                         {
                             BlockPos pos = tile.getPos();
-                            if(pos.getX() >= min.getX() && pos.getY() >= min.getY() && pos.getZ() >= min.getZ() &&
-                               pos.getX() <  max.getX() && pos.getY() <  max.getY() && pos.getZ() <  max.getZ())
+                            if (pos.getX() >= min.getX() && pos.getY() >= min.getY() && pos.getZ() >= min.getZ() &&
+                                pos.getX() < max.getX() && pos.getY() < max.getY() && pos.getZ() < max.getZ())
                             {
                                 list.add((T) tile);
                             }

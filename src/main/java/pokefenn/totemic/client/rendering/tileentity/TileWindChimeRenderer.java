@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.client.rendering.model.ModelWindChime;
 import pokefenn.totemic.tileentity.music.TileWindChime;
@@ -21,9 +22,9 @@ public class TileWindChimeRenderer extends TileEntitySpecialRenderer<TileWindChi
         GlStateManager.translate(x + 0.5, y + 1.47, z + 0.5);
         GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);
 
-        if(tile.isPlaying())
+        if (tile.isPlaying())
         {
-            if(getWorld().getTotalWorldTime() % 2L == 0)
+            if (getWorld().getTotalWorldTime() % 2L == 0)
                 setRotations();
         }
         else
@@ -76,14 +77,14 @@ public class TileWindChimeRenderer extends TileEntitySpecialRenderer<TileWindChi
         float max = 0.05F;
         float value = min + (int) (random.nextFloat() * ((1 + max) - min));
 
-        if(random.nextInt(2) + 1 == 1)
+        if (random.nextInt(2) + 1 == 1)
             multiplier = 1;
         else
             multiplier = -1;
 
         number += value;
         number *= multiplier;
-        if(number > 1 || number < -1)
+        if (number > 1 || number < -1)
             number = 0;
 
         return number;

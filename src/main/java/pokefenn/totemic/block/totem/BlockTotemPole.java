@@ -2,7 +2,6 @@ package pokefenn.totemic.block.totem;
 
 import java.util.List;
 import java.util.Random;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -26,12 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -40,6 +34,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.TotemicRegistries;
 import pokefenn.totemic.api.TotemicStaffUsage;
@@ -90,7 +85,7 @@ public class BlockTotemPole extends Block implements ITileEntityProvider, Totemi
     @Override
     public EnumActionResult onTotemicStaffRightClick(World world, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if(world.isRemote)
+        if (world.isRemote)
         {
             TileTotemPole pole = (TileTotemPole) world.getTileEntity(pos);
             String name = pole.getEffect() != null ? pole.getEffect().getUnlocalizedName() : "totemicmisc.noEffect";
@@ -100,102 +95,13 @@ public class BlockTotemPole extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityLiving, ItemStack stack)
-    {
-        if(stack.getItem() == Item.getItemFromBlock(this))
-        {
-            TileTotemPole tile = (TileTotemPole) world.getTileEntity(pos);
-            tile.setWoodType(WoodVariant.fromID(stack.getMetadata()));
-            tile.setEffect(ItemTotemWhittlingKnife.getCarvingEffect(stack));
-        }
-
-        notifyTotemBase(world, pos);
-    }
-
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state)
-    {
-        super.breakBlock(world, pos, state);
-        notifyTotemBase(world, pos);
-    }
-
-    private void notifyTotemBase(World world, BlockPos pos)
-    {
-        for(int i = 0; i < TotemBase.MAX_POLE_SIZE; i++)
-        {
-            Block block = world.getBlockState(pos.down(i + 1)).getBlock();
-            if(block instanceof BlockTotemBase)
-            {
-                world.addBlockEvent(pos.down(i + 1), block, BlockTotemBase.EVENT_POLE_CHANGE_ID, 0);
-                break;
-            }
-            else if(!(block instanceof BlockTotemPole))
-                break;
-        }
-    }
-
-    @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
-    {
-        TileTotemPole tile = (TileTotemPole) world.getTileEntity(pos);
-        ItemStack stack = new ItemStack(this, 1, tile.getWoodType().getID());
-        TotemEffect effect = tile.getEffect();
-        String effectName = (effect != null) ? effect.getRegistryName().toString() : ItemTotemWhittlingKnife.TOTEM_BASE_PLACEHOLDER_NAME;
-        stack.setTagInfo(ItemTotemWhittlingKnife.KNIFE_TOTEM_KEY, new NBTTagString(effectName));
-        return stack;
-    }
-
-    @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items)
-    {
-        for(TotemEffect effect: TotemicRegistries.totemEffects())
-        {
-            ItemStack stack = new ItemStack(this, 1, 0);
-            stack.setTagInfo(ItemTotemWhittlingKnife.KNIFE_TOTEM_KEY, new NBTTagString(effect.getRegistryName().toString()));
-            items.add(stack);
-        }
-
-        ItemStack blankStack = new ItemStack(this, 1, 0);
-        blankStack.setTagInfo(ItemTotemWhittlingKnife.KNIFE_TOTEM_KEY, new NBTTagString(ItemTotemWhittlingKnife.TOTEM_BASE_PLACEHOLDER_NAME));
-        items.add(blankStack);
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced)
-    {
-        TotemEffect effect = ItemTotemWhittlingKnife.getCarvingEffect(stack);
-        if(effect != null)
-            tooltip.add(I18n.format(effect.getUnlocalizedName()));
-        else
-            tooltip.add(I18n.format(getUnlocalizedName() + ".noEffect"));
-    }
-
-    @Override
-    public int quantityDropped(Random rand)
-    {
-        return 0;
-    }
-
-    @Override
     public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileTotemPole)
+        if (tile instanceof TileTotemPole)
             return ((TileTotemPole) tile).getWoodType().getMapColor();
         else
             return MapColor.WOOD;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer.Builder(this).add(FACING, WOOD).add(TOTEM).build();
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        return state.getValue(FACING).getHorizontalIndex();
     }
 
     @Override
@@ -204,30 +110,20 @@ public class BlockTotemPole extends Block implements ITileEntityProvider, Totemi
         return getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta));
     }
 
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        return state.getValue(FACING).getHorizontalIndex();
+    }
+
     //We actually need both getActualState and getExtendedState
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileTotemPole)
+        if (tile instanceof TileTotemPole)
             return state.withProperty(WOOD, ((TileTotemPole) tile).getWoodType());
         return state;
-    }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
-    {
-        IExtendedBlockState extState = (IExtendedBlockState) state;
-        TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileTotemPole)
-            return extState.withProperty(TOTEM, ((TileTotemPole) tile).getEffect());
-        return extState.withProperty(TOTEM, null);
-    }
-
-    @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
-    {
-        return getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
     }
 
     @Override
@@ -243,19 +139,9 @@ public class BlockTotemPole extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    @Nullable
-    public TileEntity createTileEntity(World world, IBlockState state)
+    public boolean isFullCube(IBlockState state)
     {
-        TileTotemPole tile = new TileTotemPole();
-        tile.setWoodType(state.getValue(WOOD));
-        return tile;
-    }
-
-    //Necessary for ITileEntityProvider
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta)
-    {
-        return new TileTotemPole();
+        return false;
     }
 
     @Override
@@ -265,26 +151,135 @@ public class BlockTotemPole extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
     public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
     {
         return BlockFaceShape.UNDEFINED;
     }
 
     @Override
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    {
+        super.breakBlock(world, pos, state);
+        notifyTotemBase(world, pos);
+    }
+
+    @Override
+    public int quantityDropped(Random rand)
+    {
+        return 0;
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    {
+        return getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityLiving, ItemStack stack)
+    {
+        if (stack.getItem() == Item.getItemFromBlock(this))
+        {
+            TileTotemPole tile = (TileTotemPole) world.getTileEntity(pos);
+            tile.setWoodType(WoodVariant.fromID(stack.getMetadata()));
+            tile.setEffect(ItemTotemWhittlingKnife.getCarvingEffect(stack));
+        }
+
+        notifyTotemBase(world, pos);
+    }
+
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items)
+    {
+        for (TotemEffect effect : TotemicRegistries.totemEffects())
+        {
+            ItemStack stack = new ItemStack(this, 1, 0);
+            stack.setTagInfo(ItemTotemWhittlingKnife.KNIFE_TOTEM_KEY, new NBTTagString(effect.getRegistryName().toString()));
+            items.add(stack);
+        }
+
+        ItemStack blankStack = new ItemStack(this, 1, 0);
+        blankStack.setTagInfo(ItemTotemWhittlingKnife.KNIFE_TOTEM_KEY, new NBTTagString(ItemTotemWhittlingKnife.TOTEM_BASE_PLACEHOLDER_NAME));
+        items.add(blankStack);
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer.Builder(this).add(FACING, WOOD).add(TOTEM).build();
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced)
+    {
+        TotemEffect effect = ItemTotemWhittlingKnife.getCarvingEffect(stack);
+        if (effect != null)
+            tooltip.add(I18n.format(effect.getUnlocalizedName()));
+        else
+            tooltip.add(I18n.format(getUnlocalizedName() + ".noEffect"));
+    }
+
+    @Override
+    @Nullable
+    public TileEntity createTileEntity(World world, IBlockState state)
+    {
+        TileTotemPole tile = new TileTotemPole();
+        tile.setWoodType(state.getValue(WOOD));
+        return tile;
+    }
+
+    @Override
     public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         return true;
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
+    {
+        TileTotemPole tile = (TileTotemPole) world.getTileEntity(pos);
+        ItemStack stack = new ItemStack(this, 1, tile.getWoodType().getID());
+        TotemEffect effect = tile.getEffect();
+        String effectName = (effect != null) ? effect.getRegistryName().toString() : ItemTotemWhittlingKnife.TOTEM_BASE_PLACEHOLDER_NAME;
+        stack.setTagInfo(ItemTotemWhittlingKnife.KNIFE_TOTEM_KEY, new NBTTagString(effectName));
+        return stack;
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        IExtendedBlockState extState = (IExtendedBlockState) state;
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileTotemPole)
+            return extState.withProperty(TOTEM, ((TileTotemPole) tile).getEffect());
+        return extState.withProperty(TOTEM, null);
+    }
+
+    //Necessary for ITileEntityProvider
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta)
+    {
+        return new TileTotemPole();
+    }
+
+    private void notifyTotemBase(World world, BlockPos pos)
+    {
+        for (int i = 0; i < TotemBase.MAX_POLE_SIZE; i++)
+        {
+            Block block = world.getBlockState(pos.down(i + 1)).getBlock();
+            if (block instanceof BlockTotemBase)
+            {
+                world.addBlockEvent(pos.down(i + 1), block, BlockTotemBase.EVENT_POLE_CHANGE_ID, 0);
+                break;
+            }
+            else if (!(block instanceof BlockTotemPole))
+                break;
+        }
     }
 }

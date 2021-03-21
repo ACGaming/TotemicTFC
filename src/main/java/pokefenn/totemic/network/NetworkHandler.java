@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.network.client.PacketMouseWheel;
 import pokefenn.totemic.network.server.PacketCeremonyStartupFull;
@@ -16,13 +17,8 @@ import pokefenn.totemic.network.server.PacketTotemEffectMusic;
 
 public class NetworkHandler
 {
-    private static int id;
     public static final SimpleNetworkWrapper wrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Totemic.MOD_ID);
-
-    private static <T extends IMessage, R extends IMessage> void registerPacket(Class<? extends IMessageHandler<T, R>> handlerClass, Class<T> messageClass, Side side)
-    {
-        wrapper.registerMessage(handlerClass, messageClass, id++, side);
-    }
+    private static int id;
 
     public static void init()
     {
@@ -55,6 +51,11 @@ public class NetworkHandler
     public static void sendAround(IMessage packet, TileEntity tile, double range)
     {
         sendAround(packet, tile.getWorld().provider.getDimension(), tile.getPos(), range);
+    }
+
+    private static <T extends IMessage, R extends IMessage> void registerPacket(Class<? extends IMessageHandler<T, R>> handlerClass, Class<T> messageClass, Side side)
+    {
+        wrapper.registerMessage(handlerClass, messageClass, id++, side);
     }
 
 }

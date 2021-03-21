@@ -5,13 +5,13 @@ import java.util.*;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.TotemicRegistries;
 import pokefenn.totemic.api.ceremony.Ceremony;
@@ -38,10 +38,10 @@ public class CeremonyTrigger implements ICriterionTrigger<CeremonyTrigger.Instan
     public void removeListener(PlayerAdvancements advancements, Listener<Instance> listener)
     {
         Listeners ls = listeners.get(advancements);
-        if(ls != null)
+        if (ls != null)
         {
             ls.remove(listener);
-            if(ls.isEmpty())
+            if (ls.isEmpty())
                 listeners.remove(advancements);
         }
     }
@@ -57,7 +57,7 @@ public class CeremonyTrigger implements ICriterionTrigger<CeremonyTrigger.Instan
     {
         String name = JsonUtils.getString(json, "ceremony");
         Ceremony ceremony = TotemicRegistries.ceremonies().getValue(new ResourceLocation(name));
-        if(ceremony == null)
+        if (ceremony == null)
             throw new JsonSyntaxException("Unknown ceremony: '" + name + "'");
         else
             return new Instance(ceremony);
@@ -66,7 +66,7 @@ public class CeremonyTrigger implements ICriterionTrigger<CeremonyTrigger.Instan
     public void trigger(EntityPlayerMP player, Ceremony ceremony)
     {
         Listeners ls = listeners.get(player.getAdvancements());
-        if(ls != null)
+        if (ls != null)
             ls.trigger(ceremony);
     }
 
@@ -115,19 +115,19 @@ public class CeremonyTrigger implements ICriterionTrigger<CeremonyTrigger.Instan
         {
             List<Listener<Instance>> list = null;
 
-            for(Listener<Instance> listener: listeners)
+            for (Listener<Instance> listener : listeners)
             {
-                if(listener.getCriterionInstance().test(ceremony))
+                if (listener.getCriterionInstance().test(ceremony))
                 {
-                    if(list == null)
+                    if (list == null)
                         list = new ArrayList<>();
                     list.add(listener);
                 }
             }
 
-            if(list != null)
+            if (list != null)
             {
-                for(Listener<Instance> listener: list)
+                for (Listener<Instance> listener : list)
                     listener.grantCriterion(playerAdvancements);
             }
         }

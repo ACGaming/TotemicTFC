@@ -5,6 +5,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.api.TotemicEntityUtil;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
@@ -22,14 +23,14 @@ public class CeremonyFluteInfusion extends Ceremony
     @Override
     public void effect(World world, BlockPos pos, CeremonyEffectContext context)
     {
-        if(world.isRemote)
+        if (world.isRemote)
             return;
 
         //I was gonna look at needing sugar cane nearby for this ceremony, but, no.
 
         TotemicEntityUtil.getEntitiesInRange(EntityItem.class, world, pos, 5, 5).forEach(entity ->
         {
-            if(entity.getItem().getItem() == ModItems.flute)
+            if (entity.getItem().getItem() == ModItems.flute)
             {
                 EntityUtil.dropItem(world, entity.posX, entity.posY, entity.posZ, new ItemStack(ModItems.flute, 1, 1));
                 entity.setDead();
@@ -39,9 +40,9 @@ public class CeremonyFluteInfusion extends Ceremony
         TotemicEntityUtil.getPlayersInRange(world, pos, 5, 5).forEach(player ->
         {
             InventoryPlayer inv = player.inventory;
-            for(int i = 0; i < inv.getSizeInventory(); i++)
+            for (int i = 0; i < inv.getSizeInventory(); i++)
             {
-                if(inv.getStackInSlot(i).getItem() == ModItems.flute)
+                if (inv.getStackInSlot(i).getItem() == ModItems.flute)
                     inv.setInventorySlotContents(i, new ItemStack(ModItems.flute, 1, 1));
             }
             player.inventoryContainer.detectAndSendChanges();

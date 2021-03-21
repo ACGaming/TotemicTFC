@@ -13,6 +13,7 @@ package pokefenn.totemic.api.lexicon;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.api.internal.IGuiLexiconEntry;
 
 public abstract class LexiconPage
@@ -45,6 +46,7 @@ public abstract class LexiconPage
 
     /**
      * Called when this page is added to a lexicon entry
+     *
      * @param entry The entry this page has been added to
      * @param index The page number
      */

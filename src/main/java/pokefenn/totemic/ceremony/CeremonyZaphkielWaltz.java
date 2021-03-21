@@ -11,6 +11,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+
 import pokefenn.totemic.api.TotemicEntityUtil;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
@@ -28,18 +29,18 @@ public class CeremonyZaphkielWaltz extends Ceremony
     {
         int radius = 6;
 
-        if(!world.isRemote && context.getTime() % 20 == 0)
+        if (!world.isRemote && context.getTime() % 20 == 0)
         {
             TotemicEntityUtil.getEntitiesInRange(EntityItem.class, world, pos, radius, radius).forEach(entity ->
             {
-                if(entity.getItem().getItem() == Items.EGG)
+                if (entity.getItem().getItem() == Items.EGG)
                 {
-                    if(world.rand.nextInt(4) == 0)
+                    if (world.rand.nextInt(4) == 0)
                     {
                         EntityChicken chicken = new EntityChicken(world);
                         chicken.setPosition(entity.posX, entity.posY, entity.posZ);
                         world.spawnEntity(chicken);
-                        if(entity.getItem().getCount() == 1)
+                        if (entity.getItem().getCount() == 1)
                             entity.setDead();
                         else
                         {
@@ -52,17 +53,17 @@ public class CeremonyZaphkielWaltz extends Ceremony
             });
         }
 
-        if(context.getTime() % 5 == 0)
+        if (context.getTime() % 5 == 0)
         {
-            for(BlockPos p: BlockPos.getAllInBoxMutable(pos.add(-radius, -radius, -radius), pos.add(radius, radius, radius)))
+            for (BlockPos p : BlockPos.getAllInBoxMutable(pos.add(-radius, -radius, -radius), pos.add(radius, radius, radius)))
             {
                 IBlockState state = world.getBlockState(p);
                 Block block = state.getBlock();
-                if((block instanceof IGrowable || block instanceof IPlantable) && block.getTickRandomly())
+                if ((block instanceof IGrowable || block instanceof IPlantable) && block.getTickRandomly())
                 {
-                    if(world.rand.nextInt(4) < 3)
+                    if (world.rand.nextInt(4) < 3)
                     {
-                        if(!world.isRemote)
+                        if (!world.isRemote)
                             block.updateTick(world, p, state, world.rand);
                         spawnParticles(world, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5);
                     }
@@ -85,7 +86,7 @@ public class CeremonyZaphkielWaltz extends Ceremony
 
     private void spawnParticles(World world, double x, double y, double z)
     {
-        if(world.isRemote)
+        if (world.isRemote)
         {
             double dx = world.rand.nextGaussian();
             double dy = world.rand.nextGaussian() * 0.5;

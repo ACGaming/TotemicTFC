@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.item.*;
 import pokefenn.totemic.item.equipment.ItemBarkStripper;
@@ -91,11 +92,6 @@ public final class ModItems
 
     }
 
-    private static ItemBlock makeItemBlock(Block block)
-    {
-        return (ItemBlock) new ItemBlock(block).setRegistryName(block.getRegistryName());
-    }
-
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void setItemModels(ModelRegistryEvent event)
@@ -114,21 +110,21 @@ public final class ModItems
         setDefaultModel(ModBlocks.wind_chime);
         setDefaultModel(ModBlocks.tipi);
 
-        for(WoodVariant var: WoodVariant.values())
+        for (WoodVariant var : WoodVariant.values())
         {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.totem_base), var.getID(),
-                    new ModelResourceLocation(ModBlocks.totem_base.getRegistryName(), "facing=north,wood=" + var.getName()));
+                new ModelResourceLocation(ModBlocks.totem_base.getRegistryName(), "facing=north,wood=" + var.getName()));
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.totem_pole), var.getID(),
-                    new ModelResourceLocation(ModBlocks.totem_pole.getRegistryName(), "facing=north,wood=" + var.getName()));
+                new ModelResourceLocation(ModBlocks.totem_pole.getRegistryName(), "facing=north,wood=" + var.getName()));
 
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.wooden_pillar), 2*var.getID(),
-                    new ModelResourceLocation(ModBlocks.wooden_pillar.getRegistryName(), "axis=y,stripped=false,wood=" + var.getName()));
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.wooden_pillar), 2*var.getID() + 1,
-                    new ModelResourceLocation(ModBlocks.wooden_pillar.getRegistryName(), "axis=y,stripped=true,wood=" + var.getName()));
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.wooden_pillar_base), 2*var.getID(),
-                    new ModelResourceLocation(ModBlocks.wooden_pillar_base.getRegistryName(), "facing=up,stripped=false,wood=" + var.getName()));
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.wooden_pillar_base), 2*var.getID() + 1,
-                    new ModelResourceLocation(ModBlocks.wooden_pillar_base.getRegistryName(), "facing=up,stripped=true,wood=" + var.getName()));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.wooden_pillar), 2 * var.getID(),
+                new ModelResourceLocation(ModBlocks.wooden_pillar.getRegistryName(), "axis=y,stripped=false,wood=" + var.getName()));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.wooden_pillar), 2 * var.getID() + 1,
+                new ModelResourceLocation(ModBlocks.wooden_pillar.getRegistryName(), "axis=y,stripped=true,wood=" + var.getName()));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.wooden_pillar_base), 2 * var.getID(),
+                new ModelResourceLocation(ModBlocks.wooden_pillar_base.getRegistryName(), "facing=up,stripped=false,wood=" + var.getName()));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.wooden_pillar_base), 2 * var.getID() + 1,
+                new ModelResourceLocation(ModBlocks.wooden_pillar_base.getRegistryName(), "facing=up,stripped=true,wood=" + var.getName()));
         }
 
         setDefaultModel(flute);
@@ -150,11 +146,16 @@ public final class ModItems
 
         setModel(sub_items, 1, Strings.RESOURCE_PREFIX + ItemTotemicItems.Type.iron_bells.toString());
 
-        for(ItemBuffaloDrops.Type t: ItemBuffaloDrops.Type.values())
+        for (ItemBuffaloDrops.Type t : ItemBuffaloDrops.Type.values())
             setModel(buffalo_items, t.ordinal(), Strings.RESOURCE_PREFIX + t.toString());
 
-        for(ItemEagleDrops.Type t: ItemEagleDrops.Type.values())
+        for (ItemEagleDrops.Type t : ItemEagleDrops.Type.values())
             setModel(eagle_drops, t.ordinal(), Strings.RESOURCE_PREFIX + t.toString());
+    }
+
+    private static ItemBlock makeItemBlock(Block block)
+    {
+        return (ItemBlock) new ItemBlock(block).setRegistryName(block.getRegistryName());
     }
 
     @SideOnly(Side.CLIENT)

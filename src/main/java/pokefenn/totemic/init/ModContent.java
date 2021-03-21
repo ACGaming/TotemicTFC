@@ -7,6 +7,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.RegistryBuilder;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.music.MusicInstrument;
@@ -82,11 +83,11 @@ public final class ModContent
             buffaloTotem = new TotemEffectPotion("totemic:buffalo", MobEffects.HASTE).setRegistryName("buffalo"),
             cowTotem = new TotemEffectCow("totemic:cow").setRegistryName("cow"),
             endermanTotem =
-                    new TotemEffectPotion("totemic:enderman", MobEffects.NIGHT_VISION)
-                    {
-                        @Override
-                        protected int getLingeringTime() { return 210; }
-                    }.setRegistryName("enderman"),
+                new TotemEffectPotion("totemic:enderman", MobEffects.NIGHT_VISION)
+                {
+                    @Override
+                    protected int getLingeringTime() { return 210; }
+                }.setRegistryName("enderman"),
             horseTotem = new TotemEffectPotion("totemic:horse", MobEffects.SPEED).setRegistryName("horse"),
             ocelotTotem = new TotemEffectOcelot("totemic:ocelot").setRegistryName("ocelot"),
             pigTotem = new TotemEffectPotion("totemic:pig", MobEffects.LUCK).setRegistryName("pig"),
@@ -111,29 +112,29 @@ public final class ModContent
         //270: Flute + Drum + Rattle + Eagle-Bone Whistle + Jingle Dress + full Wind Chime
         event.getRegistry().registerAll(
             warDance = new CeremonyWarDance("totemic:warDance", 75, 20 * 20,
-                    drum, drum).setRegistryName("war_dance"),
+                drum, drum).setRegistryName("war_dance"),
             depths = new CeremonyDepths("totemic:depths", 75, 20 * 20,
-                    flute, flute).setRegistryName("depths"),
+                flute, flute).setRegistryName("depths"),
             fertility = new CeremonyFertility("totemic:fertility", 88, 23 * 20,
-                    flute, drum).setRegistryName("fertility"),
+                flute, drum).setRegistryName("fertility"),
             zaphkielWaltz = new CeremonyZaphkielWaltz("totemic:zaphkielWaltz", 112, 20 * 20,
-                    windChime, flute).setRegistryName("zaphkiel_waltz"),
+                windChime, flute).setRegistryName("zaphkiel_waltz"),
             buffaloDance = new CeremonyBuffaloDance("totemic:buffaloDance", 123, 24 * 20,
-                    drum, windChime).setRegistryName("buffalo_dance"),
+                drum, windChime).setRegistryName("buffalo_dance"),
             rainDance = new CeremonyRain(true, "totemic:rainDance", 183, 26 * 20,
-                    drum, rattle).setRegistryName("rain_dance"),
+                drum, rattle).setRegistryName("rain_dance"),
             drought = new CeremonyRain(false, "totemic:drought", 183, 26 * 20,
-                    rattle, drum).setRegistryName("drought"),
+                rattle, drum).setRegistryName("drought"),
             fluteCeremony = new CeremonyFluteInfusion("totemic:flute", 189, 28 * 20,
-                    flute, rattle).setRegistryName("flute"),
+                flute, rattle).setRegistryName("flute"),
             eagleDance = new CeremonyEagleDance("totemic:eagleDance", 193, 25 * 20,
-                    rattle, windChime).setRegistryName("eagle_dance"),
+                rattle, windChime).setRegistryName("eagle_dance"),
             cleansing = new CeremonyCleansing("totemic:cleansing", 245, 30 * 20,
-                    eagleBoneWhistle, flute).setRegistryName("cleansing"),
+                eagleBoneWhistle, flute).setRegistryName("cleansing"),
             baykokSummon = new CeremonyBaykok("totemic:baykokSummon", 251, 32 * 20,
-                    windChime, eagleBoneWhistle).setRegistryName("baykok_summon"),
+                windChime, eagleBoneWhistle).setRegistryName("baykok_summon"),
             sunDance = new CeremonySunDance("totemic:sunDance", 247, 31 * 20,
-                    drum, eagleBoneWhistle).setRegistryName("sun_dance"),
+                drum, eagleBoneWhistle).setRegistryName("sun_dance"),
             danseMacabre = new CeremonyDanseMacabre("totemic:danseMacabre", 249, 32 * 20,
                 eagleBoneWhistle, windChime).setRegistryName("danseMacabre"));
     }

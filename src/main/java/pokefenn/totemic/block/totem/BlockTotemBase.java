@@ -3,7 +3,6 @@ package pokefenn.totemic.block.totem;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -25,12 +24,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -39,17 +33,14 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.TotemicStaffUsage;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.init.ModItems;
 import pokefenn.totemic.lib.Strings;
 import pokefenn.totemic.lib.WoodVariant;
-import pokefenn.totemic.tileentity.totem.StateCeremonyEffect;
-import pokefenn.totemic.tileentity.totem.StateSelection;
-import pokefenn.totemic.tileentity.totem.StateStartup;
-import pokefenn.totemic.tileentity.totem.StateTotemEffect;
-import pokefenn.totemic.tileentity.totem.TileTotemBase;
+import pokefenn.totemic.tileentity.totem.*;
 
 public class BlockTotemBase extends Block implements ITileEntityProvider, TotemicStaffUsage
 {
@@ -58,9 +49,9 @@ public class BlockTotemBase extends Block implements ITileEntityProvider, Totemi
 
     public static final int EVENT_POLE_CHANGE_ID = 0;
 
-    private static final AxisAlignedBB SELECTION_AABB = new AxisAlignedBB(0.0625F, 0.0F, 0.0625F,  0.9375F, 1.0F, 0.9375F);
-    private static final AxisAlignedBB BASE_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F,  1.0F, 0.28125F, 1.0F);
-    private static final AxisAlignedBB POLE_AABB = new AxisAlignedBB(0.125F, 0.28125F, 0.125F,  0.875F, 1.0F, 0.875F);
+    private static final AxisAlignedBB SELECTION_AABB = new AxisAlignedBB(0.0625F, 0.0F, 0.0625F, 0.9375F, 1.0F, 0.9375F);
+    private static final AxisAlignedBB BASE_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.28125F, 1.0F);
+    private static final AxisAlignedBB POLE_AABB = new AxisAlignedBB(0.125F, 0.28125F, 0.125F, 0.875F, 1.0F, 0.875F);
 
     public BlockTotemBase()
     {
@@ -75,46 +66,31 @@ public class BlockTotemBase extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    public void onBlockClicked(World world, BlockPos pos, EntityPlayer player)
-    {
-        if(!world.isRemote)
-        {
-            TileTotemBase tile = (TileTotemBase) world.getTileEntity(pos);
-            if(tile != null)
-                if(player.getHeldItemMainhand().getItem() == ModItems.totemic_staff && !(tile.getState() instanceof StateTotemEffect))
-                {
-                    ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 16, 0.6D, 0.5D, 0.6D, 0.0D);
-                    tile.resetState();
-                }
-        }
-    }
-
-    @Override
     public EnumActionResult onTotemicStaffRightClick(World world, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if(!world.isRemote)
+        if (!world.isRemote)
             return EnumActionResult.SUCCESS;
         TileTotemBase tile = (TileTotemBase) world.getTileEntity(pos);
 
-        if(tile.getState() instanceof StateTotemEffect)
+        if (tile.getState() instanceof StateTotemEffect)
         {
             player.sendStatusMessage(new TextComponentTranslation("totemicmisc.isDoingNoCeremony"), true);
         }
-        else if(tile.getState() instanceof StateSelection)
+        else if (tile.getState() instanceof StateSelection)
         {
             String selectors = ((StateSelection) tile.getState()).getSelectors().stream()
-                    .map(instr -> I18n.format(instr.getUnlocalizedName()))
-                    .collect(Collectors.joining(", "));
+                .map(instr -> I18n.format(instr.getUnlocalizedName()))
+                .collect(Collectors.joining(", "));
             player.sendStatusMessage(new TextComponentTranslation("totemicmisc.isDoingSelection"), false);
             player.sendStatusMessage(new TextComponentTranslation("totemicmisc.selection", selectors), false);
         }
-        else if(tile.getState() instanceof StateStartup)
+        else if (tile.getState() instanceof StateStartup)
         {
             Ceremony ceremony = ((StateStartup) tile.getState()).getCeremony();
             player.sendStatusMessage(new TextComponentTranslation("totemicmisc.isDoingStartup"), false);
             player.sendStatusMessage(new TextComponentTranslation(ceremony.getUnlocalizedName()), false);
         }
-        else if(tile.getState() instanceof StateCeremonyEffect)
+        else if (tile.getState() instanceof StateCeremonyEffect)
         {
             Ceremony ceremony = ((StateCeremonyEffect) tile.getState()).getCeremony();
             player.sendStatusMessage(new TextComponentTranslation("totemicmisc.isDoingCeremony"), false);
@@ -125,61 +101,13 @@ public class BlockTotemBase extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param)
-    {
-        switch(id)
-        {
-        case EVENT_POLE_CHANGE_ID:
-            TileEntity tile = world.getTileEntity(pos);
-            if(tile instanceof TileTotemBase)
-                ((TileTotemBase) tile).onPoleChange();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-    {
-        if(stack.getItem() == Item.getItemFromBlock(this))
-        {
-            TileTotemBase tile = (TileTotemBase) world.getTileEntity(pos);
-            tile.setWoodType(WoodVariant.fromID(stack.getMetadata()));
-        }
-    }
-
-    @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
-    {
-        return new ItemStack(this, 1, ((TileTotemBase) world.getTileEntity(pos)).getWoodType().getID());
-    }
-
-    @Override
-    public int quantityDropped(Random rand)
-    {
-        return 0;
-    }
-
-    @Override
     public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileTotemBase)
+        if (tile instanceof TileTotemBase)
             return ((TileTotemBase) tile).getWoodType().getMapColor();
         else
             return MapColor.WOOD;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING, WOOD);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        return state.getValue(FACING).getHorizontalIndex();
     }
 
     @Override
@@ -189,18 +117,18 @@ public class BlockTotemBase extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+    public int getMetaFromState(IBlockState state)
     {
-        TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileTotemBase)
-            return state.withProperty(WOOD, ((TileTotemBase) tile).getWoodType());
-        return state;
+        return state.getValue(FACING).getHorizontalIndex();
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
     {
-        return getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileTotemBase)
+            return state.withProperty(WOOD, ((TileTotemBase) tile).getWoodType());
+        return state;
     }
 
     @Override
@@ -216,19 +144,9 @@ public class BlockTotemBase extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    @Nullable
-    public TileEntity createTileEntity(World world, IBlockState state)
+    public boolean isFullCube(IBlockState state)
     {
-        TileTotemBase tile = new TileTotemBase();
-        tile.setWoodType(state.getValue(WOOD));
-        return tile;
-    }
-
-    //Necessary for ITileEntityProvider
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta)
-    {
-        return new TileTotemBase();
+        return false;
     }
 
     @Override
@@ -238,32 +156,24 @@ public class BlockTotemBase extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos)
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
     {
-        return SELECTION_AABB.offset(pos);
-    }
-
-    @Override
-    @Nullable
-    public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end)
-    {
-        RayTraceResult base_res = rayTrace(pos, start, end, BASE_AABB);
-        RayTraceResult pole_res = rayTrace(pos, start, end, POLE_AABB);
-
-        if(base_res == null)
-            return pole_res;
-        if(pole_res == null)
-            return base_res;
-        return (base_res.hitVec.squareDistanceTo(start) < pole_res.hitVec.squareDistanceTo(start)) ? base_res : pole_res;
+        return BlockFaceShape.UNDEFINED;
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
-            List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
+                                      List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
     {
         addCollisionBoxToList(pos, entityBox, collidingBoxes, BASE_AABB);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, POLE_AABB);
+    }
+
+    @Override
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos)
+    {
+        return SELECTION_AABB.offset(pos);
     }
 
     @Override
@@ -273,20 +183,101 @@ public class BlockTotemBase extends Block implements ITileEntityProvider, Totemi
     }
 
     @Override
-    public boolean isFullCube(IBlockState state)
+    public int quantityDropped(Random rand)
     {
+        return 0;
+    }
+
+    @Override
+    @Nullable
+    public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end)
+    {
+        RayTraceResult base_res = rayTrace(pos, start, end, BASE_AABB);
+        RayTraceResult pole_res = rayTrace(pos, start, end, POLE_AABB);
+
+        if (base_res == null)
+            return pole_res;
+        if (pole_res == null)
+            return base_res;
+        return (base_res.hitVec.squareDistanceTo(start) < pole_res.hitVec.squareDistanceTo(start)) ? base_res : pole_res;
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    {
+        return getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+    }
+
+    @Override
+    public void onBlockClicked(World world, BlockPos pos, EntityPlayer player)
+    {
+        if (!world.isRemote)
+        {
+            TileTotemBase tile = (TileTotemBase) world.getTileEntity(pos);
+            if (tile != null)
+                if (player.getHeldItemMainhand().getItem() == ModItems.totemic_staff && !(tile.getState() instanceof StateTotemEffect))
+                {
+                    ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 16, 0.6D, 0.5D, 0.6D, 0.0D);
+                    tile.resetState();
+                }
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    {
+        if (stack.getItem() == Item.getItemFromBlock(this))
+        {
+            TileTotemBase tile = (TileTotemBase) world.getTileEntity(pos);
+            tile.setWoodType(WoodVariant.fromID(stack.getMetadata()));
+        }
+    }
+
+    @Override
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param)
+    {
+        switch (id)
+        {
+            case EVENT_POLE_CHANGE_ID:
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile instanceof TileTotemBase)
+                    ((TileTotemBase) tile).onPoleChange();
+                return true;
+        }
         return false;
     }
 
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
+    protected BlockStateContainer createBlockState()
     {
-        return BlockFaceShape.UNDEFINED;
+        return new BlockStateContainer(this, FACING, WOOD);
+    }
+
+    @Override
+    @Nullable
+    public TileEntity createTileEntity(World world, IBlockState state)
+    {
+        TileTotemBase tile = new TileTotemBase();
+        tile.setWoodType(state.getValue(WOOD));
+        return tile;
     }
 
     @Override
     public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         return true;
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
+    {
+        return new ItemStack(this, 1, ((TileTotemBase) world.getTileEntity(pos)).getWoodType().getID());
+    }
+
+    //Necessary for ITileEntityProvider
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta)
+    {
+        return new TileTotemBase();
     }
 }

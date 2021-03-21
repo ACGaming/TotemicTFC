@@ -4,17 +4,12 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.lib.Strings;
 
 public class ItemTotemicItems extends ItemTotemic
 {
-    public enum Type
-    {
-        //Can't remove the first enum constant, the ordinals need to stay the same
-        @Deprecated _unused, iron_bells;
-    }
-
     public ItemTotemicItems()
     {
         super("");
@@ -34,10 +29,16 @@ public class ItemTotemicItems extends ItemTotemic
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
     {
-        if(isInCreativeTab(tab))
+        if (isInCreativeTab(tab))
         {
-            for(int meta = 1; meta < Type.values().length; meta++)
+            for (int meta = 1; meta < Type.values().length; meta++)
                 list.add(new ItemStack(this, 1, meta));
         }
+    }
+
+    public enum Type
+    {
+        //Can't remove the first enum constant, the ordinals need to stay the same
+        @Deprecated _unused, iron_bells
     }
 }

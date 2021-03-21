@@ -24,18 +24,18 @@ public class BLexiconEntry extends LexiconEntry
     }
 
     @Override
-    public LexiconEntry addPages(LexiconPage... pages)
-    {
-        for(LexiconPage page : pages)
-            page.unlocalizedName = "totemic.page." + getLazyUnlocalizedName() + page.unlocalizedName;
-
-        return super.addPages(pages);
-    }
-
-    @Override
     public String getUnlocalizedName()
     {
         return "totemic.entry." + super.getUnlocalizedName();
+    }
+
+    @Override
+    public LexiconEntry addPages(LexiconPage... pages)
+    {
+        for (LexiconPage page : pages)
+            page.unlocalizedName = "totemic.page." + getLazyUnlocalizedName() + page.unlocalizedName;
+
+        return super.addPages(pages);
     }
 
     public String getLazyUnlocalizedName()

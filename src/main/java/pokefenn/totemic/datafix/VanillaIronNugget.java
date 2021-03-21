@@ -15,7 +15,7 @@ public class VanillaIronNugget implements IFixableData
     public NBTTagCompound fixTagCompound(NBTTagCompound compound)
     {
         String id = compound.getString("id");
-        if(("totemic:sub_items".equals(id) || "totemic:subItems".equals(id)) && compound.getShort("Damage") == 0)
+        if (("totemic:sub_items".equals(id) || "totemic:subItems".equals(id)) && compound.getShort("Damage") == 0)
         {
             compound.setString("id", "minecraft:iron_nugget");
         }

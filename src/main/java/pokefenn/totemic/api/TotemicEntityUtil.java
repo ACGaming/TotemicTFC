@@ -20,8 +20,9 @@ public final class TotemicEntityUtil
 {
     /**
      * Returns the players that are within range of a position (and are not in Spectator mode).
+     *
      * @param horizontal the horizontal range
-     * @param vertical the vertical range
+     * @param vertical   the vertical range
      */
     public static Stream<EntityPlayer> getPlayersInRange(World world, BlockPos pos, double horizontal, double vertical)
     {
@@ -30,9 +31,10 @@ public final class TotemicEntityUtil
 
     /**
      * Returns the players that are within range of a position and satisfy a filter.
+     *
      * @param horizontal the horizontal range
-     * @param vertical the vertical range
-     * @param filter the filter predicate. Must not be {@code null}.
+     * @param vertical   the vertical range
+     * @param filter     the filter predicate. Must not be {@code null}.
      */
     public static Stream<EntityPlayer> getPlayersInRange(World world, BlockPos pos, double horizontal, double vertical, Predicate<? super EntityPlayer> filter)
     {
@@ -45,7 +47,7 @@ public final class TotemicEntityUtil
      * Variant of {@link #getPlayersInRange(World, BlockPos, double, double)} for when the world is a server world, to
      * avoid casts to {@code EntityPlayerMP}.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" }) //casts are safe since a WorldServer only has EntityPlayerMP's
+    @SuppressWarnings({"unchecked", "rawtypes"}) //casts are safe since a WorldServer only has EntityPlayerMP's
     public static Stream<EntityPlayerMP> getPlayersMPInRange(WorldServer worldServer, BlockPos pos, double horizontal, double vertical)
     {
         return (Stream) getPlayersInRange(worldServer, pos, horizontal, vertical);
@@ -55,7 +57,7 @@ public final class TotemicEntityUtil
      * Variant of {@link #getPlayersInRange(World, BlockPos, double, double, Predicate)} for when the world is a server
      * world, to avoid casts to {@code EntityPlayerMP}.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Stream<EntityPlayerMP> getPlayersMPInRange(WorldServer worldServer, BlockPos pos, double horizontal, double vertical, Predicate<? super EntityPlayerMP> filter)
     {
         return (Stream) getPlayersInRange(worldServer, pos, horizontal, vertical, (Predicate<EntityPlayer>) filter);
@@ -65,8 +67,9 @@ public final class TotemicEntityUtil
      * Returns the entities of the given type that are within range of a position (and are not spectating players).
      *
      * <p>If {@code type} is {@link EntityPlayer} you should use {@link #getPlayersInRange} instead, as it tends to be faster.
+     *
      * @param horizontal the horizontal range
-     * @param vertical the vertical range
+     * @param vertical   the vertical range
      */
     public static <T extends Entity> Stream<T> getEntitiesInRange(Class<? extends T> type, World world, BlockPos pos, double horizontal, double vertical)
     {
@@ -77,9 +80,10 @@ public final class TotemicEntityUtil
      * Returns the entities of the given type that are within range of a position and satisfy a filter.
      *
      * <p>If {@code type} is {@link EntityPlayer} you should use {@link #getPlayersInRange} instead, as it tends to be faster.
+     *
      * @param horizontal the horizontal range
-     * @param vertical the vertical range
-     * @param filter the filter predicate. Must not be {@code null}.
+     * @param vertical   the vertical range
+     * @param filter     the filter predicate. Must not be {@code null}.
      */
     public static <T extends Entity> Stream<T> getEntitiesInRange(Class<? extends T> type, World world, BlockPos pos, double horizontal, double vertical, Predicate<? super T> filter)
     {

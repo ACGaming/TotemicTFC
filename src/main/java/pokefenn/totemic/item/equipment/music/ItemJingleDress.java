@@ -1,7 +1,6 @@
 package pokefenn.totemic.item.equipment.music;
 
 import java.util.List;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -22,6 +21,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.init.ModContent;
 import pokefenn.totemic.item.equipment.EquipmentMaterials;
@@ -47,10 +47,9 @@ public class ItemJingleDress extends ItemArmor implements ISpecialArmor
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
+    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot)
     {
-        tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip"));
+        return getArmorMaterial().getDamageReductionAmount(EntityEquipmentSlot.values()[slot]);
     }
 
     @Override
@@ -60,9 +59,16 @@ public class ItemJingleDress extends ItemArmor implements ISpecialArmor
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
+    {
+        tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip"));
+    }
+
+    @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack)
     {
-        if(!world.isRemote && !player.isSpectator() && world.getTotalWorldTime() % 20L == 0)
+        if (!world.isRemote && !player.isSpectator() && world.getTotalWorldTime() % 20L == 0)
         {
             NBTTagCompound tag = ItemUtil.getOrCreateTag(itemStack);
             int time = tag.getByte(TIME_KEY);
@@ -73,20 +79,20 @@ public class ItemJingleDress extends ItemArmor implements ISpecialArmor
             double vx = player.posX - player.chasingPosX;
             double vy = player.posY - player.chasingPosY;
             double vz = player.posZ - player.chasingPosZ;
-            double vel = Math.sqrt(vx*vx + vy*vy + vz*vz);
-            if(player.isPotionActive(MobEffects.SPEED))
+            double vel = Math.sqrt(vx * vx + vy * vy + vz * vz);
+            if (player.isPotionActive(MobEffects.SPEED))
                 vel *= 1.2;
 
             time += MathHelper.clamp((int) (vel * 10.0), 0, 8);
 
             final int limit = 10;
-            if(time >= limit)
+            if (time >= limit)
             {
                 playMusic(world, player, itemStack);
                 time %= limit;
             }
 
-            if(time != prevTime)
+            if (time != prevTime)
                 tag.setByte(TIME_KEY, (byte) time);
         }
     }
@@ -94,17 +100,11 @@ public class ItemJingleDress extends ItemArmor implements ISpecialArmor
     private void playMusic(World world, EntityPlayer player, ItemStack itemStack)
     {
         Totemic.api.music().playMusic(player, ModContent.jingleDress);
-        particlesAllAround((WorldServer)world, player.posX, player.posY, player.posZ);
+        particlesAllAround((WorldServer) world, player.posX, player.posY, player.posZ);
     }
 
     private void particlesAllAround(WorldServer world, double x, double y, double z)
     {
         world.spawnParticle(EnumParticleTypes.NOTE, x, y + 0.4D, z, 3, 0.5D, 0.2D, 0.5D, 0.0D);
-    }
-
-    @Override
-    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot)
-    {
-        return getArmorMaterial().getDamageReductionAmount(EntityEquipmentSlot.values()[slot]);
     }
 }

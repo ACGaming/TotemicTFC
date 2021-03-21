@@ -9,12 +9,12 @@ public interface TotemBase
     /**
      * The maximum amount of music for Totem Effects that a pole can have
      */
-    static final int MAX_TOTEM_EFFECT_MUSIC = 128;
+    int MAX_TOTEM_EFFECT_MUSIC = 128;
 
     /**
      * The maximum number of Totem Pole blocks above the base that a pole can have
      */
-    static final int MAX_POLE_SIZE = 5;
+    int MAX_POLE_SIZE = 5;
 
     /**
      * @return the amount of music for Totem Effects

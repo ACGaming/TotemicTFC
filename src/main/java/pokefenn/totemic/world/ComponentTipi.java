@@ -17,12 +17,23 @@ import net.minecraft.world.gen.structure.StructureVillagePieces.Start;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
+
 import pokefenn.totemic.block.tipi.BlockTipi;
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.init.ModVillagers;
 
 public class ComponentTipi extends StructureVillagePieces.Village
 {
+    public static ComponentTipi createPiece(StructureVillagePieces.Start startPiece, List<StructureComponent> pieces,
+                                            Random random, int strucMinX, int strucMinY, int strucMinZ, EnumFacing facing, int type)
+    {
+        StructureBoundingBox bb = StructureBoundingBox.getComponentToAddBoundingBox(strucMinX, strucMinY, strucMinZ, 0, 0, 0, 5, 6, 5, facing);
+        if (canVillageGoDeeper(bb) && StructureComponent.findIntersecting(pieces, bb) == null)
+            return new ComponentTipi(startPiece, type, random, bb, facing);
+        else
+            return null;
+    }
+
     public ComponentTipi()
     {
     }
@@ -34,31 +45,21 @@ public class ComponentTipi extends StructureVillagePieces.Village
         this.boundingBox = bb;
     }
 
-    public static ComponentTipi createPiece(StructureVillagePieces.Start startPiece, List<StructureComponent> pieces,
-            Random random, int strucMinX, int strucMinY, int strucMinZ, EnumFacing facing, int type)
-    {
-        StructureBoundingBox bb = StructureBoundingBox.getComponentToAddBoundingBox(strucMinX, strucMinY, strucMinZ, 0, 0, 0,  5, 6, 5, facing);
-        if(canVillageGoDeeper(bb) && StructureComponent.findIntersecting(pieces, bb) == null)
-            return new ComponentTipi(startPiece, type, random, bb, facing);
-        else
-            return null;
-    }
-
     @Override
     public boolean addComponentParts(World world, Random random, StructureBoundingBox bb)
     {
-        if(averageGroundLvl < 0)
+        if (averageGroundLvl < 0)
         {
             averageGroundLvl = getAverageGroundLevel(world, bb);
-            if(averageGroundLvl < 0)
+            if (averageGroundLvl < 0)
                 return true;
             boundingBox.offset(0, averageGroundLvl - boundingBox.maxY + 6 - 1, 0);
         }
 
-        fillWithAir(world, bb, 0, 0, 0,  4, 5, 4);
+        fillWithAir(world, bb, 0, 0, 0, 4, 5, 4);
 
         placeTipi(world, 2, 0, 2, EnumFacing.NORTH, bb);
-        if(!isZombieInfested)
+        if (!isZombieInfested)
         {
             setBlockState(world, ModBlocks.totem_torch.getDefaultState(), 0, 0, 0, bb);
             setBlockState(world, ModBlocks.totem_torch.getDefaultState(), 4, 0, 0, bb);
@@ -66,27 +67,33 @@ public class ComponentTipi extends StructureVillagePieces.Village
 
         IBlockState ground = (structureType != 1) ? Blocks.DIRT.getDefaultState() : Blocks.SAND.getDefaultState();
         IBlockState grass = getBiomeSpecificBlockState(Blocks.GRASS.getDefaultState());
-        for(int z = 0; z < 5; z++)
-            for(int x = 0; x < 5; x++)
+        for (int z = 0; z < 5; z++)
+            for (int x = 0; x < 5; x++)
             {
                 clearCurrentPositionBlocksUpwards(world, x, 6, z, bb);
                 replaceAirAndLiquidDownwards(world, ground, x, -1, z, bb);
-                if(getBlockStateFromPos(world, x, -1, z, bb).getBlock() == Blocks.DIRT)
+                if (getBlockStateFromPos(world, x, -1, z, bb).getBlock() == Blocks.DIRT)
                     setBlockState(world, grass, x, -1, z, bb);
             }
 
-        spawnVillagers(world, bb, 2, 1, 1,  1);
+        spawnVillagers(world, bb, 2, 1, 1, 1);
         return true;
+    }
+
+    @Override
+    protected VillagerProfession chooseForgeProfession(int count, VillagerProfession prof)
+    {
+        return ModVillagers.profTotemist;
     }
 
     private void placeTipi(World world, int x, int y, int z, EnumFacing dir, StructureBoundingBox bb)
     {
         //Place dummy blocks
-        for(int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
         {
-            for(EnumFacing blockDir : EnumFacing.HORIZONTALS)
+            for (EnumFacing blockDir : EnumFacing.HORIZONTALS)
             {
-                if(blockDir == dir)
+                if (blockDir == dir)
                     continue;
                 Vec3i dirVec = blockDir.getDirectionVec();
                 setBlockState(world, ModBlocks.dummy_tipi.getDefaultState(), x + dirVec.getX(), y + i, z + dirVec.getZ(), bb);
@@ -98,12 +105,6 @@ public class ComponentTipi extends StructureVillagePieces.Village
 
         //Place Tipi block itself
         setBlockState(world, ModBlocks.tipi.getDefaultState().withProperty(BlockTipi.FACING, dir), x, y, z, bb);
-    }
-
-    @Override
-    protected VillagerProfession chooseForgeProfession(int count, VillagerProfession prof)
-    {
-        return ModVillagers.profTotemist;
     }
 
     public static class CreationHandler implements IVillageCreationHandler
@@ -122,7 +123,7 @@ public class ComponentTipi extends StructureVillagePieces.Village
 
         @Override
         public Village buildComponent(PieceWeight villagePiece, Start startPiece, List<StructureComponent> pieces,
-                Random random, int strucMinX, int strucMinY, int strucMinZ, EnumFacing facing, int type)
+                                      Random random, int strucMinX, int strucMinY, int strucMinZ, EnumFacing facing, int type)
         {
             return ComponentTipi.createPiece(startPiece, pieces, random, strucMinX, strucMinY, strucMinZ, facing, type);
         }

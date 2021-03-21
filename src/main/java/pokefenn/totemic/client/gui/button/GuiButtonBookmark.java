@@ -7,12 +7,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
+
 import pokefenn.totemic.client.TotemicRenderHelper;
 import pokefenn.totemic.client.gui.GuiLexicon;
 
 public class GuiButtonBookmark extends GuiButton
 {
-    private GuiLexicon gui = new GuiLexicon();
+    private final GuiLexicon gui = new GuiLexicon();
 
     public GuiButtonBookmark(int buttonId, int x, int y, GuiLexicon gui, String str)
     {
@@ -27,7 +28,7 @@ public class GuiButtonBookmark extends GuiButton
         int k = getHoverState(hovered);
 
         List<String> tooltip = new ArrayList<>();
-        if(displayString.equals("+"))
+        if (displayString.equals("+"))
             tooltip.add(I18n.format("totemicmisc.clickToAdd"));
         else
         {
@@ -37,7 +38,7 @@ public class GuiButtonBookmark extends GuiButton
         }
 
         int tooltipY = (tooltip.size() + 1) * 5;
-        if(k == 2)
+        if (k == 2)
             TotemicRenderHelper.renderTooltip(mouseX, mouseY + tooltipY, tooltip);
     }
 

@@ -18,6 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
 import pokefenn.totemic.api.music.MusicInstrument;
@@ -39,14 +40,14 @@ public class CeremonyFertility extends Ceremony
     {
         int radius = 8;
 
-        if(!world.isRemote && context.getTime() % 20 == 0)
+        if (!world.isRemote && context.getTime() % 20 == 0)
         {
-            for(Entity entity: EntityUtil.listEntitiesInRange(EntityLiving.class, world, pos, radius, radius, e -> e instanceof EntityAnimal || e instanceof EntityVillager))
+            for (Entity entity : EntityUtil.listEntitiesInRange(EntityLiving.class, world, pos, radius, radius, e -> e instanceof EntityAnimal || e instanceof EntityVillager))
             {
-                if(entity instanceof EntityAnimal)
+                if (entity instanceof EntityAnimal)
                 {
                     EntityAnimal animal = (EntityAnimal) entity;
-                    if(animal.getGrowingAge() == 0 && !animal.isInLove() && consumeBreedingItem(world, pos, animal))
+                    if (animal.getGrowingAge() == 0 && !animal.isInLove() && consumeBreedingItem(world, pos, animal))
                     {
                         animal.setInLove(null);
                         break;
@@ -55,7 +56,7 @@ public class CeremonyFertility extends Ceremony
                 else
                 {
                     EntityVillager villager = (EntityVillager) entity;
-                    if(villager.getGrowingAge() == 0 && !matedVillagers.contains(villager) && !villager.isMating() && consumeBreedingItem(world, pos, villager))
+                    if (villager.getGrowingAge() == 0 && !matedVillagers.contains(villager) && !villager.isMating() && consumeBreedingItem(world, pos, villager))
                     {
                         matedVillagers.add(villager);
                         villager.setIsWillingToMate(true);
@@ -67,54 +68,19 @@ public class CeremonyFertility extends Ceremony
             }
         }
 
-        if(context.getTime() % 20 == 0)
+        if (context.getTime() % 20 == 0)
         {
-            for(BlockPos p: BlockPos.getAllInBoxMutable(pos.add(-radius, -radius, -radius), pos.add(radius, radius, radius)))
+            for (BlockPos p : BlockPos.getAllInBoxMutable(pos.add(-radius, -radius, -radius), pos.add(radius, radius, radius)))
             {
                 IBlockState state = world.getBlockState(p);
                 Block block = state.getBlock();
-                if(block instanceof BlockSapling && block != ModBlocks.cedar_sapling)
+                if (block instanceof BlockSapling && block != ModBlocks.cedar_sapling)
                 {
                     world.setBlockState(p, ModBlocks.cedar_sapling.getDefaultState(), 3);
                     spawnParticles(world, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5);
                 }
             }
         }
-    }
-
-    private boolean consumeBreedingItem(World world, BlockPos pos, EntityAnimal animal)
-    {
-        int radius = 8;
-        List<EntityItem> breedingItems = EntityUtil.listEntitiesInRange(EntityItem.class, world, pos, radius, radius, e -> animal.isBreedingItem(e.getItem()));
-        if(!breedingItems.isEmpty())
-        {
-            if(world.rand.nextInt(3) < 2)
-            {
-                EntityItem entityItem = breedingItems.get(0);
-                entityItem.getItem().shrink(1);
-                if(entityItem.getItem().isEmpty())
-                    entityItem.setDead();
-            }
-            return true;
-        }
-        else
-            return false;
-    }
-
-    private boolean consumeBreedingItem(World world, BlockPos pos, EntityVillager villager)
-    {
-        int radius = 8;
-        List<EntityItem> breedingItems = EntityUtil.listEntitiesInRange(EntityItem.class, world, pos, radius, radius, e -> e.getItem().getItem() == Items.EMERALD);
-        if(!breedingItems.isEmpty())
-        {
-            EntityItem entityItem = breedingItems.get(0);
-            entityItem.getItem().shrink(1);
-            if(entityItem.getItem().isEmpty())
-                entityItem.setDead();
-            return true;
-        }
-        else
-            return false;
     }
 
     @Override
@@ -129,15 +95,50 @@ public class CeremonyFertility extends Ceremony
         return 6;
     }
 
+    private boolean consumeBreedingItem(World world, BlockPos pos, EntityAnimal animal)
+    {
+        int radius = 8;
+        List<EntityItem> breedingItems = EntityUtil.listEntitiesInRange(EntityItem.class, world, pos, radius, radius, e -> animal.isBreedingItem(e.getItem()));
+        if (!breedingItems.isEmpty())
+        {
+            if (world.rand.nextInt(3) < 2)
+            {
+                EntityItem entityItem = breedingItems.get(0);
+                entityItem.getItem().shrink(1);
+                if (entityItem.getItem().isEmpty())
+                    entityItem.setDead();
+            }
+            return true;
+        }
+        else
+            return false;
+    }
+
+    private boolean consumeBreedingItem(World world, BlockPos pos, EntityVillager villager)
+    {
+        int radius = 8;
+        List<EntityItem> breedingItems = EntityUtil.listEntitiesInRange(EntityItem.class, world, pos, radius, radius, e -> e.getItem().getItem() == Items.EMERALD);
+        if (!breedingItems.isEmpty())
+        {
+            EntityItem entityItem = breedingItems.get(0);
+            entityItem.getItem().shrink(1);
+            if (entityItem.getItem().isEmpty())
+                entityItem.setDead();
+            return true;
+        }
+        else
+            return false;
+    }
+
     private void spawnParticles(World world, double x, double y, double z)
     {
-        if(world.isRemote)
+        if (world.isRemote)
         {
             double dx = world.rand.nextGaussian();
             double dy = world.rand.nextGaussian() * 0.5;
             double dz = world.rand.nextGaussian();
             double velY = world.rand.nextGaussian();
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
                 world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, x + dx, y + dy, z + dz, 0, velY, 0);
         }
     }
@@ -146,8 +147,8 @@ public class CeremonyFertility extends Ceremony
     private static class EntityAIVillagerFertility extends EntityAIBase
     {
         private final EntityVillager villager;
-        private EntityVillager mate;
         private final World world;
+        private EntityVillager mate;
         private int matingTimeout;
 
         public EntityAIVillagerFertility(EntityVillager villagerIn)
@@ -160,7 +161,7 @@ public class CeremonyFertility extends Ceremony
         @Override
         public boolean shouldExecute()
         {
-            if(villager.getIsWillingToMate(true))
+            if (villager.getIsWillingToMate(true))
             {
                 EntityVillager mate = this.world.findNearestEntityWithinAABB(EntityVillager.class, this.villager.getEntityBoundingBox().grow(8.0D, 3.0D, 8.0D), this.villager);
                 if (mate == null)
@@ -175,6 +176,12 @@ public class CeremonyFertility extends Ceremony
             {
                 return false;
             }
+        }
+
+        @Override
+        public boolean shouldContinueExecuting()
+        {
+            return this.matingTimeout >= 0 && this.villager.getGrowingAge() == 0 && this.villager.getIsWillingToMate(false) && matedVillagers.contains(mate);
         }
 
         @Override
@@ -195,12 +202,6 @@ public class CeremonyFertility extends Ceremony
         }
 
         @Override
-        public boolean shouldContinueExecuting()
-        {
-            return this.matingTimeout >= 0 && this.villager.getGrowingAge() == 0 && this.villager.getIsWillingToMate(false) && matedVillagers.contains(mate);
-        }
-
-        @Override
         public void updateTask()
         {
             --this.matingTimeout;
@@ -217,7 +218,7 @@ public class CeremonyFertility extends Ceremony
 
             if (this.villager.getRNG().nextInt(35) == 0)
             {
-                this.world.setEntityState(this.villager, (byte)12);
+                this.world.setEntityState(this.villager, (byte) 12);
             }
         }
 
@@ -235,7 +236,7 @@ public class CeremonyFertility extends Ceremony
             entityvillager.setGrowingAge(-24000);
             entityvillager.setLocationAndAngles(this.villager.posX, this.villager.posY, this.villager.posZ, 0.0F, 0.0F);
             this.world.spawnEntity(entityvillager);
-            this.world.setEntityState(entityvillager, (byte)12);
+            this.world.setEntityState(entityvillager, (byte) 12);
         }
     }
 }

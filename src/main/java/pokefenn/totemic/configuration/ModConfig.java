@@ -2,6 +2,7 @@ package pokefenn.totemic.configuration;
 
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.LangKey;
+
 import pokefenn.totemic.Totemic;
 
 @Config(modid = Totemic.MOD_ID, category = "")

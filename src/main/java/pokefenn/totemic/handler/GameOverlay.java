@@ -1,11 +1,9 @@
 package pokefenn.totemic.handler;
 
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
@@ -23,6 +21,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.music.MusicInstrument;
 import pokefenn.totemic.client.TotemicRenderHelper;
@@ -34,12 +33,12 @@ import pokefenn.totemic.tileentity.totem.*;
 @SideOnly(Side.CLIENT)
 public class GameOverlay
 {
-    private static TileTotemBase activeTotem = null;
-
     private static final ResourceLocation SELECTION_HUD_TEXTURE = new ResourceLocation(Resources.SELECTION_HUD);
     private static final ResourceLocation CEREMONY_HUD_TEXTURE = new ResourceLocation(Resources.CEREMONY_HUD);
+    private static TileTotemBase activeTotem = null;
 
-    public static @Nullable TileTotemBase getActiveTotem()
+    public static @Nullable
+    TileTotemBase getActiveTotem()
     {
         return activeTotem;
     }
@@ -52,19 +51,19 @@ public class GameOverlay
     @SubscribeEvent
     public void renderHUD(RenderGameOverlayEvent.Post event)
     {
-        if(event.getType() != ElementType.ALL)
+        if (event.getType() != ElementType.ALL)
             return;
 
         Minecraft mc = Minecraft.getMinecraft();
         mc.mcProfiler.startSection("totemicHUD");
 
-        if(activeTotem != null)
+        if (activeTotem != null)
         {
-            if(activeTotem.isInvalid() || activeTotem.getState() instanceof StateTotemEffect)
+            if (activeTotem.isInvalid() || activeTotem.getState() instanceof StateTotemEffect)
                 activeTotem = null;
         }
 
-        if(activeTotem != null)
+        if (activeTotem != null)
         {
             int hudWidth = 117;
             int hudHeight = 30;
@@ -80,15 +79,15 @@ public class GameOverlay
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
             TotemState state = activeTotem.getState();
-            if(state instanceof StateSelection)
+            if (state instanceof StateSelection)
             {
                 renderSelectionHUD((StateSelection) state, hudWidth, hudHeight, mc, tes, buf, font);
             }
-            else if(state instanceof StateStartup)
+            else if (state instanceof StateStartup)
             {
                 renderStartupHUD((StateStartup) state, hudWidth, hudHeight, mc, tes, buf, font);
             }
-            else if(state instanceof StateCeremonyEffect)
+            else if (state instanceof StateCeremonyEffect)
             {
                 renderCeremonyEffectHUD((StateCeremonyEffect) state, hudWidth, hudHeight, mc, tes, buf, font);
             }
@@ -97,6 +96,24 @@ public class GameOverlay
         }
 
         mc.mcProfiler.endSection();
+    }
+
+    @SubscribeEvent
+    public void onFOVUpdate(FOVUpdateEvent event)
+    {
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        if (player.isHandActive() && player.getActiveItemStack().getItem() instanceof ItemBaykokBow)
+        {
+            int bowTicks = player.getItemInUseMaxCount();
+            float modifier = bowTicks / 20.0F;
+
+            if (modifier > 1.0F)
+                modifier = 1.0F;
+            else
+                modifier = modifier * modifier;
+
+            event.setNewfov(event.getFov() * (1.0F - 0.15F * modifier));
+        }
     }
 
     private void renderSelectionHUD(StateSelection state, int w, int h, Minecraft mc, Tessellator tes, BufferBuilder buf, FontRenderer font)
@@ -146,15 +163,15 @@ public class GameOverlay
         TotemicRenderHelper.addQuad(buf, 0, 0, 0, w, h, 0, 0, w / texW, h / texH);
 
         //Symbols
-        TotemicRenderHelper.addQuad(buf, 1, 10, 0,  9, 9,  16 / texW, 48 / texH,   8 / texW,  8 / texH); //Note
-        TotemicRenderHelper.addQuad(buf, 1, 20, 0,  9, 9,   0 / texW, 48 / texH,  16 / texW, 16 / texH); //Clock
+        TotemicRenderHelper.addQuad(buf, 1, 10, 0, 9, 9, 16 / texW, 48 / texH, 8 / texW, 8 / texH); //Note
+        TotemicRenderHelper.addQuad(buf, 1, 20, 0, 9, 9, 0 / texW, 48 / texH, 16 / texW, 16 / texH); //Clock
 
         //Bars
-        float musicW = state.getTotalMusic() / (float)cer.getMusicNeeded() * barW;
-        float timeW = Math.min(state.getTime() / (float)cer.getAdjustedMaxStartupTime(mc.world.getDifficulty()), 1.0f) * barW;
+        float musicW = state.getTotalMusic() / (float) cer.getMusicNeeded() * barW;
+        float timeW = Math.min(state.getTime() / (float) cer.getAdjustedMaxStartupTime(mc.world.getDifficulty()), 1.0f) * barW;
 
-        TotemicRenderHelper.addQuad(buf, 11, 11, 0,  musicW, barH,  0, 32 / texH,  musicW / texW, barH / texH); //Music bar
-        TotemicRenderHelper.addQuad(buf, 11, 21, 0,  timeW,  barH,  0, 32 / texH,  timeW  / texW, barH / texH); //Time bar
+        TotemicRenderHelper.addQuad(buf, 11, 11, 0, musicW, barH, 0, 32 / texH, musicW / texW, barH / texH); //Music bar
+        TotemicRenderHelper.addQuad(buf, 11, 21, 0, timeW, barH, 0, 32 / texH, timeW / texW, barH / texH); //Time bar
         tes.draw();
 
         //Ceremony name
@@ -178,35 +195,17 @@ public class GameOverlay
         TotemicRenderHelper.addQuad(buf, 0, 0, 0, w, h, 0, 0, w / texW, h / texH);
 
         //Clock symbol
-        TotemicRenderHelper.addQuad(buf, 1, 20, 0,  9, 9,   0 / texW, 48 / texH,  16 / texW, 16 / texH);
+        TotemicRenderHelper.addQuad(buf, 1, 20, 0, 9, 9, 0 / texW, 48 / texH, 16 / texW, 16 / texH);
 
         //Time bar
-        float timeW = MathHelper.clamp(1.0f - state.getTime() / (float)cer.getEffectTime(), 0.0f, 1.0f) * barW;
+        float timeW = MathHelper.clamp(1.0f - state.getTime() / (float) cer.getEffectTime(), 0.0f, 1.0f) * barW;
 
-        TotemicRenderHelper.addQuad(buf, 11, 21, 0,  timeW,  barH,  0, 32 / texH,  timeW  / texW, barH / texH);
+        TotemicRenderHelper.addQuad(buf, 11, 21, 0, timeW, barH, 0, 32 / texH, timeW / texW, barH / texH);
         tes.draw();
 
         //Ceremony name
         String locName = I18n.format(cer.getUnlocalizedName());
         int nameX = (w - font.getStringWidth(locName)) / 2;
         font.drawString(locName, nameX, 1, 0xC8000000);
-    }
-
-    @SubscribeEvent
-    public void onFOVUpdate(FOVUpdateEvent event)
-    {
-        EntityPlayer player = Minecraft.getMinecraft().player;
-        if(player.isHandActive() && player.getActiveItemStack().getItem() instanceof ItemBaykokBow)
-        {
-            int bowTicks = player.getItemInUseMaxCount();
-            float modifier = bowTicks / 20.0F;
-
-            if (modifier > 1.0F)
-                modifier = 1.0F;
-            else
-                modifier = modifier * modifier;
-
-            event.setNewfov(event.getFov() * (1.0F - 0.15F * modifier));
-        }
     }
 }

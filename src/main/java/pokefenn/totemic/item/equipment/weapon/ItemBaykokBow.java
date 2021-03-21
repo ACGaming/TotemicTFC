@@ -1,11 +1,8 @@
 package pokefenn.totemic.item.equipment.weapon;
 
-import static pokefenn.totemic.Totemic.logger;
-
 import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.Level;
-
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,9 +20,12 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.entity.projectile.EntityInvisArrow;
 import pokefenn.totemic.lib.Strings;
+
+import static pokefenn.totemic.Totemic.logger;
 
 public class ItemBaykokBow extends ItemBow
 {
@@ -38,7 +38,7 @@ public class ItemBaykokBow extends ItemBow
         setCreativeTab(Totemic.tabsTotem);
         setMaxDamage(576);
         addPropertyOverride(new ResourceLocation("pull"), (stack, world, entity) -> {
-            if(entity != null && entity.getActiveItemStack().getItem() == this)
+            if (entity != null && entity.getActiveItemStack().getItem() == this)
                 return (stack.getMaxItemUseDuration() - entity.getItemInUseCount()) / 20.0F;
             else
                 return 0.0F;
@@ -50,7 +50,7 @@ public class ItemBaykokBow extends ItemBow
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entity, int timeLeft)
     {
-        if(!(entity instanceof EntityPlayer))
+        if (!(entity instanceof EntityPlayer))
             return;
 
         EntityPlayer player = (EntityPlayer) entity;
@@ -59,26 +59,26 @@ public class ItemBaykokBow extends ItemBow
 
         int chargeTicks = this.getMaxItemUseDuration(stack) - timeLeft;
         chargeTicks = ForgeEventFactory.onArrowLoose(stack, world, player, chargeTicks, !arrow.isEmpty() || infinity);
-        if(chargeTicks < 0)
+        if (chargeTicks < 0)
             return;
 
-        if(!arrow.isEmpty() || infinity)
+        if (!arrow.isEmpty() || infinity)
         {
-            if(arrow.isEmpty())
+            if (arrow.isEmpty())
                 arrow = new ItemStack(Items.ARROW);
 
             float charge = getArrowVelocity(chargeTicks);
 
-            if(charge >= 0.1)
+            if (charge >= 0.1)
             {
                 boolean flag1 = infinity && arrow.getItem() instanceof ItemArrow; //Forge: Fix consuming custom arrows.
 
-                if(!world.isRemote)
+                if (!world.isRemote)
                 {
-                    ItemArrow itemarrow = ((ItemArrow)(arrow.getItem() instanceof ItemArrow ? arrow.getItem() : Items.ARROW));
+                    ItemArrow itemarrow = ((ItemArrow) (arrow.getItem() instanceof ItemArrow ? arrow.getItem() : Items.ARROW));
                     EntityArrow entityarrow;
 
-                    if(itemarrow == Items.ARROW) //Mundane arrows will become invisible
+                    if (itemarrow == Items.ARROW) //Mundane arrows will become invisible
                     {
                         entityarrow = new EntityInvisArrow(world, player);
                     }
@@ -87,28 +87,28 @@ public class ItemBaykokBow extends ItemBow
                         entityarrow = itemarrow.createArrow(world, arrow, entity);
                     }
 
-                    if(entityarrow.getDamage() < 2.5)
+                    if (entityarrow.getDamage() < 2.5)
                         entityarrow.setDamage(2.5);
 
                     entityarrow.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F, charge * 4.0F, 1.0F);
 
-                    if(charge == 1.0F)
+                    if (charge == 1.0F)
                         entityarrow.setIsCritical(true);
 
                     int power = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
-                    if(power > 0)
+                    if (power > 0)
                         entityarrow.setDamage(entityarrow.getDamage() + power * 0.5D + 0.5D);
 
                     int punch = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
-                    if(punch > 0)
+                    if (punch > 0)
                         entityarrow.setKnockbackStrength(punch);
 
-                    if(EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0)
+                    if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0)
                         entityarrow.setFire(100);
 
                     stack.damageItem(1, player);
 
-                    if(flag1)
+                    if (flag1)
                         entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
 
                     world.spawnEntity(entityarrow);
@@ -116,31 +116,16 @@ public class ItemBaykokBow extends ItemBow
 
                 world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + charge * 0.5F);
 
-                if(!flag1)
+                if (!flag1)
                 {
                     arrow.shrink(1);
 
-                    if(arrow.isEmpty())
+                    if (arrow.isEmpty())
                         player.inventory.deleteStack(arrow);
                 }
 
                 player.addStat(StatList.getObjectUseStats(this));
             }
-        }
-    }
-
-    //The name of this method must not be "findAmmo", otherwise if there is some Access Transformer
-    //that makes ItemBow.findAmmo protected or public, it will cause an infinite recursion
-    protected ItemStack findAmmo0(EntityPlayer player)
-    {
-        try
-        {
-            return (ItemStack) findAmmoMethod.invoke(this, player);
-        }
-        catch(ReflectiveOperationException e)
-        {
-            logger.catching(Level.ERROR, e);
-            return ItemStack.EMPTY;
         }
     }
 
@@ -160,5 +145,20 @@ public class ItemBaykokBow extends ItemBow
     public EnumRarity getRarity(ItemStack stack)
     {
         return EnumRarity.RARE;
+    }
+
+    //The name of this method must not be "findAmmo", otherwise if there is some Access Transformer
+    //that makes ItemBow.findAmmo protected or public, it will cause an infinite recursion
+    protected ItemStack findAmmo0(EntityPlayer player)
+    {
+        try
+        {
+            return (ItemStack) findAmmoMethod.invoke(this, player);
+        }
+        catch (ReflectiveOperationException e)
+        {
+            logger.catching(Level.ERROR, e);
+            return ItemStack.EMPTY;
+        }
     }
 }

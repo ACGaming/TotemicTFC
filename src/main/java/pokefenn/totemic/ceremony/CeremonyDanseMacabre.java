@@ -12,6 +12,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import pokefenn.totemic.api.TotemicEntityUtil;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
@@ -29,20 +30,20 @@ public class CeremonyDanseMacabre extends Ceremony
     {
         int radius = 6;
 
-        if(!world.isRemote && context.getTime() % 20 == 0)
+        if (!world.isRemote && context.getTime() % 20 == 0)
         {
             TotemicEntityUtil.getEntitiesInRange(EntityItem.class, world, pos, radius, radius).forEach(entity ->
             {
-                if(entity.getItem().getItem() == Items.ROTTEN_FLESH)
+                if (entity.getItem().getItem() == Items.ROTTEN_FLESH)
                 {
-                    if(world.rand.nextInt(4) == 0)
+                    if (world.rand.nextInt(4) == 0)
                     {
-                        if(entity.dimension == -1)
+                        if (entity.dimension == -1)
                         {
                             EntityPigZombie pigZombie = new EntityPigZombie(world);
                             summon(world, pigZombie, entity);
                         }
-                        else if(world.rand.nextInt(10) == 0)
+                        else if (world.rand.nextInt(10) == 0)
                         {
                             EntityZombieVillager zombieVillager = new EntityZombieVillager(world);
                             summon(world, zombieVillager, entity);
@@ -59,31 +60,6 @@ public class CeremonyDanseMacabre extends Ceremony
 
     }
 
-    private void summon(World world, EntityZombie zombie, EntityItem item)
-    {
-        BlockPos spawnPos = item.getPosition();
-        double x = item.posX;
-        double y = item.posY;
-        double z = item.posZ;
-
-        if(world.isAirBlock(spawnPos) && world.isAirBlock(spawnPos.up()))
-        {
-            zombie.setPosition(x, y, z);
-            zombie.addPotionEffect(new PotionEffect(MobEffects.SPEED, 20 * 30, 1));
-            zombie.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 20 * 30, 1));
-            world.spawnEntity(zombie);
-            if(item.getItem().getCount() == 1)
-                item.setDead();
-            else
-            {
-                ItemStack stack = item.getItem().copy();
-                stack.shrink(1);
-                item.setItem(stack);
-            }
-            ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE, x, y, z, 24, 0.6D, 0.5D, 0.6D, 1.0D);
-        }
-    }
-
     @Override
     public int getEffectTime()
     {
@@ -94,5 +70,30 @@ public class CeremonyDanseMacabre extends Ceremony
     public int getMusicPer5()
     {
         return 6;
+    }
+
+    private void summon(World world, EntityZombie zombie, EntityItem item)
+    {
+        BlockPos spawnPos = item.getPosition();
+        double x = item.posX;
+        double y = item.posY;
+        double z = item.posZ;
+
+        if (world.isAirBlock(spawnPos) && world.isAirBlock(spawnPos.up()))
+        {
+            zombie.setPosition(x, y, z);
+            zombie.addPotionEffect(new PotionEffect(MobEffects.SPEED, 20 * 30, 1));
+            zombie.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 20 * 30, 1));
+            world.spawnEntity(zombie);
+            if (item.getItem().getCount() == 1)
+                item.setDead();
+            else
+            {
+                ItemStack stack = item.getItem().copy();
+                stack.shrink(1);
+                item.setItem(stack);
+            }
+            ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE, x, y, z, 24, 0.6D, 0.5D, 0.6D, 1.0D);
+        }
     }
 }

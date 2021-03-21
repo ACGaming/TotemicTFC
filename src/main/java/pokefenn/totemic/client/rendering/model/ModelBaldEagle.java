@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.MathHelper;
+
 import pokefenn.totemic.entity.animal.EntityBaldEagle;
 
 /**
@@ -14,17 +15,17 @@ import pokefenn.totemic.entity.animal.EntityBaldEagle;
  */
 public class ModelBaldEagle extends ModelBase
 {
-    private ModelRenderer torso;
-    private ModelRenderer rightWing;
-    private ModelRenderer tailFeathers;
-    private ModelRenderer head;
-    private ModelRenderer leftLeg;
-    private ModelRenderer leftWing;
-    private ModelRenderer rightLeg;
-    private ModelRenderer headTop;
-    private ModelRenderer mouth;
-    private ModelRenderer beak;
-    private ModelRenderer beakTip;
+    private final ModelRenderer torso;
+    private final ModelRenderer rightWing;
+    private final ModelRenderer tailFeathers;
+    private final ModelRenderer head;
+    private final ModelRenderer leftLeg;
+    private final ModelRenderer leftWing;
+    private final ModelRenderer rightLeg;
+    private final ModelRenderer headTop;
+    private final ModelRenderer mouth;
+    private final ModelRenderer beak;
+    private final ModelRenderer beakTip;
 
     private State state = State.STANDING;
 
@@ -83,7 +84,7 @@ public class ModelBaldEagle extends ModelBase
         GlStateManager.translate(0, -0.75F, 0);
         GlStateManager.scale(1.5F, 1.5F, 1.5F);
 
-        if(isChild)
+        if (isChild)
         {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0.0F, 8F * scale, 0.5F * scale);
@@ -122,14 +123,14 @@ public class ModelBaldEagle extends ModelBase
         this.leftWing.rotationPointX = -1.5F;
         this.rightWing.rotationPointX = 1.5F;
 
-        if(this.state == State.SITTING)
+        if (this.state == State.SITTING)
         {
             return;
         }
-        else if(this.state == State.STANDING)
+        else if (this.state == State.STANDING)
         {
             this.leftLeg.rotateAngleX += MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-            this.rightLeg.rotateAngleX += MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+            this.rightLeg.rotateAngleX += MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
         }
 
         this.head.rotationPointY = 15.0F + f;
@@ -148,19 +149,19 @@ public class ModelBaldEagle extends ModelBase
     public void setLivingAnimations(EntityLivingBase entity, float limbSwing, float limbSwingAmount, float partialTickTime)
     {
         this.torso.rotateAngleX = 0.4937F;
-        this.rightWing.rotateAngleX = -((float)Math.PI * 2F / 9F);
-        this.rightWing.rotateAngleY = -(float)Math.PI;
-        this.leftWing.rotateAngleX = -((float)Math.PI * 2F / 9F);
-        this.leftWing.rotateAngleY = -(float)Math.PI;
+        this.rightWing.rotateAngleX = -((float) Math.PI * 2F / 9F);
+        this.rightWing.rotateAngleY = -(float) Math.PI;
+        this.leftWing.rotateAngleX = -((float) Math.PI * 2F / 9F);
+        this.leftWing.rotateAngleY = -(float) Math.PI;
         this.leftLeg.rotateAngleX = -0.0299F;
         this.rightLeg.rotateAngleX = -0.0299F;
         this.leftLeg.rotationPointY = 22.0F;
         this.rightLeg.rotationPointY = 22.0F;
 
-        if(entity instanceof EntityBaldEagle)
+        if (entity instanceof EntityBaldEagle)
         {
             EntityBaldEagle eagle = (EntityBaldEagle) entity;
-            if(eagle.isSitting())
+            if (eagle.isSitting())
             {
                 this.head.rotationPointY = 16.9F;
                 this.tailFeathers.rotateAngleX = 1.5388988F;
@@ -176,10 +177,10 @@ public class ModelBaldEagle extends ModelBase
                 this.rightLeg.rotateAngleX += 1F;
                 this.state = State.SITTING;
             }
-            else if(eagle.isFlying())
+            else if (eagle.isFlying())
             {
-                this.leftLeg.rotateAngleX += ((float)Math.PI * 2F / 9F);
-                this.rightLeg.rotateAngleX += ((float)Math.PI * 2F / 9F);
+                this.leftLeg.rotateAngleX += ((float) Math.PI * 2F / 9F);
+                this.rightLeg.rotateAngleX += ((float) Math.PI * 2F / 9F);
                 this.state = State.FLYING;
             }
             else
@@ -202,8 +203,8 @@ public class ModelBaldEagle extends ModelBase
         modelRenderer.rotateAngleZ = z;
     }
 
-    private static enum State
+    private enum State
     {
-        FLYING, STANDING, SITTING;
+        FLYING, STANDING, SITTING
     }
 }

@@ -2,6 +2,7 @@ package pokefenn.totemic.ceremony;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
 import pokefenn.totemic.api.music.MusicInstrument;
@@ -19,7 +20,7 @@ public class CeremonyRain extends Ceremony
     @Override
     public void effect(World world, BlockPos pos, CeremonyEffectContext context)
     {
-        if(!world.isRemote && world.isRaining() != doRain)
+        if (!world.isRemote && world.isRaining() != doRain)
         {
             world.getWorldInfo().setRaining(doRain);
             world.getWorldInfo().setRainTime(0);

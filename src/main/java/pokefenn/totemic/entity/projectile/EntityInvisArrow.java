@@ -13,6 +13,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.entity.boss.EntityBaykok;
 import pokefenn.totemic.util.EntityUtil;
 
@@ -31,33 +32,19 @@ public class EntityInvisArrow extends EntityArrow
     public EntityInvisArrow(World world, EntityLivingBase shooter)
     {
         super(world, shooter);
-        if(shooter instanceof EntityPlayer)
+        if (shooter instanceof EntityPlayer)
         {
             dataManager.set(SHOOTING_PLAYER, shooter.getEntityId());
         }
     }
 
     @Override
-    protected void arrowHit(EntityLivingBase living)
-    {
-        if(shootingEntity instanceof EntityBaykok)
-            living.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 20, 1));
-    }
-
-    @Override
-    protected void entityInit()
-    {
-        super.entityInit();
-        dataManager.register(SHOOTING_PLAYER, 0);
-    }
-
-    @Override
     public void notifyDataManagerChange(DataParameter<?> key)
     {
         super.notifyDataManagerChange(key);
-        if(world.isRemote && SHOOTING_PLAYER.equals(key))
+        if (world.isRemote && SHOOTING_PLAYER.equals(key))
         {
-            if(dataManager.get(SHOOTING_PLAYER) == EntityUtil.getClientPlayer().getEntityId())
+            if (dataManager.get(SHOOTING_PLAYER) == EntityUtil.getClientPlayer().getEntityId())
             {
                 shotByLocalPlayer = true;
             }
@@ -68,6 +55,20 @@ public class EntityInvisArrow extends EntityArrow
     public boolean isShotByLocalPlayer()
     {
         return shotByLocalPlayer;
+    }
+
+    @Override
+    protected void entityInit()
+    {
+        super.entityInit();
+        dataManager.register(SHOOTING_PLAYER, 0);
+    }
+
+    @Override
+    protected void arrowHit(EntityLivingBase living)
+    {
+        if (shootingEntity instanceof EntityBaykok)
+            living.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 20, 1));
     }
 
     @Override

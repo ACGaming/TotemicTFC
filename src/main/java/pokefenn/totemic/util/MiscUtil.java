@@ -13,14 +13,14 @@ public class MiscUtil
      */
     public static boolean isPrefix(List<?> list1, List<?> list2)
     {
-        if(list1.size() > list2.size())
+        if (list1.size() > list2.size())
             return false;
 
         Iterator<?> it1 = list1.iterator();
         Iterator<?> it2 = list2.iterator();
-        while(it1.hasNext())
+        while (it1.hasNext())
         {
-            if(!Objects.equals(it1.next(), it2.next()))
+            if (!Objects.equals(it1.next(), it2.next()))
                 return false;
         }
 
@@ -31,8 +31,8 @@ public class MiscUtil
     {
         String[] components = StringUtils.splitByCharacterTypeCamelCase(str);
         return Arrays.stream(components)
-                .map(s -> s.toLowerCase(Locale.ROOT))
-                .collect(Collectors.joining("_"));
+            .map(s -> s.toLowerCase(Locale.ROOT))
+            .collect(Collectors.joining("_"));
     }
 
     /**

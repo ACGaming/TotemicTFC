@@ -2,7 +2,6 @@ package pokefenn.totemic.item.equipment;
 
 import java.util.List;
 import java.util.Optional;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.client.resources.I18n;
@@ -24,6 +23,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.api.TotemicRegistries;
 import pokefenn.totemic.api.totem.TotemEffect;
 import pokefenn.totemic.item.ItemTotemic;
@@ -39,21 +39,15 @@ public class ItemMedicineBag extends ItemTotemic
     public static final String MED_BAG_TOTEM_KEY = "totem";
     public static final String MED_BAG_CHARGE_KEY = "charge";
 
-    public ItemMedicineBag()
-    {
-        super(Strings.MEDICINE_BAG_NAME);
-        setMaxStackSize(1);
-    }
-
     public static Optional<TotemEffect> getEffect(ItemStack stack)
     {
         return Optional.ofNullable(stack.getTagCompound())
-                .map(tag -> TotemicRegistries.totemEffects().getValue(new ResourceLocation(tag.getString(MED_BAG_TOTEM_KEY))));
+            .map(tag -> TotemicRegistries.totemEffects().getValue(new ResourceLocation(tag.getString(MED_BAG_TOTEM_KEY))));
     }
 
     public static int getCharge(ItemStack stack)
     {
-        if(stack.hasTagCompound())
+        if (stack.hasTagCompound())
             return stack.getTagCompound().getInteger(MED_BAG_CHARGE_KEY);
         else
             return 0;
@@ -65,54 +59,26 @@ public class ItemMedicineBag extends ItemTotemic
         return (4 + 2 * unbreaking) * 60 * 20;
     }
 
+    public ItemMedicineBag()
+    {
+        super(Strings.MEDICINE_BAG_NAME);
+        setMaxStackSize(1);
+    }
+
     @Override
-    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected)
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if(!world.isRemote && world.getTotalWorldTime() % 20 == 0)
-            tryCharge(stack, world, entity.getPosition());
-
-        if(stack.getMetadata() != 0)
+        ItemStack stack = player.getHeldItem(hand);
+        if (!player.isSneaking())
         {
-            int charge = getCharge(stack);
-            if(charge != 0)
-            {
-                getEffect(stack).ifPresent(eff -> {
-                    if(world.getTotalWorldTime() % eff.getInterval() == 0)
-                    {
-                        eff.medicineBagEffect(world, (EntityPlayer) entity, stack, charge);
-                        if(!world.isRemote && charge != -1)
-                            stack.getTagCompound().setInteger(MED_BAG_CHARGE_KEY, Math.max(charge - eff.getInterval(), 0));
-                    }
-                });
-            }
-        }
-    }
-
-    private void tryCharge(ItemStack stack, World world, BlockPos pos)
-    {
-        int charge = getCharge(stack);
-        int maxCharge = getMaxCharge(stack);
-        if(charge < maxCharge && charge != -1)
-        {
-            getEffect(stack).ifPresent(effect -> {
-                if(EntityUtil.getTileEntitiesInRange(TileTotemBase.class, world, pos, 6, 6).stream()
-                        .anyMatch(tile -> tile.getState() instanceof StateTotemEffect && tile.getTotemEffectSet().contains(effect)))
-                {
-                    stack.getTagCompound().setInteger(MED_BAG_CHARGE_KEY, Math.min(charge + maxCharge / 12, maxCharge));
-                }
-            });
-        }
-    }
-
-    private ActionResult<ItemStack> openOrClose(ItemStack stack)
-    {
-        if(getEffect(stack).isPresent())
-        {
-            stack.setItemDamage((stack.getMetadata() == 0) ? 1 : 0);
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            ItemStack copyStack = player.isCreative() ? stack.copy() : stack; //Workaround for creative mode, otherwise Minecraft will reset the item damage
+            ActionResult<ItemStack> result = openOrClose(copyStack);
+            if (result.getType() == EnumActionResult.SUCCESS)
+                player.setHeldItem(hand, result.getResult());
+            return result.getType();
         }
         else
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
+            return trySetEffect(stack, player, world, pos, hand);
     }
 
     @Override
@@ -122,46 +88,80 @@ public class ItemMedicineBag extends ItemTotemic
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected)
     {
-        ItemStack stack = player.getHeldItem(hand);
-        if(!player.isSneaking())
-        {
-            ItemStack copyStack = player.isCreative() ? stack.copy() : stack; //Workaround for creative mode, otherwise Minecraft will reset the item damage
-            ActionResult<ItemStack> result = openOrClose(copyStack);
-            if(result.getType() == EnumActionResult.SUCCESS)
-                player.setHeldItem(hand, result.getResult());
-            return result.getType();
-        }
-        else
-            return trySetEffect(stack, player, world, pos, hand);
-    }
+        if (!world.isRemote && world.getTotalWorldTime() % 20 == 0)
+            tryCharge(stack, world, entity.getPosition());
 
-    private EnumActionResult trySetEffect(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand)
-    {
-        TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileTotemPole)
+        if (stack.getMetadata() != 0)
         {
-            TotemEffect effect = ((TileTotemPole) tile).getEffect();
-            if(effect != null)
+            int charge = getCharge(stack);
+            if (charge != 0)
             {
-                if(!effect.isPortable())
-                {
-                    if(world.isRemote)
-                        player.sendStatusMessage(new TextComponentTranslation("totemicmisc.effectNotPortable", new TextComponentTranslation(effect.getUnlocalizedName())), true);
-                    return EnumActionResult.FAIL;
-                }
-
-                ItemStack newStack = stack.copy();
-                NBTTagCompound tag = ItemUtil.getOrCreateTag(newStack);
-                tag.setString(MED_BAG_TOTEM_KEY, effect.getRegistryName().toString());
-                if(tag.getInteger(MED_BAG_CHARGE_KEY) != -1)
-                    tag.setInteger(MED_BAG_CHARGE_KEY, 0);
-                player.setHeldItem(hand, newStack);
-                return EnumActionResult.SUCCESS;
+                getEffect(stack).ifPresent(eff -> {
+                    if (world.getTotalWorldTime() % eff.getInterval() == 0)
+                    {
+                        eff.medicineBagEffect(world, (EntityPlayer) entity, stack, charge);
+                        if (!world.isRemote && charge != -1)
+                            stack.getTagCompound().setInteger(MED_BAG_CHARGE_KEY, Math.max(charge - eff.getInterval(), 0));
+                    }
+                });
             }
         }
-        return EnumActionResult.FAIL;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
+    {
+        String key;
+        if (getEffect(stack).isPresent())
+        {
+            if (getCharge(stack) != 0)
+                key = (stack.getMetadata() == 0) ? "tooltipClosed" : "tooltipOpen";
+            else
+                key = "tooltipEmpty";
+        }
+        else
+            key = "tooltip";
+        tooltip.add(I18n.format(getUnlocalizedName() + "." + key));
+
+        if (flag.isAdvanced())
+            tooltip.add(I18n.format(getUnlocalizedName() + ".tooltipCharge", getCharge(stack), getMaxCharge(stack)));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getItemStackDisplayName(ItemStack stack)
+    {
+        String key = (getCharge(stack) != -1) ? getUnlocalizedName() : (getUnlocalizedName() + ".creative");
+        return getEffect(stack)
+            .map(eff -> I18n.format(key + ".display", I18n.format(eff.getUnlocalizedName())))
+            .orElseGet(() -> I18n.format(key + ".name"));
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack)
+    {
+        return true;
+    }
+
+    @Override
+    public int getItemEnchantability()
+    {
+        return 8;
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
+    {
+        if (isInCreativeTab(tab))
+        {
+            subItems.add(new ItemStack(this));
+            ItemStack stack = new ItemStack(this);
+            stack.setTagInfo(MED_BAG_CHARGE_KEY, new NBTTagInt(-1));
+            subItems.add(stack);
+        }
     }
 
     @Override
@@ -183,63 +183,9 @@ public class ItemMedicineBag extends ItemTotemic
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public String getItemStackDisplayName(ItemStack stack)
-    {
-        String key = (getCharge(stack) != -1) ? getUnlocalizedName() : (getUnlocalizedName() + ".creative");
-        return getEffect(stack)
-                .map(eff -> I18n.format(key + ".display", I18n.format(eff.getUnlocalizedName())))
-                .orElseGet(() -> I18n.format(key + ".name"));
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
-    {
-        String key;
-        if(getEffect(stack).isPresent())
-        {
-            if(getCharge(stack) != 0)
-                key = (stack.getMetadata() == 0) ? "tooltipClosed" : "tooltipOpen";
-            else
-                key = "tooltipEmpty";
-        }
-        else
-            key = "tooltip";
-        tooltip.add(I18n.format(getUnlocalizedName() + "." + key));
-
-        if(flag.isAdvanced())
-            tooltip.add(I18n.format(getUnlocalizedName() + ".tooltipCharge", getCharge(stack), getMaxCharge(stack)));
-    }
-
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
     {
         return enchantment == Enchantments.EFFICIENCY || enchantment == Enchantments.UNBREAKING || super.canApplyAtEnchantingTable(stack, enchantment);
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack)
-    {
-        return true;
-    }
-
-    @Override
-    public int getItemEnchantability()
-    {
-        return 8;
-    }
-
-    @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
-    {
-        if(isInCreativeTab(tab))
-        {
-            subItems.add(new ItemStack(this));
-            ItemStack stack = new ItemStack(this);
-            stack.setTagInfo(MED_BAG_CHARGE_KEY, new NBTTagInt(-1));
-            subItems.add(stack);
-        }
     }
 
     @Override
@@ -252,5 +198,59 @@ public class ItemMedicineBag extends ItemTotemic
     public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack)
     {
         return !ItemStack.areItemsEqual(oldStack, newStack);
+    }
+
+    private void tryCharge(ItemStack stack, World world, BlockPos pos)
+    {
+        int charge = getCharge(stack);
+        int maxCharge = getMaxCharge(stack);
+        if (charge < maxCharge && charge != -1)
+        {
+            getEffect(stack).ifPresent(effect -> {
+                if (EntityUtil.getTileEntitiesInRange(TileTotemBase.class, world, pos, 6, 6).stream()
+                    .anyMatch(tile -> tile.getState() instanceof StateTotemEffect && tile.getTotemEffectSet().contains(effect)))
+                {
+                    stack.getTagCompound().setInteger(MED_BAG_CHARGE_KEY, Math.min(charge + maxCharge / 12, maxCharge));
+                }
+            });
+        }
+    }
+
+    private ActionResult<ItemStack> openOrClose(ItemStack stack)
+    {
+        if (getEffect(stack).isPresent())
+        {
+            stack.setItemDamage((stack.getMetadata() == 0) ? 1 : 0);
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        }
+        else
+            return new ActionResult<>(EnumActionResult.FAIL, stack);
+    }
+
+    private EnumActionResult trySetEffect(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand)
+    {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileTotemPole)
+        {
+            TotemEffect effect = ((TileTotemPole) tile).getEffect();
+            if (effect != null)
+            {
+                if (!effect.isPortable())
+                {
+                    if (world.isRemote)
+                        player.sendStatusMessage(new TextComponentTranslation("totemicmisc.effectNotPortable", new TextComponentTranslation(effect.getUnlocalizedName())), true);
+                    return EnumActionResult.FAIL;
+                }
+
+                ItemStack newStack = stack.copy();
+                NBTTagCompound tag = ItemUtil.getOrCreateTag(newStack);
+                tag.setString(MED_BAG_TOTEM_KEY, effect.getRegistryName().toString());
+                if (tag.getInteger(MED_BAG_CHARGE_KEY) != -1)
+                    tag.setInteger(MED_BAG_CHARGE_KEY, 0);
+                player.setHeldItem(hand, newStack);
+                return EnumActionResult.SUCCESS;
+            }
+        }
+        return EnumActionResult.FAIL;
     }
 }

@@ -3,16 +3,16 @@ package pokefenn.totemic.api.music;
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
-
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import pokefenn.totemic.api.TotemicRegistries;
 
 /**
@@ -30,6 +30,7 @@ public class DefaultMusicAcceptor implements MusicAcceptor
 
     /**
      * Accepts and stores music from the given instrument, up to the maximum specified by the instrument.
+     *
      * @return {@code true} if any music was accepted.
      */
     @Override
@@ -37,7 +38,7 @@ public class DefaultMusicAcceptor implements MusicAcceptor
     {
         int oldVal = music.getInt(instr);
         int newVal = Math.min(oldVal + amount, instr.getMusicMaximum());
-        if(newVal != oldVal)
+        if (newVal != oldVal)
         {
             music.put(instr, newVal);
             totalMusic += (newVal - oldVal);
@@ -61,7 +62,7 @@ public class DefaultMusicAcceptor implements MusicAcceptor
     public void setMusicAmount(MusicInstrument instr, int amount)
     {
         int oldVal = music.getInt(instr);
-        if(amount != oldVal)
+        if (amount != oldVal)
         {
             music.put(instr, amount);
             totalMusic += (amount - oldVal);
@@ -85,12 +86,12 @@ public class DefaultMusicAcceptor implements MusicAcceptor
         @Nullable
         public NBTBase writeNBT(Capability<MusicAcceptor> capability, MusicAcceptor instance, EnumFacing side)
         {
-            if(!(instance instanceof DefaultMusicAcceptor))
+            if (!(instance instanceof DefaultMusicAcceptor))
                 throw new IllegalArgumentException("Can only write instances of DefaultMusicAcceptor");
             DefaultMusicAcceptor acceptor = (DefaultMusicAcceptor) instance;
             NBTTagCompound nbt = new NBTTagCompound();
 
-            for(Entry<MusicInstrument> entry: acceptor.music.object2IntEntrySet())
+            for (Entry<MusicInstrument> entry : acceptor.music.object2IntEntrySet())
                 nbt.setInteger(entry.getKey().getRegistryName().toString(), entry.getIntValue());
             return nbt;
         }
@@ -98,17 +99,17 @@ public class DefaultMusicAcceptor implements MusicAcceptor
         @Override
         public void readNBT(Capability<MusicAcceptor> capability, MusicAcceptor instance, EnumFacing side, NBTBase nbt)
         {
-            if(!(instance instanceof DefaultMusicAcceptor))
+            if (!(instance instanceof DefaultMusicAcceptor))
                 throw new IllegalArgumentException("Can only read instances of DefaultMusicAcceptor");
             DefaultMusicAcceptor acceptor = (DefaultMusicAcceptor) instance;
             NBTTagCompound tag = (NBTTagCompound) nbt;
 
             acceptor.music.clear();
             acceptor.totalMusic = 0;
-            for(String key: tag.getKeySet())
+            for (String key : tag.getKeySet())
             {
                 MusicInstrument instr = TotemicRegistries.instruments().getValue(new ResourceLocation(key));
-                if(instr != null)
+                if (instr != null)
                 {
                     int amount = tag.getInteger(key);
                     acceptor.music.put(instr, amount);

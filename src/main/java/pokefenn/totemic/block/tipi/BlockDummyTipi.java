@@ -17,6 +17,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.lib.Strings;
 
@@ -32,57 +33,23 @@ public class BlockDummyTipi extends Block
     }
 
     @Override
-    public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player)
-    {
-        //find main Tipi block
-        int range = 1;
-        int height = 5;
-        for(int i = -range; i <= range; i++)
-            for(int j = 0; j >= -height; j--) //search downwards
-                for(int k = -range; k <= range; k++)
-                {
-                    BlockPos p = pos.add(i, j, k);
-                    IBlockState s = world.getBlockState(p);
-                    if(s.getBlock() == ModBlocks.tipi)
-                    {
-                        world.setBlockToAir(p);
-                        if(!player.capabilities.isCreativeMode)
-                            ModBlocks.tipi.dropBlockAsItem(world, p, s, 0);
-                        return;
-                    }
-                }
-    }
-
-    @Override
     public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosion)
     {
         //find main Tipi block
         int range = 1;
         int height = 5;
-        for(int i = -range; i <= range; i++)
-            for(int j = 0; j >= -height; j--) //search downwards
-                for(int k = -range; k <= range; k++)
+        for (int i = -range; i <= range; i++)
+            for (int j = 0; j >= -height; j--) //search downwards
+                for (int k = -range; k <= range; k++)
                 {
                     BlockPos p = pos.add(i, j, k);
                     IBlockState s = world.getBlockState(p);
-                    if(s.getBlock() == ModBlocks.tipi)
+                    if (s.getBlock() == ModBlocks.tipi)
                     {
                         world.setBlockToAir(p);
                         return;
                     }
                 }
-    }
-
-    @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
-    {
-        return new ItemStack(ModBlocks.tipi);
-    }
-
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.INVISIBLE;
     }
 
     @Override
@@ -92,9 +59,21 @@ public class BlockDummyTipi extends Block
     }
 
     @Override
-    public int quantityDropped(Random random)
+    public boolean isFullCube(IBlockState state)
     {
-        return 0;
+        return false;
+    }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state)
+    {
+        return EnumBlockRenderType.INVISIBLE;
+    }
+
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
+    {
+        return BlockFaceShape.UNDEFINED;
     }
 
     @Override
@@ -104,14 +83,36 @@ public class BlockDummyTipi extends Block
     }
 
     @Override
-    public boolean isFullCube(IBlockState state)
+    public int quantityDropped(Random random)
     {
-        return false;
+        return 0;
     }
 
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
+    public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player)
     {
-        return BlockFaceShape.UNDEFINED;
+        //find main Tipi block
+        int range = 1;
+        int height = 5;
+        for (int i = -range; i <= range; i++)
+            for (int j = 0; j >= -height; j--) //search downwards
+                for (int k = -range; k <= range; k++)
+                {
+                    BlockPos p = pos.add(i, j, k);
+                    IBlockState s = world.getBlockState(p);
+                    if (s.getBlock() == ModBlocks.tipi)
+                    {
+                        world.setBlockToAir(p);
+                        if (!player.capabilities.isCreativeMode)
+                            ModBlocks.tipi.dropBlockAsItem(world, p, s, 0);
+                        return;
+                    }
+                }
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
+    {
+        return new ItemStack(ModBlocks.tipi);
     }
 }

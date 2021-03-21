@@ -11,8 +11,8 @@ public final class MusicInstrument extends IForgeRegistryEntry.Impl<MusicInstrum
     private ItemStack itemStack = ItemStack.EMPTY;
 
     /**
-     * @param name the unlocalized name.
-     * @param baseOutput the default music output when the instrument is played.
+     * @param name         the unlocalized name.
+     * @param baseOutput   the default music output when the instrument is played.
      * @param musicMaximum the maximum amount of music that a Totem Base can take from this instrument.
      */
     public MusicInstrument(String name, int baseOutput, int musicMaximum)

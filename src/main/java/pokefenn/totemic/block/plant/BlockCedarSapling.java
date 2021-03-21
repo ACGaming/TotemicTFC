@@ -2,7 +2,6 @@ package pokefenn.totemic.block.plant;
 
 import java.util.List;
 import java.util.Random;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockSapling;
@@ -21,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.lib.Strings;
 import pokefenn.totemic.world.TotemTreeGeneration;
@@ -45,30 +45,17 @@ public class BlockCedarSapling extends BlockSapling
     }
 
     @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return SAPLING_AABB;
+    }
+
+    @Override
     public void generateTree(World world, BlockPos pos, IBlockState state, Random rand)
     {
         if (!TerrainGen.saplingGrowTree(world, rand, pos))
             return;
         treeGen.growTree(world, rand, pos);
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        //TYPE is necessary because otherwise the constructor of BlockSapling will crash due to the missing property
-        return new BlockStateContainer(this, TYPE, STAGE);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        return state.getValue(STAGE);
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
-        return getDefaultState().withProperty(STAGE, meta);
     }
 
     @Override
@@ -84,8 +71,21 @@ public class BlockCedarSapling extends BlockSapling
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    public IBlockState getStateFromMeta(int meta)
     {
-        return SAPLING_AABB;
+        return getDefaultState().withProperty(STAGE, meta);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        return state.getValue(STAGE);
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        //TYPE is necessary because otherwise the constructor of BlockSapling will crash due to the missing property
+        return new BlockStateContainer(this, TYPE, STAGE);
     }
 }

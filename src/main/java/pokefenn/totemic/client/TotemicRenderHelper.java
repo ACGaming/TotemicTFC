@@ -3,7 +3,6 @@ package pokefenn.totemic.client;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -40,23 +39,23 @@ public class TotemicRenderHelper
 
     public static void renderTooltip(int x, int y, List<String> tooltipData, int color, int color2)
     {
-        if(tooltipData.isEmpty())
+        if (tooltipData.isEmpty())
             return;
 
         int var5 = 0;
         int var6;
         int var7;
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        for(var6 = 0; var6 < tooltipData.size(); ++var6)
+        for (var6 = 0; var6 < tooltipData.size(); ++var6)
         {
             var7 = fontRenderer.getStringWidth(tooltipData.get(var6));
-            if(var7 > var5)
+            if (var7 > var5)
                 var5 = var7;
         }
         var6 = x + 12;
         var7 = y - 12;
         int var9 = 8;
-        if(tooltipData.size() > 1)
+        if (tooltipData.size() > 1)
             var9 += 2 + (tooltipData.size() - 1) * 10;
         float z = 300F;
         drawGradientRect(var6 - 3, var7 - 4, z, var6 + var5 + 3, var7 - 3, color2, color2);
@@ -71,11 +70,11 @@ public class TotemicRenderHelper
         drawGradientRect(var6 - 3, var7 + var9 + 2, z, var6 + var5 + 3, var7 + var9 + 3, var12, var12);
 
         GlStateManager.disableDepth();
-        for(int var13 = 0; var13 < tooltipData.size(); ++var13)
+        for (int var13 = 0; var13 < tooltipData.size(); ++var13)
         {
             String var14 = tooltipData.get(var13);
             fontRenderer.drawStringWithShadow(var14, var6, var7, -1);
-            if(var13 == 0)
+            if (var13 == 0)
                 var7 += 2;
             var7 += 10;
         }
@@ -201,10 +200,10 @@ public class TotemicRenderHelper
      * Adds a textured quad to the WorldRenderer. Needs the POSITION_TEX vertex format.
      */
     public static void addQuad(BufferBuilder buf, double x, double y, double z, double w, double h, double u, double v,
-            double texW, double texH)
+                               double texW, double texH)
     {
-        buf.pos(x + 0, y + 0, z).tex(u + 0,    v + 0).endVertex();
-        buf.pos(x + 0, y + h, z).tex(u + 0,    v + texH).endVertex();
+        buf.pos(x + 0, y + 0, z).tex(u + 0, v + 0).endVertex();
+        buf.pos(x + 0, y + h, z).tex(u + 0, v + texH).endVertex();
         buf.pos(x + w, y + h, z).tex(u + texW, v + texH).endVertex();
         buf.pos(x + w, y + 0, z).tex(u + texW, v + 0).endVertex();
     }

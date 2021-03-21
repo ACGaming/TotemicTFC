@@ -1,7 +1,6 @@
 package pokefenn.totemic.block.music;
 
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -23,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.init.ModContent;
 import pokefenn.totemic.init.ModSounds;
@@ -45,16 +45,39 @@ public class BlockWindChime extends Block implements ITileEntityProvider
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
+    public boolean isFullCube(IBlockState state)
     {
-        tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip"));
+        return false;
+    }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state)
+    {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return AABB;
+    }
+
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
+    {
+        return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return false;
     }
 
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighbor, BlockPos fromPos)
     {
-        if(!canPlaceBlockAt(world, pos))
+        if (!canPlaceBlockAt(world, pos))
         {
             world.setBlockToAir(pos);
             spawnAsEntity(world, pos, new ItemStack(this));
@@ -65,7 +88,7 @@ public class BlockWindChime extends Block implements ITileEntityProvider
     public void breakBlock(World world, BlockPos pos, IBlockState state)
     {
         world.removeTileEntity(pos);
-        for(TileWindChime chime: EntityUtil.getTileEntitiesInRange(TileWindChime.class, world, pos, 8, 8))
+        for (TileWindChime chime : EntityUtil.getTileEntitiesInRange(TileWindChime.class, world, pos, 8, 8))
             chime.tryUncongest();
     }
 
@@ -74,35 +97,68 @@ public class BlockWindChime extends Block implements ITileEntityProvider
     {
         IBlockState upState = world.getBlockState(pos.up());
         return world.isAirBlock(pos.down())
-                && (world.isSideSolid(pos.up(), EnumFacing.DOWN) || upState.getBlock().isLeaves(upState, world, pos.up()));
-    }
-
-    private boolean isCongested(World world, BlockPos pos)
-    {
-        return ((TileWindChime) world.getTileEntity(pos)).isCongested();
-    }
-
-    @Override
-    public void onBlockClicked(World world, BlockPos pos, EntityPlayer player)
-    {
-        if(!world.isRemote && player.isSneaking() && !isCongested(world, pos))
-            playSelector(world, pos, player);
+            && (world.isSideSolid(pos.up(), EnumFacing.DOWN) || upState.getBlock().isLeaves(upState, world, pos.up()));
     }
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-            EnumFacing side, float hitX, float hitY, float hitZ)
+                                    EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        if(player.isSneaking())
+        if (player.isSneaking())
         {
-            if(isCongested(world, pos))
+            if (isCongested(world, pos))
                 return false;
-            if(!world.isRemote)
+            if (!world.isRemote)
                 playSelector(world, pos, player);
             return true;
         }
         else
             return false;
+    }
+
+    @Override
+    public void onBlockClicked(World world, BlockPos pos, EntityPlayer player)
+    {
+        if (!world.isRemote && player.isSneaking() && !isCongested(world, pos))
+            playSelector(world, pos, player);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileWindChime)
+            ((TileWindChime) tile).setNotPlaying();
+    }
+
+    @Override
+    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param)
+    {
+        if (!world.isRemote)
+            return true;
+
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileWindChime)
+            ((TileWindChime) tile).setPlaying(param);
+        return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
+    {
+        tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip"));
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta)
+    {
+        return new TileWindChime();
+    }
+
+    private boolean isCongested(World world, BlockPos pos)
+    {
+        return ((TileWindChime) world.getTileEntity(pos)).isCongested();
     }
 
     private void playSelector(World world, BlockPos pos, EntityPlayer player)
@@ -111,61 +167,5 @@ public class BlockWindChime extends Block implements ITileEntityProvider
         Totemic.api.music().playSelector(world, pos, player, ModContent.windChime);
         ((WorldServer) world).spawnParticle(EnumParticleTypes.NOTE, pos.getX() + 0.5, pos.getY() - 0.5, pos.getZ() + 0.5, 6, 0.0, 0.0, 0.0, 0.0);
         ((WorldServer) world).spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, pos.getX() + 0.5, pos.getY() - 0.5, pos.getZ() + 0.5, 6, 0.0, 0.0, 0.0, 0.0);
-    }
-
-    @Override
-    public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param)
-    {
-        if(!world.isRemote)
-            return true;
-
-        TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileWindChime)
-            ((TileWindChime) tile).setPlaying(param);
-        return true;
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-    {
-        TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileWindChime)
-            ((TileWindChime) tile).setNotPlaying();
-    }
-
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
-    {
-        return AABB;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
-    {
-        return BlockFaceShape.UNDEFINED;
-    }
-
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta)
-    {
-        return new TileWindChime();
     }
 }

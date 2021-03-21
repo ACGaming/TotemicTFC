@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+
 import pokefenn.totemic.client.TotemicRenderHelper;
 import pokefenn.totemic.client.gui.GuiLexicon;
 
@@ -40,7 +41,7 @@ public class GuiButtonBack extends GuiButton
 
         List<String> tooltip = getTooltip();
         int tooltipY = (tooltip.size() - 1) * 10;
-        if(k == 2)
+        if (k == 2)
             TotemicRenderHelper.renderTooltip(mouseX, mouseY + tooltipY, tooltip);
     }
 

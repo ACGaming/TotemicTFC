@@ -25,14 +25,14 @@ public abstract class TotemEffect extends IForgeRegistryEntry.Impl<TotemEffect>
     protected final int interval;
 
     /**
-     * @param name the unlocalized name
+     * @param name     the unlocalized name
      * @param portable whether this Totem Effect can be used with a Medicine Bag.
-     * In this case, override {@link #medicineBagEffect}.
+     *                 In this case, override {@link #medicineBagEffect}.
      * @param interval the time in ticks between applications of the effect
      */
     public TotemEffect(String name, boolean portable, int interval)
     {
-        if(interval < 1)
+        if (interval < 1)
             throw new IllegalArgumentException("The interval must be positive");
         this.name = name;
         this.portable = portable;
@@ -42,7 +42,8 @@ public abstract class TotemEffect extends IForgeRegistryEntry.Impl<TotemEffect>
     /**
      * Performs the Totem effect at the given Totem base position.<p>
      * This gets called every {@link #interval} ticks on the server and the client.
-     * @param totem the Totem Base tile entity
+     *
+     * @param totem      the Totem Base tile entity
      * @param repetition the number of Totem Pole blocks that are carved with this effect
      */
     public abstract void effect(World world, BlockPos pos, TotemBase totem, int repetition);
@@ -51,8 +52,9 @@ public abstract class TotemEffect extends IForgeRegistryEntry.Impl<TotemEffect>
      * Performs the Totem effect to the given player, if applicable.
      * Override this method to make your effect work with Medicine Bags.<p>
      * This gets called every {@link #interval} ticks on the server and the client.
+     *
      * @param medicineBag the Medicine Bag item stack
-     * @param charge time in ticks until the Medicine Bag is depleted, or -1 if it is a Creative Medicine Bag
+     * @param charge      time in ticks until the Medicine Bag is depleted, or -1 if it is a Creative Medicine Bag
      */
     public void medicineBagEffect(World world, EntityPlayer player, ItemStack medicineBag, int charge)
     { }

@@ -12,7 +12,7 @@ public class ConfigClient
     public int ceremonyHudPositionY = -70;
 
     @Comment({"Removes the screen flashing when the Night Vision/Enderman effect is about to end. Disable this if you experience problems.",
-            "Has no effect when the \"No Night Vision Flashing\" mod is installed."})
+        "Has no effect when the \"No Night Vision Flashing\" mod is installed."})
     @RequiresMcRestart
     public boolean removeNightVisionFlashing = true;
 }

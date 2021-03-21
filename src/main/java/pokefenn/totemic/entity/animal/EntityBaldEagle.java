@@ -1,7 +1,6 @@
 package pokefenn.totemic.entity.animal;
 
 import java.util.UUID;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -24,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
+
 import pokefenn.totemic.init.ModSounds;
 import pokefenn.totemic.lib.Resources;
 
@@ -40,6 +40,113 @@ public class EntityBaldEagle extends EntityTameable implements EntityFlying
         super(world);
         setSize(0.6F, 1.0F);
         moveHelper = new EntityFlyHelper(this);
+    }
+
+    @Override
+    public void onLivingUpdate()
+    {
+        super.onLivingUpdate();
+        calculateFlapping();
+    }
+
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount)
+    {
+        if (isEntityInvulnerable(source))
+            return false;
+        else
+        {
+            if (this.aiSit != null)
+                this.aiSit.setSitting(false);
+
+            return super.attackEntityFrom(source, amount);
+        }
+    }
+
+    @Override
+    public boolean isBreedingItem(ItemStack stack)
+    {
+        return stack.getItem() == Items.FISH && stack.getMetadata() == FishType.SALMON.getMetadata();
+    }
+
+    @Override
+    public boolean processInteract(EntityPlayer player, EnumHand hand)
+    {
+        ItemStack stack = player.getHeldItem(hand);
+        if (!isTamed() && stack.getItem() == Items.FISH)
+        {
+            if (!player.capabilities.isCreativeMode)
+                stack.shrink(1);
+
+            if (!isSilent())
+                world.playSound(null, posX, posY, posZ, SoundEvents.ENTITY_PARROT_EAT, getSoundCategory(), 1.0F, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.2F);
+
+            if (!world.isRemote)
+            {
+                if (rand.nextInt(10) == 0 && !ForgeEventFactory.onAnimalTame(this, player))
+                {
+                    setTamedBy(player);
+                    playTameEffect(true);
+                    world.setEntityState(this, (byte) 7);
+                }
+                else
+                {
+                    playTameEffect(false);
+                    world.setEntityState(this, (byte) 6);
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            if (!world.isRemote && !isFlying() && isTamed() && isOwner(player))
+                aiSit.setSitting(!isSitting());
+
+            return super.processInteract(player, hand);
+        }
+    }
+
+    @Override
+    public boolean canMateWith(EntityAnimal otherAnimal)
+    {
+        if (otherAnimal == this)
+            return false;
+        else if (!isTamed())
+            return false;
+        else if (!(otherAnimal instanceof EntityBaldEagle))
+            return false;
+        else
+        {
+            EntityBaldEagle otherEagle = (EntityBaldEagle) otherAnimal;
+            if (!otherEagle.isTamed())
+                return false;
+            else if (otherEagle.isSitting())
+                return false;
+            else
+                return isInLove() && otherEagle.isInLove();
+        }
+    }
+
+    @Override
+    @Nullable
+    public EntityAgeable createChild(EntityAgeable ageable)
+    {
+        EntityBaldEagle child = new EntityBaldEagle(world);
+
+        UUID uuid = getOwnerId();
+        if (uuid != null)
+        {
+            child.setOwnerId(uuid);
+            child.setTamed(true);
+        }
+
+        return child;
+    }
+
+    public boolean isFlying()
+    {
+        return !this.onGround;
     }
 
     @Override
@@ -77,135 +184,22 @@ public class EntityBaldEagle extends EntityTameable implements EntityFlying
     }
 
     @Override
-    public float getEyeHeight()
-    {
-        return height * 0.6F;
-    }
-
-    @Override
-    public void onLivingUpdate()
-    {
-        super.onLivingUpdate();
-        calculateFlapping();
-    }
-
-    private void calculateFlapping()
-    {
-        this.oFlap = this.flap;
-        this.oFlapSpeed = this.flapSpeed;
-        this.flapSpeed = (float)(this.flapSpeed + (this.onGround ? -1 : 4) * 0.3D);
-        this.flapSpeed = MathHelper.clamp(this.flapSpeed, 0.0F, 1.0F);
-
-        if (!this.onGround && this.flapping < 1.0F)
-        {
-            this.flapping = 1.0F;
-        }
-
-        this.flapping = (float)(this.flapping * 0.9D);
-
-        if (!this.onGround && this.motionY < 0.0D)
-        {
-            this.motionY *= 0.6D;
-        }
-
-        this.flap += this.flapping * 2.0F;
-    }
-
-    @Override
-    public boolean processInteract(EntityPlayer player, EnumHand hand)
-    {
-        ItemStack stack = player.getHeldItem(hand);
-        if(!isTamed() && stack.getItem() == Items.FISH)
-        {
-            if(!player.capabilities.isCreativeMode)
-                stack.shrink(1);
-
-            if(!isSilent())
-                world.playSound(null, posX, posY, posZ, SoundEvents.ENTITY_PARROT_EAT, getSoundCategory(), 1.0F, 1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.2F);
-
-            if(!world.isRemote)
-            {
-                if(rand.nextInt(10) == 0 && !ForgeEventFactory.onAnimalTame(this, player))
-                {
-                    setTamedBy(player);
-                    playTameEffect(true);
-                    world.setEntityState(this, (byte) 7);
-                }
-                else
-                {
-                    playTameEffect(false);
-                    world.setEntityState(this, (byte) 6);
-                }
-            }
-
-            return true;
-        }
-        else
-        {
-            if(!world.isRemote && !isFlying() && isTamed() && isOwner(player))
-                aiSit.setSitting(!isSitting());
-
-            return super.processInteract(player, hand);
-        }
-    }
-
-    @Override
-    public boolean isBreedingItem(ItemStack stack)
-    {
-        return stack.getItem() == Items.FISH && stack.getMetadata() == FishType.SALMON.getMetadata();
-    }
-
-    @Override
-    public void fall(float distance, float damageMultiplier)
-    { }
-
-    @Override
-    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos)
-    { }
-
-    @Override
-    public boolean canMateWith(EntityAnimal otherAnimal)
-    {
-        if(otherAnimal == this)
-            return false;
-        else if(!isTamed())
-            return false;
-        else if(!(otherAnimal instanceof EntityBaldEagle))
-            return false;
-        else
-        {
-            EntityBaldEagle otherEagle = (EntityBaldEagle) otherAnimal;
-            if(!otherEagle.isTamed())
-                return false;
-            else if(otherEagle.isSitting())
-                return false;
-            else
-                return isInLove() && otherEagle.isInLove();
-        }
-    }
-
-    @Override
-    @Nullable
-    public EntityAgeable createChild(EntityAgeable ageable)
-    {
-        EntityBaldEagle child = new EntityBaldEagle(world);
-
-        UUID uuid = getOwnerId();
-        if(uuid != null)
-        {
-            child.setOwnerId(uuid);
-            child.setTamed(true);
-        }
-
-        return child;
-    }
-
-    @Override
     @Nullable
     protected SoundEvent getAmbientSound()
     {
         return ModSounds.baldEagleAmbient;
     }
+
+    @Override
+    @Nullable
+    protected ResourceLocation getLootTable()
+    {
+        return Resources.LOOT_BALD_EAGLE;
+    }
+
+    @Override
+    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos)
+    { }
 
     @Override
     @Nullable
@@ -220,6 +214,10 @@ public class EntityBaldEagle extends EntityTameable implements EntityFlying
     {
         return ModSounds.baldEagleDeath;
     }
+
+    @Override
+    public void fall(float distance, float damageMultiplier)
+    { }
 
     @Override
     protected void playStepSound(BlockPos pos, Block block)
@@ -241,34 +239,36 @@ public class EntityBaldEagle extends EntityTameable implements EntityFlying
     }
 
     @Override
+    public float getEyeHeight()
+    {
+        return height * 0.6F;
+    }
+
+    @Override
     public SoundCategory getSoundCategory()
     {
         return SoundCategory.NEUTRAL;
     }
 
-    @Override
-    public boolean attackEntityFrom(DamageSource source, float amount)
+    private void calculateFlapping()
     {
-        if(isEntityInvulnerable(source))
-            return false;
-        else
+        this.oFlap = this.flap;
+        this.oFlapSpeed = this.flapSpeed;
+        this.flapSpeed = (float) (this.flapSpeed + (this.onGround ? -1 : 4) * 0.3D);
+        this.flapSpeed = MathHelper.clamp(this.flapSpeed, 0.0F, 1.0F);
+
+        if (!this.onGround && this.flapping < 1.0F)
         {
-            if(this.aiSit != null)
-                this.aiSit.setSitting(false);
-
-            return super.attackEntityFrom(source, amount);
+            this.flapping = 1.0F;
         }
-    }
 
-    @Override
-    @Nullable
-    protected ResourceLocation getLootTable()
-    {
-        return Resources.LOOT_BALD_EAGLE;
-    }
+        this.flapping = (float) (this.flapping * 0.9D);
 
-    public boolean isFlying()
-    {
-        return !this.onGround;
+        if (!this.onGround && this.motionY < 0.0D)
+        {
+            this.motionY *= 0.6D;
+        }
+
+        this.flap += this.flapping * 2.0F;
     }
 }

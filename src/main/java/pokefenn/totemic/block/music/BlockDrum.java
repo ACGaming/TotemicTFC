@@ -1,7 +1,6 @@
 package pokefenn.totemic.block.music;
 
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -27,6 +26,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.init.ModContent;
 import pokefenn.totemic.init.ModSounds;
@@ -36,7 +36,7 @@ import pokefenn.totemic.util.TotemUtil;
 
 public class BlockDrum extends Block implements ITileEntityProvider
 {
-    private static final AxisAlignedBB AABB = new AxisAlignedBB(3F/16, 0F/16, 3F/16, 13F/16, 13F/16, 13F/16);
+    private static final AxisAlignedBB AABB = new AxisAlignedBB(3F / 16, 0F / 16, 3F / 16, 13F / 16, 13F / 16, 13F / 16);
 
     public BlockDrum()
     {
@@ -48,28 +48,12 @@ public class BlockDrum extends Block implements ITileEntityProvider
         setCreativeTab(Totemic.tabsTotem);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
-    {
-        tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip"));
-    }
-
-    @Override
-    public void onBlockClicked(World world, BlockPos pos, EntityPlayer player)
-    {
-        TileDrum tileDrum = (TileDrum) world.getTileEntity(pos);
-
-        if(!world.isRemote && tileDrum.canPlay)
-            playDaMusicu((WorldServer) world, pos, player, tileDrum, player.isSneaking());
-    }
-
     public void playDaMusicu(WorldServer world, BlockPos pos, EntityPlayer player, TileDrum tileDrum, boolean isSneaking)
     {
         IBlockState state = world.getBlockState(pos);
-        if(!isSneaking)
+        if (!isSneaking)
         {
-            if(!(player instanceof FakePlayer))
+            if (!(player instanceof FakePlayer))
             {
                 tileDrum.canPlay = false;
                 Totemic.api.music().playMusic(world, pos, player, ModContent.drum);
@@ -90,20 +74,9 @@ public class BlockDrum extends Block implements ITileEntityProvider
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-            EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean isFullCube(IBlockState state)
     {
-        TileDrum tileDrum = (TileDrum) world.getTileEntity(pos);
-
-        if(!world.isRemote)
-        {
-            if(tileDrum.canPlay)
-            {
-                playDaMusicu((WorldServer)world, pos, player, tileDrum, player.isSneaking());
-            }
-        }
-
-        return true;
+        return false;
     }
 
     @Override
@@ -113,21 +86,48 @@ public class BlockDrum extends Block implements ITileEntityProvider
     }
 
     @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
+    {
+        return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
     public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        return false;
+        TileDrum tileDrum = (TileDrum) world.getTileEntity(pos);
+
+        if (!world.isRemote)
+        {
+            if (tileDrum.canPlay)
+            {
+                playDaMusicu((WorldServer) world, pos, player, tileDrum, player.isSneaking());
+            }
+        }
+
+        return true;
     }
 
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
+    public void onBlockClicked(World world, BlockPos pos, EntityPlayer player)
     {
-        return BlockFaceShape.UNDEFINED;
+        TileDrum tileDrum = (TileDrum) world.getTileEntity(pos);
+
+        if (!world.isRemote && tileDrum.canPlay)
+            playDaMusicu((WorldServer) world, pos, player, tileDrum, player.isSneaking());
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
+    {
+        tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip"));
     }
 
     @Override

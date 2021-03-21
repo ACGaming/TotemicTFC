@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+
 import pokefenn.totemic.advancements.ModCriteriaTriggers;
 import pokefenn.totemic.api.TotemicRegistries;
 import pokefenn.totemic.api.ceremony.Ceremony;
@@ -93,6 +94,15 @@ public class CommonProxy
             EntityEntryBuilder.create().entity(EntityBaldEagle.class).id(Strings.BALD_EAGLE_NAME, 3).name(Strings.RESOURCE_PREFIX + Strings.BALD_EAGLE_NAME).tracker(80, 3, true).egg(0x4B4136, 0xF5E6A3).build());
     }
 
+    protected void registerEventHandlers()
+    {
+        MinecraftForge.EVENT_BUS.register(new PlayerTick());
+        MinecraftForge.EVENT_BUS.register(new EntityFall());
+        MinecraftForge.EVENT_BUS.register(new PlayerInteract());
+        if (ModConfig.general.skeletonsShouldAttackBuffalos)
+            MinecraftForge.EVENT_BUS.register(new EntitySpawn());
+    }
+
     private void registerCapabilities()
     {
         CapabilityManager.INSTANCE.register(MusicAcceptor.class, new DefaultMusicAcceptor.Storage(), DefaultMusicAcceptor::new);
@@ -104,7 +114,7 @@ public class CommonProxy
         GameRegistry.registerTileEntity(TileTotemPole.class, new ResourceLocation(Totemic.MOD_ID, Strings.TOTEM_POLE_NAME));
         GameRegistry.registerTileEntity(TileDrum.class, new ResourceLocation(Totemic.MOD_ID, Strings.DRUM_NAME));
         GameRegistry.registerTileEntity(TileWindChime.class, new ResourceLocation(Totemic.MOD_ID, Strings.WIND_CHIME_NAME));
-        GameRegistry.registerTileEntity(TileTipi.class, new ResourceLocation(Totemic.MOD_ID,  Strings.TIPI_NAME));
+        GameRegistry.registerTileEntity(TileTipi.class, new ResourceLocation(Totemic.MOD_ID, Strings.TIPI_NAME));
         GameRegistry.registerTileEntity(TileDecoPillar.class, new ResourceLocation(Totemic.MOD_ID, Strings.WOODEN_PILLAR_NAME));
     }
 
@@ -141,11 +151,11 @@ public class CommonProxy
     private void registerStructures()
     {
         MapGenStructureIO.registerStructureComponent(ComponentTipi.class, Resources.PREFIX_MOD + "ViTi");
-        if(ModConfig.general.enableVillageTipi)
+        if (ModConfig.general.enableVillageTipi)
             VillagerRegistry.instance().registerVillageCreationHandler(new ComponentTipi.CreationHandler());
 
         MapGenStructureIO.registerStructureComponent(ComponentMedicineWheel.class, Resources.PREFIX_MOD + "ViCer");
-        if(ModConfig.general.enableVillageMedicineWheel)
+        if (ModConfig.general.enableVillageMedicineWheel)
             VillagerRegistry.instance().registerVillageCreationHandler(new ComponentMedicineWheel.CreationHandler());
     }
 
@@ -158,24 +168,15 @@ public class CommonProxy
         fixes.registerFix(FixTypes.CHUNK, new TotemWoodToTileEntity());
     }
 
-    protected void registerEventHandlers()
-    {
-        MinecraftForge.EVENT_BUS.register(new PlayerTick());
-        MinecraftForge.EVENT_BUS.register(new EntityFall());
-        MinecraftForge.EVENT_BUS.register(new PlayerInteract());
-        if(ModConfig.general.skeletonsShouldAttackBuffalos)
-            MinecraftForge.EVENT_BUS.register(new EntitySpawn());
-    }
-
     private void checkCeremonySelectors()
     {
         //Search for ambiguous selectors
         //The selectors for ceremonies have to be prefix-free in order to ensure
         //that every ceremony can actually be selected
-        for(Ceremony ceremony1: TotemicRegistries.ceremonies())
-            for(Ceremony ceremony2: TotemicRegistries.ceremonies())
+        for (Ceremony ceremony1 : TotemicRegistries.ceremonies())
+            for (Ceremony ceremony2 : TotemicRegistries.ceremonies())
             {
-                if(ceremony1 != ceremony2 && MiscUtil.isPrefix(ceremony1.getSelectors(), ceremony2.getSelectors()))
+                if (ceremony1 != ceremony2 && MiscUtil.isPrefix(ceremony1.getSelectors(), ceremony2.getSelectors()))
                 {
                     throw new IllegalStateException(String.format(
                         "The selectors of Ceremony %1$s are prefixing the selectors of %2$s. This would make selecting %2$s impossible.\n%3$s prefixes %4$s",

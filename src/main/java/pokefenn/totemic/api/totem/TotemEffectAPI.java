@@ -8,9 +8,10 @@ public interface TotemEffectAPI
 {
     /**
      * For Totem Effects that affect an area, this value is a suggested default base value for how large that area should be.
+     *
      * @see #getDefaultRange(TotemEffect, int, TotemBase, int)
      */
-    static final int DEFAULT_BASE_RANGE = 6;
+    int DEFAULT_BASE_RANGE = 6;
 
     /**
      * For Totem Effects that affect an area, returns a default value for how large that area should be.
@@ -25,6 +26,7 @@ public interface TotemEffectAPI
     /**
      * For Totem Effects that affect an area, returns a default value (based on a custom base value) for how large that area should be.
      * The return value ranges between 0 and 5 above baseRange, depending on the height of the Totem Pole and the amount of music.
+     *
      * @param baseRange a base value for the range
      * @see #getDefaultRange(TotemEffect, TotemBase, int)
      */

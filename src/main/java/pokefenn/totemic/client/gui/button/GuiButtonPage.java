@@ -17,12 +17,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+
 import pokefenn.totemic.client.TotemicRenderHelper;
 import pokefenn.totemic.client.gui.GuiLexicon;
 
 public class GuiButtonPage extends GuiButton
 {
-    private boolean right;
+    private final boolean right;
 
     public GuiButtonPage(int buttonId, int x, int y, boolean right)
     {
@@ -33,7 +34,7 @@ public class GuiButtonPage extends GuiButton
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks)
     {
-        if(enabled)
+        if (enabled)
         {
             hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
             int k = getHoverState(hovered);
@@ -42,7 +43,7 @@ public class GuiButtonPage extends GuiButton
             GlStateManager.color(1F, 1F, 1F, 1F);
             drawTexturedModalRect(x, y, k == 2 ? 18 : 0, right ? 180 : 190, 18, 10);
 
-            if(k == 2)
+            if (k == 2)
                 TotemicRenderHelper.renderTooltip(mouseX, mouseY, Collections.singletonList(I18n.format(right ? "totemicmisc.nextPage" : "totemicmisc.prevPage")));
         }
     }

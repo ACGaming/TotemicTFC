@@ -18,7 +18,7 @@ public final class TotemicAPI
      */
     public static API get()
     {
-        if(instance == null)
+        if (instance == null)
             throw new IllegalStateException("The Totemic API has not been initalized yet, or Totemic is not installed");
         return instance;
     }

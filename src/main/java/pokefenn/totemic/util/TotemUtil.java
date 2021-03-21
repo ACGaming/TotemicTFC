@@ -15,17 +15,17 @@ public class TotemUtil
     {
         String amount;
 
-        if(music == 0)
+        if (music == 0)
             amount = "none";
-        else if(music <= 110)
+        else if (music <= 110)
             amount = "little";
-        else if(music <= 150)
+        else if (music <= 150)
             amount = "littleMedium";
-        else if(music <= 195)
+        else if (music <= 195)
             amount = "medium";
-        else if(music <= 240)
+        else if (music <= 240)
             amount = "mediumLarge";
-        else if(music <= 290)
+        else if (music <= 290)
             amount = "large";
         else
             amount = "crazyLarge";

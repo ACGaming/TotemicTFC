@@ -1,12 +1,13 @@
 package pokefenn.totemic.network.server;
 
-import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.registries.ForgeRegistry;
+
+import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import pokefenn.totemic.api.TotemicRegistries;
 import pokefenn.totemic.api.music.MusicInstrument;
 import pokefenn.totemic.network.CSynchronizedMessageHandler;
@@ -39,7 +40,7 @@ public class PacketCeremonyStartupFull implements IMessage
         int len = buf.readByte();
         instruments = new MusicInstrument[len];
         values = new int[len];
-        for(int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++)
         {
             instruments[i] = ((ForgeRegistry<MusicInstrument>) TotemicRegistries.instruments()).getValue(buf.readByte());
             values[i] = buf.readShort();
@@ -54,7 +55,7 @@ public class PacketCeremonyStartupFull implements IMessage
         buf.writeInt(startupTime);
 
         buf.writeByte(instruments.length);
-        for(int i = 0; i < instruments.length; i++)
+        for (int i = 0; i < instruments.length; i++)
         {
             buf.writeByte(((ForgeRegistry<MusicInstrument>) TotemicRegistries.instruments()).getID(instruments[i]));
             buf.writeShort(values[i]);
@@ -92,10 +93,10 @@ public class PacketCeremonyStartupFull implements IMessage
         protected void handleClient(PacketCeremonyStartupFull msg)
         {
             TileEntity tile = Minecraft.getMinecraft().world.getTileEntity(msg.pos);
-            if(tile instanceof TileTotemBase)
+            if (tile instanceof TileTotemBase)
             {
                 TileTotemBase totem = (TileTotemBase) tile;
-                if(totem.getState() instanceof StateStartup)
+                if (totem.getState() instanceof StateStartup)
                     ((StateStartup) totem.getState()).handleFullPacket(msg);
             }
         }

@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.init.ModItems;
 import pokefenn.totemic.item.equipment.ItemTotemWhittlingKnife;
@@ -22,13 +23,13 @@ public class PlayerInteract
     @SideOnly(Side.CLIENT)
     public void onMouse(MouseEvent event)
     {
-        if(event.isCanceled())
+        if (event.isCanceled())
             return;
 
-        if(event.getDwheel() != 0)
+        if (event.getDwheel() != 0)
         {
             EntityPlayer player = Minecraft.getMinecraft().player;
-            if(player.isSneaking() && player.getHeldItemMainhand().getItem() == ModItems.totem_whittling_knife)
+            if (player.isSneaking() && player.getHeldItemMainhand().getItem() == ModItems.totem_whittling_knife)
             {
                 boolean direction = (event.getDwheel() > 0);
                 NetworkHandler.sendToServer(new PacketMouseWheel(direction));
@@ -41,16 +42,16 @@ public class PlayerInteract
     @SubscribeEvent
     public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event)
     {
-        if(event.getEntityPlayer().isCreative() && event.getUseBlock() != Result.DENY)
+        if (event.getEntityPlayer().isCreative() && event.getUseBlock() != Result.DENY)
         {
             Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
-            if(event.getEntityPlayer().isSneaking() && (block == ModBlocks.drum || block == ModBlocks.wind_chime))
+            if (event.getEntityPlayer().isSneaking() && (block == ModBlocks.drum || block == ModBlocks.wind_chime))
             {
                 //Enable using sneak+left click to select ceremonies in Creative mode
                 event.setCanceled(true);
                 block.onBlockClicked(event.getWorld(), event.getPos(), event.getEntityPlayer());
             }
-            else if(!event.getWorld().isRemote && event.getItemStack().getItem() == ModItems.totemic_staff && block == ModBlocks.totem_base)
+            else if (!event.getWorld().isRemote && event.getItemStack().getItem() == ModItems.totemic_staff && block == ModBlocks.totem_base)
             {
                 //Workaround to make left-clicking the Totem Base with a Totemic Staff work in creative mode
                 block.onBlockClicked(event.getWorld(), event.getPos(), event.getEntityPlayer());

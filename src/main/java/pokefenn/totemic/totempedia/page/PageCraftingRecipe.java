@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Objects;
 
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -31,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.api.internal.IGuiLexiconEntry;
 import pokefenn.totemic.api.lexicon.LexiconEntry;
 import pokefenn.totemic.api.lexicon.LexiconRecipeMappings;
@@ -40,14 +40,6 @@ import pokefenn.totemic.lib.Resources;
 public class PageCraftingRecipe extends PageRecipe
 {
     private static final ResourceLocation craftingOverlay = new ResourceLocation(Resources.GUI_CRAFTING_OVERLAY);
-
-    private final IRecipe recipe;
-    private final int recipeWidth;
-    private final boolean shapelessRecipe;
-
-    private int ticksElapsed = 0;
-    private int recipeIndex = 0;
-
     private static final IRecipe DUMMY_RECIPE = new ShapelessRecipes("", ItemStack.EMPTY, NonNullList.create());
 
     private static IRecipe getRecipeOrDummy(ResourceLocation name)
@@ -56,12 +48,18 @@ public class PageCraftingRecipe extends PageRecipe
         return (recipe != null) ? recipe : DUMMY_RECIPE;
     }
 
+    private final IRecipe recipe;
+    private final int recipeWidth;
+    private final boolean shapelessRecipe;
+    private int ticksElapsed = 0;
+    private int recipeIndex = 0;
+
     public PageCraftingRecipe(String unlocalizedName, IRecipe recipe)
     {
         super(unlocalizedName);
         this.recipe = Objects.requireNonNull(recipe);
 
-        if(recipe instanceof IShapedRecipe)
+        if (recipe instanceof IShapedRecipe)
         {
             recipeWidth = ((IShapedRecipe) recipe).getRecipeWidth();
             shapelessRecipe = false;
@@ -79,15 +77,6 @@ public class PageCraftingRecipe extends PageRecipe
     }
 
     @Override
-    public void onPageAdded(LexiconEntry entry, int index)
-    {
-        if(recipe != DUMMY_RECIPE)
-            LexiconRecipeMappings.map(recipe.getRecipeOutput(), entry, index);
-        else
-            unlocalizedName = "totemic.gui.lexicon.recipeNotAvailable";
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void renderRecipe(IGuiLexiconEntry gui, int mx, int my)
     {
@@ -101,14 +90,14 @@ public class PageCraftingRecipe extends PageRecipe
         GlStateManager.color(1F, 1F, 1F, 1F);
         ((GuiScreen) gui).drawTexturedModalRect(gui.getLeft(), gui.getTop(), 0, 0, gui.getWidth(), gui.getHeight());
 
-        if(shapelessRecipe)
+        if (shapelessRecipe)
         {
             int iconX = gui.getLeft() + 115;
             int iconY = gui.getTop() + 12;
 
             ((GuiScreen) gui).drawTexturedModalRect(iconX, iconY, 240, 0, 16, 16);
 
-            if(mx >= iconX && my >= iconY && mx < iconX + 16 && my < iconY + 16)
+            if (mx >= iconX && my >= iconY && mx < iconX + 16 && my < iconY + 16)
                 TotemicRenderHelper.renderTooltip(mx, my, Collections.singletonList(I18n.format("totemicmisc.shapeless")));
         }
 
@@ -119,11 +108,20 @@ public class PageCraftingRecipe extends PageRecipe
     @SideOnly(Side.CLIENT)
     public void updateScreen()
     {
-        if(ticksElapsed % 30 == 0)
+        if (ticksElapsed % 30 == 0)
         {
             recipeIndex++;
         }
         ticksElapsed++;
+    }
+
+    @Override
+    public void onPageAdded(LexiconEntry entry, int index)
+    {
+        if (recipe != DUMMY_RECIPE)
+            LexiconRecipeMappings.map(recipe.getRecipeOutput(), entry, index);
+        else
+            unlocalizedName = "totemic.gui.lexicon.recipeNotAvailable";
     }
 
     @SideOnly(Side.CLIENT)
@@ -131,16 +129,16 @@ public class PageCraftingRecipe extends PageRecipe
     {
         int x = 0;
         int y = 0;
-        for(Ingredient ingredient: recipe.getIngredients())
+        for (Ingredient ingredient : recipe.getIngredients())
         {
-            if(ingredient != Ingredient.EMPTY)
+            if (ingredient != Ingredient.EMPTY)
             {
                 ItemStack[] stacks = ingredient.getMatchingStacks();
                 renderItemAtGridPos(gui, 1 + x, 1 + y, stacks[recipeIndex % stacks.length], true);
             }
 
             x++;
-            if(x >= recipeWidth)
+            if (x >= recipeWidth)
             {
                 x = 0;
                 y++;

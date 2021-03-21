@@ -1,7 +1,6 @@
 package pokefenn.totemic.item;
 
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.client.resources.I18n;
@@ -16,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.lib.Strings;
 import pokefenn.totemic.tileentity.totem.StateStartup;
 import pokefenn.totemic.tileentity.totem.TileTotemBase;
@@ -32,13 +32,13 @@ public class ItemCeremonyCheat extends ItemTotemic
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
         TileEntity tile = world.getTileEntity(pos);
-        if(tile instanceof TileTotemBase)
+        if (tile instanceof TileTotemBase)
         {
-            if(world.isRemote)
+            if (world.isRemote)
                 return EnumActionResult.SUCCESS;
 
             TileTotemBase totem = (TileTotemBase) tile;
-            if(totem.getState() instanceof StateStartup)
+            if (totem.getState() instanceof StateStartup)
             {
                 ((StateStartup) totem.getState()).startCeremony();
                 return EnumActionResult.SUCCESS;

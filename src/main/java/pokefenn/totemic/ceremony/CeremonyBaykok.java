@@ -3,6 +3,7 @@ package pokefenn.totemic.ceremony;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
 import pokefenn.totemic.api.music.MusicInstrument;
@@ -16,13 +17,9 @@ public class CeremonyBaykok extends Ceremony
     }
 
     @Override
-    public void effect(World world, BlockPos pos, CeremonyEffectContext context)
-    { }
-
-    @Override
     public void onEffectEnd(World world, BlockPos pos, CeremonyEffectContext context)
     {
-        if(world.isRemote)
+        if (world.isRemote)
             return;
 
         world.playBroadcastSound(1023, pos, 0); //Wither spawn sound
@@ -33,6 +30,10 @@ public class CeremonyBaykok extends Ceremony
         baykok.onInitialSpawn(world.getDifficultyForLocation(spos), null);
         world.spawnEntity(baykok);
     }
+
+    @Override
+    public void effect(World world, BlockPos pos, CeremonyEffectContext context)
+    { }
 
     @Override
     public int getEffectTime()

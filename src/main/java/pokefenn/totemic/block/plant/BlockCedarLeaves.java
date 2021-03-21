@@ -3,7 +3,6 @@ package pokefenn.totemic.block.plant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockLeaves;
@@ -21,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.lib.Strings;
@@ -51,18 +51,24 @@ public class BlockCedarLeaves extends BlockLeaves
 
     @SuppressWarnings("deprecation")
     @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess iba, BlockPos pos, EnumFacing side)
-    {
-        return Minecraft.isFancyGraphicsEnabled() || super.shouldSideBeRendered(state, iba, pos, side);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
     public boolean isOpaqueCube(IBlockState state)
     {
         //BlockLeaves.isOpaqueCube doesn't use the argument, so we should be safe from NPEs
         return Blocks.LEAVES.isOpaqueCube(null);
+    }
+
+    @Override
+    public EnumType getWoodType(int meta)
+    {
+        return null;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess iba, BlockPos pos, EnumFacing side)
+    {
+        return Minecraft.isFancyGraphicsEnabled() || super.shouldSideBeRendered(state, iba, pos, side);
     }
 
     @Override
@@ -73,29 +79,23 @@ public class BlockCedarLeaves extends BlockLeaves
     }
 
     @Override
-    protected BlockStateContainer createBlockState()
+    public IBlockState getStateFromMeta(int meta)
     {
-        return new BlockStateContainer(this, CHECK_DECAY, DECAYABLE, TRANSPARENT);
+        return getDefaultState()
+            .withProperty(DECAYABLE, (meta & 4) == 0)
+            .withProperty(CHECK_DECAY, (meta & 8) != 0);
     }
 
     @Override
     public int getMetaFromState(IBlockState state)
     {
         int meta = 0;
-        if(!state.getValue(DECAYABLE))
+        if (!state.getValue(DECAYABLE))
             meta |= 4;
-        if(state.getValue(CHECK_DECAY))
+        if (state.getValue(CHECK_DECAY))
             meta |= 8;
 
         return meta;
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
-        return getDefaultState()
-                .withProperty(DECAYABLE, (meta & 4) == 0)
-                .withProperty(CHECK_DECAY, (meta & 8) != 0);
     }
 
     @Override
@@ -104,17 +104,17 @@ public class BlockCedarLeaves extends BlockLeaves
         return state.withProperty(TRANSPARENT, !isOpaqueCube(state));
     }
 
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, CHECK_DECAY, DECAYABLE, TRANSPARENT);
+    }
+
     @SuppressWarnings("null")
     @Override
     @Nonnull
     public List<ItemStack> onSheared(@Nonnull ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
     {
         return Collections.singletonList(new ItemStack(this));
-    }
-
-    @Override
-    public EnumType getWoodType(int meta)
-    {
-        return null;
     }
 }

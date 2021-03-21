@@ -3,6 +3,7 @@ package pokefenn.totemic.totem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
+
 import pokefenn.totemic.api.totem.TotemEffectPotion;
 
 public class TotemEffectCow extends TotemEffectPotion

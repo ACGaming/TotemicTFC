@@ -1,5 +1,5 @@
 {
-    "variants": {
-        "normal": { "model": "totemic:totem_torch" }
-    }
+  "variants": {
+    "normal": {"model": "totemic:totem_torch"}
+  }
 }

@@ -5,6 +5,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.api.TotemicEntityUtil;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
@@ -23,7 +24,7 @@ public class CeremonySunDance extends Ceremony
     @Override
     public void onStartup(World world, BlockPos pos, StartupContext context)
     {
-        if(!world.isRemote && context.getTime() % 20 == 10)
+        if (!world.isRemote && context.getTime() % 20 == 10)
         {
             TotemicEntityUtil.getPlayersInRange(world, pos, 8, 8)
                 .filter(player -> player.getHealth() > 1)
@@ -34,7 +35,7 @@ public class CeremonySunDance extends Ceremony
     @Override
     public void effect(World world, BlockPos pos, CeremonyEffectContext context)
     {
-        if(!world.isRemote)
+        if (!world.isRemote)
         {
             TotemicEntityUtil.getPlayersInRange(world, pos, 8, 8).forEach(player ->
             {

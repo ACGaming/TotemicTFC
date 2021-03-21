@@ -12,6 +12,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.api.TotemicAPI;
 import pokefenn.totemic.api.TotemicEntityUtil;
 
@@ -20,8 +21,20 @@ import pokefenn.totemic.api.TotemicEntityUtil;
  */
 public class TotemEffectPotion extends TotemEffect
 {
-    /**  The default value for the interval time */
+    /**
+     * The default value for the interval time
+     */
     public static final int DEFAULT_INTERVAL = 80;
+
+    /**
+     * @return a list of players within the given range of the given position
+     * @deprecated Replaced with {@link TotemicEntityUtil#getPlayersInRange(World, BlockPos, double, double)}.
+     */
+    @Deprecated
+    public static List<EntityPlayer> getPlayersInRange(World world, BlockPos pos, int horizontal, int vertical)
+    {
+        return TotemicEntityUtil.getPlayersInRange(world, pos, horizontal, vertical).collect(Collectors.toList());
+    }
 
     /**
      * The potion effect
@@ -40,7 +53,8 @@ public class TotemEffectPotion extends TotemEffect
 
     /**
      * Constructs a TotemEffectPotion with default values
-     * @param name a unique name for the Totem Effect
+     *
+     * @param name   a unique name for the Totem Effect
      * @param potion the potion effect
      */
     public TotemEffectPotion(String name, Potion potion)
@@ -49,11 +63,11 @@ public class TotemEffectPotion extends TotemEffect
     }
 
     /**
-     * @param name a unique name for the Totem Effect
-     * @param portable whether this Totem Effect can be used with a Medicine Bag
-     * @param baseRange the base range of the effect. See {@link TotemEffectAPI#DEFAULT_BASE_RANGE}.
-     * @param potion the potion effect
-     * @param interval the time in ticks until the potion effect is renewed
+     * @param name          a unique name for the Totem Effect
+     * @param portable      whether this Totem Effect can be used with a Medicine Bag
+     * @param baseRange     the base range of the effect. See {@link TotemEffectAPI#DEFAULT_BASE_RANGE}.
+     * @param potion        the potion effect
+     * @param interval      the time in ticks until the potion effect is renewed
      * @param baseAmplifier the base amplifier of the potion effect
      */
     public TotemEffectPotion(String name, boolean portable, int baseRange, Potion potion, int interval, int baseAmplifier)
@@ -64,8 +78,35 @@ public class TotemEffectPotion extends TotemEffect
         this.baseAmplifier = baseAmplifier;
     }
 
+    @Override
+    public void effect(World world, BlockPos pos, TotemBase totem, int repetition)
+    {
+        if (world.isRemote)
+            return;
+
+        int horizontal = getHorizontalRange(world, pos, totem, repetition);
+        int vertical = getVerticalRange(world, pos, totem, repetition);
+        int time = interval + getLingeringTime();
+        int amplifier = getAmplifier(world, pos, totem, repetition);
+
+        TotemicEntityUtil.getPlayersInRange(world, pos, horizontal, vertical)
+            .forEach(player -> applyTo(false, player, time, amplifier));
+    }
+
+    @Override
+    public void medicineBagEffect(World world, EntityPlayer player, ItemStack medicineBag, int charge)
+    {
+        if (world.isRemote)
+            return;
+
+        int time = interval + getLingeringTime();
+        int amplifier = getAmplifierForMedicineBag(world, player, medicineBag, charge);
+        applyTo(true, player, time, amplifier);
+    }
+
     /**
      * Returns the horizontal range of this effect.
+     *
      * @see TotemEffectAPI#getDefaultRange(TotemEffect, int, TotemBase, int)
      */
     protected int getHorizontalRange(World world, BlockPos pos, TotemBase totem, int repetition)
@@ -111,46 +152,11 @@ public class TotemEffectPotion extends TotemEffect
 
     /**
      * Applies the potion effect to the given player
+     *
      * @param isMedicineBag whether the effect comes from a Medicine Bag
      */
     protected void applyTo(boolean isMedicineBag, EntityPlayer player, int time, int amplifier)
     {
         player.addPotionEffect(new PotionEffect(potion, time, amplifier, true, false));
-    }
-
-    @Override
-    public void effect(World world, BlockPos pos, TotemBase totem, int repetition)
-    {
-        if(world.isRemote)
-            return;
-
-        int horizontal = getHorizontalRange(world, pos, totem, repetition);
-        int vertical = getVerticalRange(world, pos, totem, repetition);
-        int time = interval + getLingeringTime();
-        int amplifier = getAmplifier(world, pos, totem, repetition);
-
-        TotemicEntityUtil.getPlayersInRange(world, pos, horizontal, vertical)
-            .forEach(player -> applyTo(false, player, time, amplifier));
-    }
-
-    @Override
-    public void medicineBagEffect(World world, EntityPlayer player, ItemStack medicineBag, int charge)
-    {
-        if(world.isRemote)
-            return;
-
-        int time = interval + getLingeringTime();
-        int amplifier = getAmplifierForMedicineBag(world, player, medicineBag, charge);
-        applyTo(true, player, time, amplifier);
-    }
-
-    /**
-     * @return a list of players within the given range of the given position
-     * @deprecated Replaced with {@link TotemicEntityUtil#getPlayersInRange(World, BlockPos, double, double)}.
-     */
-    @Deprecated
-    public static List<EntityPlayer> getPlayersInRange(World world, BlockPos pos, int horizontal, int vertical)
-    {
-        return TotemicEntityUtil.getPlayersInRange(world, pos, horizontal, vertical).collect(Collectors.toList());
     }
 }

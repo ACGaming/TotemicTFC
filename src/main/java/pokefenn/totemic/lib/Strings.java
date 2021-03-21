@@ -48,8 +48,12 @@ public final class Strings
     public static final String NETHER_PIPE_NAME = "nether_pipe";
 
     //Entities
-    @Nonnull public static final String BUFFALO_NAME = "buffalo";
-    @Nonnull public static final String BAYKOK_NAME = "baykok";
-    @Nonnull public static final String INVIS_ARROW_NAME = "invis_arrow";
-    @Nonnull public static final String BALD_EAGLE_NAME = "bald_eagle";
+    @Nonnull
+    public static final String BUFFALO_NAME = "buffalo";
+    @Nonnull
+    public static final String BAYKOK_NAME = "baykok";
+    @Nonnull
+    public static final String INVIS_ARROW_NAME = "invis_arrow";
+    @Nonnull
+    public static final String BALD_EAGLE_NAME = "bald_eagle";
 }

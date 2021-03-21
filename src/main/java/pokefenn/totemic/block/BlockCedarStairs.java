@@ -4,6 +4,7 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
+
 import pokefenn.totemic.lib.Strings;
 
 public class BlockCedarStairs extends BlockStairs

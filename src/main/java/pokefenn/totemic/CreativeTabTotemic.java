@@ -7,11 +7,23 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.lib.Strings;
 
 public class CreativeTabTotemic extends CreativeTabs
 {
+    public static ItemStack getEgg(String entityName)
+    {
+        ItemStack stack = new ItemStack(Items.SPAWN_EGG);
+        NBTTagCompound entityTag = new NBTTagCompound();
+        entityTag.setString("id", entityName);
+        NBTTagCompound eggTag = new NBTTagCompound();
+        eggTag.setTag("EntityTag", entityTag);
+        stack.setTagCompound(eggTag);
+        return stack;
+    }
+
     public CreativeTabTotemic(String name)
     {
         super(name);
@@ -33,16 +45,5 @@ public class CreativeTabTotemic extends CreativeTabs
         list.add(getEgg(Strings.RESOURCE_PREFIX + Strings.BUFFALO_NAME));
         list.add(getEgg(Strings.RESOURCE_PREFIX + Strings.BALD_EAGLE_NAME));
         list.add(getEgg(Strings.RESOURCE_PREFIX + Strings.BAYKOK_NAME));
-    }
-
-    public static ItemStack getEgg(String entityName)
-    {
-        ItemStack stack = new ItemStack(Items.SPAWN_EGG);
-        NBTTagCompound entityTag = new NBTTagCompound();
-        entityTag.setString("id", entityName);
-        NBTTagCompound eggTag = new NBTTagCompound();
-        eggTag.setTag("EntityTag", entityTag);
-        stack.setTagCompound(eggTag);
-        return stack;
     }
 }

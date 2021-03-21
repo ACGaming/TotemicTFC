@@ -28,6 +28,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.lib.Strings;
@@ -50,141 +51,9 @@ public class BlockTipi extends Block implements ITileEntityProvider
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
-    {
-        EnumFacing dir = EnumFacing.fromAngle(placer.rotationYaw);
-        return getDefaultState().withProperty(FACING, dir);
-    }
-
-    private boolean tipiSleep(World world, BlockPos pos, EntityPlayer player)
-    {
-        if(!world.isRemote)
-        {
-            if(world.getBiome(pos) != Biomes.HELL)
-            {
-                if(world.provider.canRespawnHere())
-                {
-                    EntityPlayer otherPlayer = null;
-
-                    for(EntityPlayer playerEntity : world.playerEntities)
-                    {
-                        if(playerEntity.isPlayerSleeping())
-                        {
-                            BlockPos playerPos = new BlockPos(playerEntity.posX, playerEntity.posY, playerEntity.posZ);
-                            if(playerPos.equals(pos))
-                                otherPlayer = playerEntity;
-                        }
-                    }
-
-                    if(otherPlayer != null)
-                    {
-                        player.sendStatusMessage(new TextComponentTranslation("tile.bed.occupied"), true);
-                        return true;
-                    }
-
-                    SleepResult sleepresult = player.trySleep(pos);
-
-                    if(sleepresult == SleepResult.OK)
-                        return true;
-                    else
-                    {
-                        if(sleepresult == SleepResult.NOT_POSSIBLE_NOW)
-                            player.sendStatusMessage(new TextComponentTranslation("tile.bed.noSleep"), true);
-                        else if(sleepresult == SleepResult.NOT_SAFE)
-                            player.sendStatusMessage(new TextComponentTranslation("tile.bed.notSafe"), true);
-
-                        return true;
-                    }
-                }
-                else
-                    player.sendStatusMessage(new TextComponentTranslation("totemicmisc.tipi.nether"), true);
-            }
-            else
-                player.sendStatusMessage(new TextComponentTranslation("totemicmisc.tipi.cantSleep"), true);
-
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-            EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
-        return tipiSleep(world, pos, player);
-    }
-
-    @Override
-    public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player)
-    {
-        int height = 5;
-        int radius = 2;
-        for(int i = -radius; i <= radius; i++)
-            for(int j = 0; j <= height; j++)
-                for(int k = -radius; k <= radius; k++)
-                {
-                    BlockPos p = pos.add(i, j, k);
-                    IBlockState s = world.getBlockState(p);
-
-                    if(s.getBlock() == ModBlocks.dummy_tipi)
-                    {
-                        world.setBlockToAir(p);
-                    }
-                }
-    }
-
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state)
-    {
-        int height = 5;
-        int radius = 2;
-        for(int i = -radius; i <= radius; i++)
-            for(int j = 0; j <= height; j++)
-                for(int k = -radius; k <= radius; k++)
-                {
-                    BlockPos p = pos.add(i, j, k);
-                    IBlockState s = world.getBlockState(p);
-
-                    if(s.getBlock() == ModBlocks.dummy_tipi)
-                    {
-                        world.setBlockToAir(p);
-                    }
-                }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
-    {
-        return null;
-    }
-
-    @Override
-    public boolean isBed(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable Entity player)
-    {
-        return true;
-    }
-
-    @Override
-    public void setBedOccupied(IBlockAccess world, BlockPos pos, EntityPlayer player, boolean occupied)
-    {
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
         return new TileTipi();
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        return state.getValue(FACING).getHorizontalIndex();
     }
 
     @Override
@@ -194,9 +63,9 @@ public class BlockTipi extends Block implements ITileEntityProvider
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    public int getMetaFromState(IBlockState state)
     {
-        return AABB;
+        return state.getValue(FACING).getHorizontalIndex();
     }
 
     @Override
@@ -212,20 +81,152 @@ public class BlockTipi extends Block implements ITileEntityProvider
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
     public boolean isFullCube(IBlockState state)
     {
         return false;
     }
 
     @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return AABB;
+    }
+
+    @Override
     public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing)
     {
         return BlockFaceShape.UNDEFINED;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    {
+        int height = 5;
+        int radius = 2;
+        for (int i = -radius; i <= radius; i++)
+            for (int j = 0; j <= height; j++)
+                for (int k = -radius; k <= radius; k++)
+                {
+                    BlockPos p = pos.add(i, j, k);
+                    IBlockState s = world.getBlockState(p);
+
+                    if (s.getBlock() == ModBlocks.dummy_tipi)
+                    {
+                        world.setBlockToAir(p);
+                    }
+                }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
+                                    EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
+        return tipiSleep(world, pos, player);
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    {
+        EnumFacing dir = EnumFacing.fromAngle(placer.rotationYaw);
+        return getDefaultState().withProperty(FACING, dir);
+    }
+
+    @Override
+    public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player)
+    {
+        int height = 5;
+        int radius = 2;
+        for (int i = -radius; i <= radius; i++)
+            for (int j = 0; j <= height; j++)
+                for (int k = -radius; k <= radius; k++)
+                {
+                    BlockPos p = pos.add(i, j, k);
+                    IBlockState s = world.getBlockState(p);
+
+                    if (s.getBlock() == ModBlocks.dummy_tipi)
+                    {
+                        world.setBlockToAir(p);
+                    }
+                }
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, FACING);
+    }
+
+    @Override
+    public boolean isBed(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable Entity player)
+    {
+        return true;
+    }
+
+    @Override
+    public void setBedOccupied(IBlockAccess world, BlockPos pos, EntityPlayer player, boolean occupied)
+    {
+    }
+
+    private boolean tipiSleep(World world, BlockPos pos, EntityPlayer player)
+    {
+        if (!world.isRemote)
+        {
+            if (world.getBiome(pos) != Biomes.HELL)
+            {
+                if (world.provider.canRespawnHere())
+                {
+                    EntityPlayer otherPlayer = null;
+
+                    for (EntityPlayer playerEntity : world.playerEntities)
+                    {
+                        if (playerEntity.isPlayerSleeping())
+                        {
+                            BlockPos playerPos = new BlockPos(playerEntity.posX, playerEntity.posY, playerEntity.posZ);
+                            if (playerPos.equals(pos))
+                                otherPlayer = playerEntity;
+                        }
+                    }
+
+                    if (otherPlayer != null)
+                    {
+                        player.sendStatusMessage(new TextComponentTranslation("tile.bed.occupied"), true);
+                        return true;
+                    }
+
+                    SleepResult sleepresult = player.trySleep(pos);
+
+                    if (sleepresult == SleepResult.OK)
+                        return true;
+                    else
+                    {
+                        if (sleepresult == SleepResult.NOT_POSSIBLE_NOW)
+                            player.sendStatusMessage(new TextComponentTranslation("tile.bed.noSleep"), true);
+                        else if (sleepresult == SleepResult.NOT_SAFE)
+                            player.sendStatusMessage(new TextComponentTranslation("tile.bed.notSafe"), true);
+
+                        return true;
+                    }
+                }
+                else
+                    player.sendStatusMessage(new TextComponentTranslation("totemicmisc.tipi.nether"), true);
+            }
+            else
+                player.sendStatusMessage(new TextComponentTranslation("totemicmisc.tipi.cantSleep"), true);
+
+        }
+        return true;
     }
 }

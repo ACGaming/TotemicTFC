@@ -10,6 +10,7 @@ public interface LexiconAPI
 {
     /**
      * Adds a new category to the lexicon
+     *
      * @return cat
      */
     LexiconCategory addCategory(LexiconCategory cat);

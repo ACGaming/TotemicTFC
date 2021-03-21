@@ -32,7 +32,7 @@ public class ModelBaykok extends ModelBiped
         bipedHeadwear.mirror = true;
         setRotation(bipedHeadwear, 0F, 0F, 0F);
 
-        if(!isArmor)
+        if (!isArmor)
         {
             ModelRenderer headdress1 = new ModelRenderer(this, 32, 0);
             headdress1.addBox(-0.5F, -14F, -1F, 2, 6, 2, modelSize);
@@ -121,10 +121,10 @@ public class ModelBaykok extends ModelBiped
     {
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
 
-        bipedLeftArm.rotateAngleX = -((float)Math.PI / 2F);
+        bipedLeftArm.rotateAngleX = -((float) Math.PI / 2F);
         bipedLeftArm.rotateAngleY = 0.35F;
 
-        bipedRightArm.rotateAngleX = -((float)Math.PI / 2F);
+        bipedRightArm.rotateAngleX = -((float) Math.PI / 2F);
         bipedRightArm.rotateAngleY = -0.1F;
 
         //super.setRotationAngles changes rotation points. This corrects for that.
@@ -136,7 +136,7 @@ public class ModelBaykok extends ModelBiped
     public void postRenderArm(float scale, EnumHandSide side)
     {
         super.postRenderArm(scale, side);
-        if(side == EnumHandSide.RIGHT)
+        if (side == EnumHandSide.RIGHT)
             GlStateManager.translate(0.04F, 0.0F, 0.085F);
         else
             GlStateManager.translate(-0.04F, 0.0F, 0.085F);

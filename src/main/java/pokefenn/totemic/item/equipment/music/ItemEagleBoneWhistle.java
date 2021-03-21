@@ -1,7 +1,6 @@
 package pokefenn.totemic.item.equipment.music;
 
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.client.resources.I18n;
@@ -15,6 +14,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.music.ItemInstrument;
 import pokefenn.totemic.init.ModSounds;
@@ -32,19 +32,19 @@ public class ItemEagleBoneWhistle extends ItemInstrument
     }
 
     @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
+    {
+        ItemStack stack = player.getHeldItem(hand);
+        if (!world.isRemote)
+            useInstrument(stack, player, 20);
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
     {
         tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip"));
-    }
-
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
-    {
-        ItemStack stack = player.getHeldItem(hand);
-        if(!world.isRemote)
-            useInstrument(stack, player, 20);
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
     @Override

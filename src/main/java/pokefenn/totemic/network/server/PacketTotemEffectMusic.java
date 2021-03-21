@@ -1,10 +1,11 @@
 package pokefenn.totemic.network.server;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import io.netty.buffer.ByteBuf;
 import pokefenn.totemic.network.CSynchronizedMessageHandler;
 import pokefenn.totemic.tileentity.totem.StateTotemEffect;
 import pokefenn.totemic.tileentity.totem.TileTotemBase;
@@ -52,10 +53,10 @@ public class PacketTotemEffectMusic implements IMessage
         protected void handleClient(PacketTotemEffectMusic msg)
         {
             TileEntity tile = Minecraft.getMinecraft().world.getTileEntity(msg.pos);
-            if(tile instanceof TileTotemBase)
+            if (tile instanceof TileTotemBase)
             {
                 TileTotemBase totem = (TileTotemBase) tile;
-                if(totem.getState() instanceof StateTotemEffect)
+                if (totem.getState() instanceof StateTotemEffect)
                     ((StateTotemEffect) totem.getState()).handleMusicPacket(msg);
             }
         }

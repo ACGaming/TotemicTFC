@@ -13,6 +13,7 @@ package pokefenn.totemic.totempedia;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.lexicon.LexiconAPI;
 import pokefenn.totemic.api.lexicon.LexiconCategory;
@@ -116,14 +117,14 @@ public final class LexiconData
         flute.addPages(new PageText("0"), new PageText("1"), new PageCraftingRecipe("2", Strings.RESOURCE_PREFIX + "flute"));
 
         drum = new BLexiconEntry(Totempedia.DRUM, categoryInstruments).setSortIndex(1);
-        drum.addPages(new PageText("0"), new PageText("1"),new PageCraftingRecipe("2", Strings.RESOURCE_PREFIX + "drum"));
+        drum.addPages(new PageText("0"), new PageText("1"), new PageCraftingRecipe("2", Strings.RESOURCE_PREFIX + "drum"));
 
         windChime = new BLexiconEntry(Totempedia.WIND_CHIME, categoryInstruments).setSortIndex(2);
         windChime.addPages(new PageText("0"), new PageText("1"), new PageCraftingRecipe("2", Strings.RESOURCE_PREFIX + "wind_chime"));
 
         jingleDress = new BLexiconEntry(Totempedia.JINGLE_DRESS, categoryInstruments).setSortIndex(3);
         jingleDress.addPages(new PageText("0"), new PageText("1"), new PageCraftingRecipe("2", Strings.RESOURCE_PREFIX + "jingle_dress"),
-                new PageCraftingRecipe("3", Strings.RESOURCE_PREFIX + "iron_bells"));
+            new PageCraftingRecipe("3", Strings.RESOURCE_PREFIX + "iron_bells"));
 
         rattle = new BLexiconEntry(Totempedia.RATTLE, categoryInstruments).setSortIndex(4);
         rattle.addPages(new PageText("0"), new PageText("1"), new PageCraftingRecipe("2", Strings.RESOURCE_PREFIX + "rattle"));
@@ -207,6 +208,6 @@ public final class LexiconData
 
         woodenPillars = new BLexiconEntry(Totempedia.WOODEN_PILLARS, categoryMisc);
         woodenPillars.addPages(new PageText("0"), new PageCraftingRecipe("1", Strings.RESOURCE_PREFIX + "pillar_oak"),
-                new PageCraftingRecipe("2", Strings.RESOURCE_PREFIX + "pillar_base_oak"));
+            new PageCraftingRecipe("2", Strings.RESOURCE_PREFIX + "pillar_base_oak"));
     }
 }

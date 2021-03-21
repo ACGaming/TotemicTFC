@@ -7,6 +7,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+
 import pokefenn.totemic.api.TotemicRegistries;
 import pokefenn.totemic.api.totem.TotemEffect;
 import pokefenn.totemic.lib.WoodVariant;
@@ -39,6 +40,25 @@ public class TileTotemPole extends TileTotemic
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound tag)
+    {
+        super.readFromNBT(tag);
+        woodType = WoodVariant.fromID(tag.getByte("wood"));
+        if (tag.hasKey("effect", Constants.NBT.TAG_STRING))
+            effect = TotemicRegistries.totemEffects().getValue(new ResourceLocation(tag.getString("effect")));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag)
+    {
+        tag = super.writeToNBT(tag);
+        tag.setByte("wood", (byte) woodType.getID());
+        if (effect != null)
+            tag.setString("effect", effect.getRegistryName().toString());
+        return tag;
+    }
+
+    @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
@@ -54,25 +74,6 @@ public class TileTotemPole extends TileTotemic
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
     {
         readFromNBT(pkt.getNbtCompound());
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tag)
-    {
-        super.readFromNBT(tag);
-        woodType = WoodVariant.fromID(tag.getByte("wood"));
-        if(tag.hasKey("effect", Constants.NBT.TAG_STRING))
-            effect = TotemicRegistries.totemEffects().getValue(new ResourceLocation(tag.getString("effect")));
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag)
-    {
-        tag = super.writeToNBT(tag);
-        tag.setByte("wood", (byte) woodType.getID());
-        if(effect != null)
-            tag.setString("effect", effect.getRegistryName().toString());
-        return tag;
     }
 
 }

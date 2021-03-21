@@ -5,6 +5,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
 import pokefenn.totemic.Totemic;
 
 @EventBusSubscriber(modid = Totemic.MOD_ID)
@@ -23,7 +24,7 @@ public final class ModSounds
     public static void init(RegistryEvent.Register<SoundEvent> event)
     {
         event.getRegistry().registerAll(flute, rattle, drum, windChime, eagleBoneWhistle,
-                baldEagleAmbient, baldEagleHurt, baldEagleDeath);
+            baldEagleAmbient, baldEagleHurt, baldEagleDeath);
     }
 
     private static SoundEvent createSound(String name)

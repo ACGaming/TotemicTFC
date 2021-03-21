@@ -21,7 +21,7 @@
       "trigger": "totemic:perform_ceremony",
       "conditions": {
         "ceremony": "totemic:buffalo_dance"
-      }    
+      }
     },
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",

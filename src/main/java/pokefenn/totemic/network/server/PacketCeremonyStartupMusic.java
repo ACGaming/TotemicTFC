@@ -1,11 +1,12 @@
 package pokefenn.totemic.network.server;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.registries.ForgeRegistry;
+
+import io.netty.buffer.ByteBuf;
 import pokefenn.totemic.api.TotemicRegistries;
 import pokefenn.totemic.api.music.MusicInstrument;
 import pokefenn.totemic.network.CSynchronizedMessageHandler;
@@ -64,10 +65,10 @@ public class PacketCeremonyStartupMusic implements IMessage
         protected void handleClient(PacketCeremonyStartupMusic msg)
         {
             TileEntity tile = Minecraft.getMinecraft().world.getTileEntity(msg.pos);
-            if(tile instanceof TileTotemBase)
+            if (tile instanceof TileTotemBase)
             {
                 TileTotemBase totem = (TileTotemBase) tile;
-                if(totem.getState() instanceof StateStartup)
+                if (totem.getState() instanceof StateStartup)
                     ((StateStartup) totem.getState()).handleMusicPacket(msg);
             }
         }

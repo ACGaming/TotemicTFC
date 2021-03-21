@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
@@ -27,24 +26,24 @@ public class PlayerRender
     @SubscribeEvent
     public void onPlayerRender(RenderPlayerEvent.Post event)
     {
-        AbstractClientPlayer player = (AbstractClientPlayer)event.getEntityPlayer();
-        if(ljfaUUID.equals(player.getUniqueID()) && annaSkinId.equals(player.getLocationSkin().getResourcePath()))
+        AbstractClientPlayer player = (AbstractClientPlayer) event.getEntityPlayer();
+        if (ljfaUUID.equals(player.getUniqueID()) && annaSkinId.equals(player.getLocationSkin().getResourcePath()))
         {
             float yaw = player.prevRotationYawHead + (player.rotationYawHead - player.prevRotationYawHead) * event.getPartialRenderTick();
             float pitch = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * event.getPartialRenderTick();
-            float pitchZ = (float)Math.toDegrees(event.getRenderer().getMainModel().bipedHead.rotateAngleZ);
+            float pitchZ = (float) Math.toDegrees(event.getRenderer().getMainModel().bipedHead.rotateAngleZ);
 
             GlStateManager.pushMatrix();
-            if(player.isSneaking())
+            if (player.isSneaking())
                 GlStateManager.translate(0, -0.25F, 0);
             GlStateManager.translate(event.getX(), event.getY() + 1.501F * 0.9375F, event.getZ());
             GlStateManager.rotate(pitchZ, 0, 0, 1);
             GlStateManager.rotate(yaw - 90, 0, -1, 0);
             GlStateManager.rotate(pitch + 180, 0, 0, 1);
-            if(!player.inventory.armorItemInSlot(3).isEmpty())
+            if (!player.inventory.armorItemInSlot(3).isEmpty())
                 GlStateManager.translate(0.01F, -0.04F, 0);
 
-            if(annaHatDisplayList == 0)
+            if (annaHatDisplayList == 0)
                 createAnnaHatDisplayList();
             GlStateManager.callList(annaHatDisplayList);
 
@@ -81,12 +80,12 @@ public class PlayerRender
 
         //Cylinder mantle
         buf.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_NORMAL);
-        for(int i = 0; i <= points; i++)
+        for (int i = 0; i <= points; i++)
         {
-            float angle = 2 * (float) Math.PI * (i + 0.5F)/points;
+            float angle = 2 * (float) Math.PI * (i + 0.5F) / points;
             float cos = (float) Math.cos(angle);
             float sin = (float) Math.sin(angle);
-            buf.pos(inner * cos, 0,      inner * sin).normal(0.95F * cos, -0.31225F, 0.95F * sin).endVertex();
+            buf.pos(inner * cos, 0, inner * sin).normal(0.95F * cos, -0.31225F, 0.95F * sin).endVertex();
             buf.pos(inner * cos, height, inner * sin).normal(0.95F * cos, -0.31225F, 0.95F * sin).endVertex();
         }
         tes.draw();
@@ -94,7 +93,7 @@ public class PlayerRender
         //Cylinder top
         buf.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_NORMAL);
         buf.pos(0, 0, 0).normal(0, -1, 0).endVertex();
-        for(int i = 0; i <= points; i++)
+        for (int i = 0; i <= points; i++)
         {
             float angle = 2 * (float) Math.PI * (i + 0.5F) / points;
             buf.pos(inner * Math.cos(angle), 0, inner * Math.sin(angle)).normal(0, -1, 0).endVertex();
@@ -104,9 +103,9 @@ public class PlayerRender
         //Outer part
         buf.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_NORMAL);
         buf.pos(0, height, 0).normal(0, -1, 0).endVertex();
-        for(int i = 0; i <= points; i++)
+        for (int i = 0; i <= points; i++)
         {
-            float angle = 2 * (float) Math.PI * (i + 0.5F)/points;
+            float angle = 2 * (float) Math.PI * (i + 0.5F) / points;
             buf.pos(outer * Math.cos(angle), height, outer * Math.sin(angle)).normal(0, -1, 0).endVertex();
         }
         tes.draw();
@@ -114,9 +113,9 @@ public class PlayerRender
         //Bottom
         buf.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_NORMAL);
         buf.pos(0, height, 0).normal(0, 1, 0).endVertex();
-        for(int i = 0; i <= points; i++)
+        for (int i = 0; i <= points; i++)
         {
-            float angle = 2 * (float) Math.PI * -(i + 0.5F)/points;
+            float angle = 2 * (float) Math.PI * -(i + 0.5F) / points;
             buf.pos(outer * Math.cos(angle), height, outer * Math.sin(angle)).normal(0, 1, 0).endVertex();
         }
         tes.draw();

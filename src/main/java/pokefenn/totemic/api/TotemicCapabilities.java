@@ -2,6 +2,7 @@ package pokefenn.totemic.api;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+
 import pokefenn.totemic.api.music.DefaultMusicAcceptor;
 import pokefenn.totemic.api.music.MusicAcceptor;
 

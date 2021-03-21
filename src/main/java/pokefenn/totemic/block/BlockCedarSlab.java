@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Random;
 
 import com.google.common.base.Optional;
-
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -20,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.lib.Strings;
 
@@ -38,7 +38,7 @@ public abstract class BlockCedarSlab extends BlockSlab
         setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
         Blocks.FIRE.setFireInfo(this, 5, 20);
 
-        if(!isDouble())
+        if (!isDouble())
             setDefaultState(blockState.getBaseState().withProperty(HALF, EnumBlockHalf.BOTTOM));
     }
 
@@ -61,6 +61,25 @@ public abstract class BlockCedarSlab extends BlockSlab
     }
 
     @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        IBlockState state = getDefaultState();
+        if (!isDouble())
+            return state.withProperty(HALF, (meta & 8) == 0 ? EnumBlockHalf.BOTTOM : EnumBlockHalf.TOP);
+        else
+            return state;
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        if (!isDouble() && state.getValue(HALF) == EnumBlockHalf.TOP)
+            return 8;
+        else
+            return 0;
+    }
+
+    @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return Item.getItemFromBlock(ModBlocks.cedar_slab);
@@ -78,37 +97,18 @@ public abstract class BlockCedarSlab extends BlockSlab
         return isDouble() ? new BlockStateContainer(this, VARIANT) : new BlockStateContainer(this, HALF, VARIANT);
     }
 
-    @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        if(!isDouble() && state.getValue(HALF) == EnumBlockHalf.TOP)
-            return 8;
-        else
-            return 0;
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
-        IBlockState state = getDefaultState();
-        if(!isDouble())
-            return state.withProperty(HALF, (meta & 8) == 0 ? EnumBlockHalf.BOTTOM : EnumBlockHalf.TOP);
-        else
-            return state;
-    }
-
     //Property that can only take one value (Integer.valueOf(0)). Necessary for BlockSlab to work.
     //Replace with PropertyEnum if we introduce more than one type of cedar wood.
     private static class PropertyVoid extends PropertyHelper<Integer>
     {
-        protected PropertyVoid(String name)
-        {
-            super(name, Integer.class);
-        }
-
         static PropertyVoid create(String name)
         {
             return new PropertyVoid(name);
+        }
+
+        protected PropertyVoid(String name)
+        {
+            super(name, Integer.class);
         }
 
         @Override

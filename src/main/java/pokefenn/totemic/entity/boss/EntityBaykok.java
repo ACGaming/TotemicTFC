@@ -1,7 +1,6 @@
 package pokefenn.totemic.entity.boss;
 
 import java.util.Arrays;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -24,13 +23,14 @@ import net.minecraft.world.BossInfo;
 import net.minecraft.world.BossInfoServer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.entity.projectile.EntityInvisArrow;
 import pokefenn.totemic.init.ModItems;
 import pokefenn.totemic.lib.Resources;
 
 public class EntityBaykok extends EntityMob implements IRangedAttackMob
 {
-    private final BossInfoServer bossInfo = (BossInfoServer)new BossInfoServer(getDisplayName(), BossInfo.Color.WHITE, BossInfo.Overlay.PROGRESS).setDarkenSky(true);
+    private final BossInfoServer bossInfo = (BossInfoServer) new BossInfoServer(getDisplayName(), BossInfo.Color.WHITE, BossInfo.Overlay.PROGRESS).setDarkenSky(true);
 
     public EntityBaykok(World world)
     {
@@ -45,50 +45,13 @@ public class EntityBaykok extends EntityMob implements IRangedAttackMob
     }
 
     @Override
-    protected void initEntityAI()
-    {
-        ((PathNavigateGround) getNavigator()).setCanSwim(true);
-        tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(2, new EntityAIAttackRanged(this, 1.0, 12, 30, 40.0F));
-        tasks.addTask(5, new EntityAIWander(this, 1.0));
-        tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        tasks.addTask(7, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, false, false));
-    }
-
-    @Override
-    protected void applyEntityAttributes()
-    {
-        super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(200);
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4);
-        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(40);
-    }
-
-    @Nullable
-    @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
-    {
-        setEquipmentBasedOnDifficulty(difficulty);
-        return super.onInitialSpawn(difficulty, livingdata);
-    }
-
-    @Override
-    protected void updateAITasks()
-    {
-        super.updateAITasks();
-        bossInfo.setPercent(getHealth() / getMaxHealth());
-    }
-
-    @Override
     public void attackEntityWithRangedAttack(EntityLivingBase target, float distanceFactor)
     {
         EntityInvisArrow arrow = new EntityInvisArrow(world, this);
         double dx = target.posX - this.posX;
         double dy = target.getEntityBoundingBox().minY + target.height / 3.0F - arrow.posY;
         double dz = target.posZ - this.posZ;
-        double xzdist = MathHelper.sqrt(dx*dx + dz*dz);
+        double xzdist = MathHelper.sqrt(dx * dx + dz * dz);
         float velocity = 2.0F + 1.0F * distanceFactor;
         float inaccuracy = 4.5F - world.getDifficulty().getDifficultyId();
         arrow.shoot(dx, dy + 0.125 * xzdist, dz, velocity, inaccuracy);
@@ -99,46 +62,8 @@ public class EntityBaykok extends EntityMob implements IRangedAttackMob
     }
 
     @Override
-    protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty)
+    public void setSwingingArms(boolean swingingArms)
     {
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.baykok_bow));
-    }
-
-    @Override
-    protected ResourceLocation getLootTable()
-    {
-        return Resources.LOOT_BAYKOK;
-    }
-
-    @Override
-    protected void despawnEntity()
-    {
-        //No despawning
-        idleTime = 0;
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return SoundEvents.ENTITY_SKELETON_AMBIENT;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSrc)
-    {
-        return SoundEvents.ENTITY_SKELETON_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound()
-    {
-        return SoundEvents.ENTITY_SKELETON_DEATH;
-    }
-
-    @Override
-    protected float getSoundPitch()
-    {
-        return super.getSoundPitch() - 0.15F;
     }
 
     @Override
@@ -156,7 +81,82 @@ public class EntityBaykok extends EntityMob implements IRangedAttackMob
     }
 
     @Override
-    public void setSwingingArms(boolean swingingArms)
+    protected void initEntityAI()
     {
+        ((PathNavigateGround) getNavigator()).setCanSwim(true);
+        tasks.addTask(0, new EntityAISwimming(this));
+        tasks.addTask(2, new EntityAIAttackRanged(this, 1.0, 12, 30, 40.0F));
+        tasks.addTask(5, new EntityAIWander(this, 1.0));
+        tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        tasks.addTask(7, new EntityAILookIdle(this));
+        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, false, false));
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound()
+    {
+        return SoundEvents.ENTITY_SKELETON_AMBIENT;
+    }
+
+    @Override
+    protected ResourceLocation getLootTable()
+    {
+        return Resources.LOOT_BAYKOK;
+    }
+
+    @Override
+    protected void despawnEntity()
+    {
+        //No despawning
+        idleTime = 0;
+    }
+
+    @Override
+    protected void updateAITasks()
+    {
+        super.updateAITasks();
+        bossInfo.setPercent(getHealth() / getMaxHealth());
+    }
+
+    @Override
+    protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty)
+    {
+        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.baykok_bow));
+    }
+
+    @Nullable
+    @Override
+    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
+    {
+        setEquipmentBasedOnDifficulty(difficulty);
+        return super.onInitialSpawn(difficulty, livingdata);
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSrc)
+    {
+        return SoundEvents.ENTITY_SKELETON_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound()
+    {
+        return SoundEvents.ENTITY_SKELETON_DEATH;
+    }
+
+    @Override
+    protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes();
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(200);
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4);
+        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(40);
+    }
+
+    @Override
+    protected float getSoundPitch()
+    {
+        return super.getSoundPitch() - 0.15F;
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.music.MusicAPI;
 import pokefenn.totemic.init.ModBlocks;
@@ -29,35 +30,35 @@ public class TileWindChime extends TileTotemic implements ITickable
     @Override
     public void update()
     {
-        if(isCongested)
+        if (isCongested)
         {
-            if(world.isRemote)
+            if (world.isRemote)
                 congestionParticles();
             return;
         }
 
-        if(isPlaying)
+        if (isPlaying)
         {
-            if(playingTimeLeft % 40 == 0)
+            if (playingTimeLeft % 40 == 0)
             {
-                if(!world.isRemote)
+                if (!world.isRemote)
                     playMusic();
                 else
                     soundAndParticles();
             }
 
             playingTimeLeft--;
-            if(playingTimeLeft <= 0)
+            if (playingTimeLeft <= 0)
             {
                 setNotPlaying();
             }
         }
         else
         {
-            if(!world.isRemote)
+            if (!world.isRemote)
             {
                 cooldown--;
-                if(cooldown <= 0)
+                if (cooldown <= 0)
                 {
                     //Not sure if we need to check here
                     /*if(checkForCongestion())
@@ -72,30 +73,107 @@ public class TileWindChime extends TileTotemic implements ITickable
         }
     }
 
-    @Override
-    public void onLoad()
+    public void setNotPlaying()
     {
-        if(!world.isRemote && checkForCongestion())
+        isPlaying = false;
+        if (!world.isRemote)
+            cooldown = getRandomCooldown(world.rand);
+        markDirty();
+    }
+
+    public boolean isCongested()
+    {
+        return isCongested;
+    }
+
+    public void tryUncongest()
+    {
+        if (isCongested)
         {
-            isCongested = true;
+            isCongested = checkForCongestion();
+            if (!isCongested)
+                markForUpdate();
         }
+    }
+
+    public boolean isPlaying()
+    {
+        return isPlaying;
     }
 
     public void setPlaying(int time)
     {
         isPlaying = true;
         playingTimeLeft = time;
-        if(!world.isRemote)
+        if (!world.isRemote)
             world.addBlockEvent(pos, ModBlocks.wind_chime, 0, time);
         markDirty();
     }
 
-    public void setNotPlaying()
+    @Override
+    public void readFromNBT(NBTTagCompound tag)
     {
-        isPlaying = false;
-        if(!world.isRemote)
-            cooldown = getRandomCooldown(world.rand);
-        markDirty();
+        super.readFromNBT(tag);
+        isPlaying = tag.getBoolean("isPlaying");
+        if (isPlaying)
+            playingTimeLeft = tag.getInteger("playingTimeLeft");
+        else
+            cooldown = tag.getInteger("cooldown");
+    }
+
+    //NBT for saving to disk
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag)
+    {
+        tag = super.writeToNBT(tag);
+        tag.setBoolean("isPlaying", isPlaying);
+        if (isPlaying)
+            tag.setInteger("playingTimeLeft", playingTimeLeft);
+        else
+            tag.setInteger("cooldown", cooldown);
+        return tag;
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket()
+    {
+        return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
+    }
+
+    //NBT for client synchronization
+    @Override
+    public NBTTagCompound getUpdateTag()
+    {
+        NBTTagCompound tag = super.getUpdateTag();
+        tag.setBoolean("isPlaying", isPlaying);
+        if (isPlaying)
+            tag.setInteger("playingTimeLeft", playingTimeLeft);
+        tag.setBoolean("isCongested", isCongested);
+        return tag;
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
+    {
+        handleUpdateTag(pkt.getNbtCompound());
+    }
+
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag)
+    {
+        isPlaying = tag.getBoolean("isPlaying");
+        if (isPlaying)
+            playingTimeLeft = tag.getInteger("playingTimeLeft");
+        isCongested = tag.getBoolean("isCongested");
+    }
+
+    @Override
+    public void onLoad()
+    {
+        if (!world.isRemote && checkForCongestion())
+        {
+            isCongested = true;
+        }
     }
 
     private int getRandomCooldown(Random rand)
@@ -107,34 +185,14 @@ public class TileWindChime extends TileTotemic implements ITickable
     {
         //FIXME: Crude implementation. Can be cheated and does does not take into account which Totem Bases the other chimes are attached to.
         int count = 0;
-        for(TileWindChime chime: EntityUtil.getTileEntitiesInRange(TileWindChime.class, world, pos, 8, 8))
+        for (TileWindChime chime : EntityUtil.getTileEntitiesInRange(TileWindChime.class, world, pos, 8, 8))
         {
-            if(chime != this && !chime.isCongested)
+            if (chime != this && !chime.isCongested)
                 count++;
-            if(count > 2)
+            if (count > 2)
                 return true;
         }
         return false;
-    }
-
-    public boolean isCongested()
-    {
-        return isCongested;
-    }
-
-    public void tryUncongest()
-    {
-        if(isCongested)
-        {
-            isCongested = checkForCongestion();
-            if(!isCongested)
-                markForUpdate();
-        }
-    }
-
-    public boolean isPlaying()
-    {
-        return isPlaying;
     }
 
     private void playMusic()
@@ -142,7 +200,7 @@ public class TileWindChime extends TileTotemic implements ITickable
         IBlockState upState = world.getBlockState(pos.up());
         int baseAmount = ModContent.windChime.getBaseOutput();
         int bonus = upState.getBlock().isLeaves(upState, world, pos.up())
-                ? world.rand.nextInt(3) : 0;
+            ? world.rand.nextInt(3) : 0;
         Totemic.api.music().playMusic(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null, ModContent.windChime, MusicAPI.DEFAULT_RANGE, baseAmount + bonus);
     }
 
@@ -150,74 +208,17 @@ public class TileWindChime extends TileTotemic implements ITickable
     private void soundAndParticles()
     {
         world.playSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                ModSounds.windChime, SoundCategory.BLOCKS, 0.5f, 1.0f, true);
+            ModSounds.windChime, SoundCategory.BLOCKS, 0.5f, 1.0f, true);
         world.spawnParticle(EnumParticleTypes.NOTE, pos.getX() + 0.5, pos.getY() - 0.8, pos.getZ() + 0.5, 0, 0, 0);
     }
 
     @SideOnly(Side.CLIENT)
     private void congestionParticles()
     {
-        if(world.getTotalWorldTime() % 2 == 0)
+        if (world.getTotalWorldTime() % 2 == 0)
         {
             Random rand = world.rand;
             world.spawnParticle(EnumParticleTypes.CRIT, pos.getX() + rand.nextFloat(), pos.getY() + rand.nextFloat(), pos.getZ() + rand.nextFloat(), 0, 0, 0);
         }
-    }
-
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
-    {
-        return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
-    {
-        handleUpdateTag(pkt.getNbtCompound());
-    }
-
-    //NBT for client synchronization
-    @Override
-    public NBTTagCompound getUpdateTag()
-    {
-        NBTTagCompound tag = super.getUpdateTag();
-        tag.setBoolean("isPlaying", isPlaying);
-        if(isPlaying)
-            tag.setInteger("playingTimeLeft", playingTimeLeft);
-        tag.setBoolean("isCongested", isCongested);
-        return tag;
-    }
-
-    @Override
-    public void handleUpdateTag(NBTTagCompound tag)
-    {
-        isPlaying = tag.getBoolean("isPlaying");
-        if(isPlaying)
-            playingTimeLeft = tag.getInteger("playingTimeLeft");
-        isCongested = tag.getBoolean("isCongested");
-    }
-
-    //NBT for saving to disk
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag)
-    {
-        tag = super.writeToNBT(tag);
-        tag.setBoolean("isPlaying", isPlaying);
-        if(isPlaying)
-            tag.setInteger("playingTimeLeft", playingTimeLeft);
-        else
-            tag.setInteger("cooldown", cooldown);
-        return tag;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tag)
-    {
-        super.readFromNBT(tag);
-        isPlaying = tag.getBoolean("isPlaying");
-        if(isPlaying)
-            playingTimeLeft = tag.getInteger("playingTimeLeft");
-        else
-            cooldown = tag.getInteger("cooldown");
     }
 }

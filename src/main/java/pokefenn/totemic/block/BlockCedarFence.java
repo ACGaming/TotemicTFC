@@ -6,6 +6,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
+
 import pokefenn.totemic.lib.Strings;
 
 public class BlockCedarFence extends BlockFence

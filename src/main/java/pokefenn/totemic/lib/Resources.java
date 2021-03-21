@@ -1,6 +1,7 @@
 package pokefenn.totemic.lib;
 
 import net.minecraft.util.ResourceLocation;
+
 import pokefenn.totemic.Totemic;
 
 public final class Resources

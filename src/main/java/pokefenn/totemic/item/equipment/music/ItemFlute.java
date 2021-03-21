@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.client.resources.I18n;
@@ -25,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.TotemicAPI;
 import pokefenn.totemic.api.music.ItemInstrument;
@@ -50,15 +50,6 @@ public class ItemFlute extends ItemInstrument
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
-    {
-        if (stack.getItemDamage() == 1)
-            tooltip.add(I18n.format(getUnlocalizedName() +".tooltip1"));
-        tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip0"));
-    }
-
-    @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
     {
         ItemStack stack = player.getHeldItem(hand);
@@ -74,9 +65,44 @@ public class ItemFlute extends ItemInstrument
 
     @Override
     @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
+    {
+        if (stack.getItemDamage() == 1)
+            tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip1"));
+        tooltip.add(I18n.format(getUnlocalizedName() + ".tooltip0"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean hasEffect(ItemStack stack)
+    {
+        return stack.getItemDamage() == 1;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
     public EnumRarity getRarity(ItemStack stack)
     {
         return stack.getItemDamage() == 1 ? EnumRarity.UNCOMMON : EnumRarity.COMMON;
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
+    {
+        if (isInCreativeTab(tab))
+        {
+            list.add(new ItemStack(this, 1, 0));
+            list.add(new ItemStack(this, 1, 1));
+        }
+    }
+
+    @Override
+    public String getUnlocalizedName(ItemStack stack)
+    {
+        if (stack.getItemDamage() == 1)
+            return "item." + Strings.RESOURCE_PREFIX + "infused_flute";
+        else
+            return "item." + Strings.RESOURCE_PREFIX + "flute";
     }
 
     @Override
@@ -92,39 +118,13 @@ public class ItemFlute extends ItemInstrument
     private void temptEntities(World world, double x, double y, double z)
     {
         for (EntityLiving entity : EntityUtil.listEntitiesInRange(EntityLiving.class, world, x, y, z, 2, 2,
-                entity -> ((entity instanceof EntityAnimal && entity.getNavigator() instanceof PathNavigateGround) || entity instanceof EntityVillager)
-                          && !temptedEntities.contains(entity)))
+            entity -> ((entity instanceof EntityAnimal && entity.getNavigator() instanceof PathNavigateGround) || entity instanceof EntityVillager)
+                && !temptedEntities.contains(entity)))
         {
             double speed = (entity instanceof EntityAnimal) ? 1 : 0.5;
             entity.targetTasks.addTask(5, new EntityAITempt((EntityCreature) entity, speed, this, false));
 
             temptedEntities.add(entity);
         }
-    }
-
-    @Override
-    public String getUnlocalizedName(ItemStack stack)
-    {
-        if (stack.getItemDamage() == 1)
-            return "item." + Strings.RESOURCE_PREFIX + "infused_flute";
-        else
-            return "item." + Strings.RESOURCE_PREFIX + "flute";
-    }
-
-    @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
-    {
-        if (isInCreativeTab(tab))
-        {
-            list.add(new ItemStack(this, 1, 0));
-            list.add(new ItemStack(this, 1, 1));
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean hasEffect(ItemStack stack)
-    {
-        return stack.getItemDamage() == 1;
     }
 }

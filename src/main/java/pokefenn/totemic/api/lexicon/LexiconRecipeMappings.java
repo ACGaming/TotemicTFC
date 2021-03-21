@@ -36,13 +36,14 @@ public final class LexiconRecipeMappings
 
     /**
      * Maps the given stack to the given page of the entry
+     *
      * @param force Add the mapping even if one already exists for this stack
      */
     public static void map(ItemStack stack, LexiconEntry entry, int page, boolean force)
     {
         String str = stackToString(stack);
 
-        if(force || !mappings.containsKey(str))
+        if (force || !mappings.containsKey(str))
             mappings.put(str, new EntryData(entry, page));
     }
 
@@ -53,7 +54,7 @@ public final class LexiconRecipeMappings
 
     private static String stackToString(ItemStack stack)
     {
-        if(stack.getItem() instanceof IRecipeKeyProvider)
+        if (stack.getItem() instanceof IRecipeKeyProvider)
             return ((IRecipeKeyProvider) stack.getItem()).getKey(stack);
 
         return stack.getItem().getRegistryName() + "@" + stack.getItemDamage();

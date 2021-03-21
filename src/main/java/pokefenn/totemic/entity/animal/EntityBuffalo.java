@@ -8,15 +8,16 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.AbstractSkeleton;
-import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import net.dries007.tfc.objects.entity.animal.EntityCowTFC;
 import pokefenn.totemic.lib.Resources;
 
-public class EntityBuffalo extends EntityCow
+public class EntityBuffalo extends EntityCowTFC
 {
     //public boolean isSheared = false;
 
@@ -24,6 +25,12 @@ public class EntityBuffalo extends EntityCow
     {
         super(world);
         setSize(1.35F, 1.95F);
+    }
+
+    @Override
+    public EntityBuffalo createChild(EntityAgeable var1)
+    {
+        return new EntityBuffalo(world);
     }
 
     @Override
@@ -39,14 +46,14 @@ public class EntityBuffalo extends EntityCow
         tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
         tasks.addTask(8, new EntityAILookIdle(this));
         targetTasks.addTask(1,
-                new EntityAIHurtByTarget(this, false)
+            new EntityAIHurtByTarget(this, false)
+            {
+                @Override
+                protected boolean isSuitableTarget(@Nullable EntityLivingBase target, boolean includeInvincibles)
                 {
-                    @Override
-                    protected boolean isSuitableTarget(@Nullable EntityLivingBase target, boolean includeInvincibles)
-                    {
-                        return target instanceof AbstractSkeleton && super.isSuitableTarget(target, includeInvincibles);
-                    }
-                });
+                    return target instanceof AbstractSkeleton && super.isSuitableTarget(target, includeInvincibles);
+                }
+            });
     }
 
     @Override
@@ -59,29 +66,15 @@ public class EntityBuffalo extends EntityCow
     }
 
     @Override
-    public boolean attackEntityAsMob(Entity entity)
+    protected ResourceLocation getLootTable()
     {
-        boolean attacked = entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
-        if(attacked)
-        {
-            if(entity instanceof EntityLivingBase)
-                ((EntityLivingBase) entity).knockBack(this, 0.75F, Math.sin(Math.toRadians(rotationYaw)), -Math.cos(Math.toRadians(rotationYaw)));
-
-            applyEnchantments(this, entity);
-        }
-        return attacked;
+        return Resources.LOOT_BUFFALO;
     }
 
     @Override
     protected float getSoundVolume()
     {
         return 0.4F;
-    }
-
-    @Override
-    protected float getSoundPitch()
-    {
-        return super.getSoundPitch() - 0.2F;
     }
 
     /*@Override
@@ -99,9 +92,9 @@ public class EntityBuffalo extends EntityCow
     }*/
 
     @Override
-    protected ResourceLocation getLootTable()
+    protected float getSoundPitch()
     {
-        return Resources.LOOT_BUFFALO;
+        return super.getSoundPitch() - 0.2F;
     }
 
     //TODO
@@ -128,9 +121,17 @@ public class EntityBuffalo extends EntityCow
     }*/
 
     @Override
-    public EntityBuffalo createChild(EntityAgeable var1)
+    public boolean attackEntityAsMob(Entity entity)
     {
-        return new EntityBuffalo(world);
+        boolean attacked = entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+        if (attacked)
+        {
+            if (entity instanceof EntityLivingBase)
+                ((EntityLivingBase) entity).knockBack(this, 0.75F, Math.sin(Math.toRadians(rotationYaw)), -Math.cos(Math.toRadians(rotationYaw)));
+
+            applyEnchantments(this, entity);
+        }
+        return attacked;
     }
 
     @Override

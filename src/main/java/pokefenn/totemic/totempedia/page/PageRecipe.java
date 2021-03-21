@@ -6,7 +6,6 @@
  * Botania is Open Source and distributed under a
  * Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License
  * (http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB)
- *
  */
 package pokefenn.totemic.totempedia.page;
 
@@ -16,7 +15,6 @@ import java.util.List;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -28,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.api.internal.IGuiLexiconEntry;
 import pokefenn.totemic.api.lexicon.LexiconPage;
 import pokefenn.totemic.api.lexicon.LexiconRecipeMappings;
@@ -36,12 +35,11 @@ import pokefenn.totemic.client.gui.GuiLexiconEntry;
 
 public class PageRecipe extends LexiconPage
 {
+    static boolean mouseDownLastTick = false;
     protected int relativeMouseX, relativeMouseY;
     protected ItemStack tooltipStack = ItemStack.EMPTY;
     protected ItemStack tooltipContainerStack = ItemStack.EMPTY;
     protected boolean tooltipEntry;
-
-    static boolean mouseDownLastTick = false;
 
     public PageRecipe(String unlocalizedName)
     {
@@ -63,16 +61,16 @@ public class PageRecipe extends LexiconPage
         int y = gui.getTop() + height - 40;
         PageText.renderText(x, y, width, height, getUnlocalizedName());
 
-        if(!tooltipStack.isEmpty())
+        if (!tooltipStack.isEmpty())
         {
             List<String> tooltipData = tooltipStack.getTooltip(Minecraft.getMinecraft().player, TooltipFlags.NORMAL);
             List<String> parsedTooltip = new ArrayList<>();
             boolean first = true;
 
-            for(String s : tooltipData)
+            for (String s : tooltipData)
             {
                 String s_ = s;
-                if(!first)
+                if (!first)
                     s_ = TextFormatting.GRAY + s;
                 parsedTooltip.add(s_);
                 first = false;
@@ -82,13 +80,13 @@ public class PageRecipe extends LexiconPage
 
             int tooltipY = 8 + tooltipData.size() * 11;
 
-            if(tooltipEntry)
+            if (tooltipEntry)
             {
                 TotemicRenderHelper.renderTooltipOrange(mx, my + tooltipY, Arrays.asList(TextFormatting.GRAY + I18n.format("totemicmisc.clickToRecipe")));
                 tooltipY += 18;
             }
 
-            if(!tooltipContainerStack.isEmpty())
+            if (!tooltipContainerStack.isEmpty())
                 TotemicRenderHelper.renderTooltipGreen(mx, my + tooltipY, Arrays.asList(TextFormatting.AQUA + I18n.format("totemicmisc.craftingContainer"), tooltipContainerStack.getDisplayName()));
         }
 
@@ -106,12 +104,12 @@ public class PageRecipe extends LexiconPage
     @SideOnly(Side.CLIENT)
     public void renderItemAtAngle(IGuiLexiconEntry gui, int angle, ItemStack stack)
     {
-        if(stack.isEmpty())
+        if (stack.isEmpty())
             return;
 
         ItemStack workStack = stack.copy();
 
-        if(workStack.getItemDamage() == Short.MAX_VALUE || workStack.getItemDamage() == -1)
+        if (workStack.getItemDamage() == Short.MAX_VALUE || workStack.getItemDamage() == -1)
             workStack.setItemDamage(0);
 
         angle -= 90;
@@ -125,12 +123,12 @@ public class PageRecipe extends LexiconPage
     @SideOnly(Side.CLIENT)
     public void renderItemAtGridPos(IGuiLexiconEntry gui, int x, int y, ItemStack stack, boolean accountForContainer)
     {
-        if(stack.isEmpty())
+        if (stack.isEmpty())
             return;
 
         ItemStack workStack = stack.copy();
 
-        if(workStack.getItemDamage() == Short.MAX_VALUE || workStack.getItemDamage() == -1)
+        if (workStack.getItemDamage() == Short.MAX_VALUE || workStack.getItemDamage() == -1)
             workStack.setItemDamage(0);
 
         int xPos = gui.getLeft() + x * 29 + 7 + (y == 0 && x == 3 ? 10 : 0);
@@ -156,16 +154,16 @@ public class PageRecipe extends LexiconPage
         RenderHelper.disableStandardItemLighting();
         GlStateManager.popMatrix();
 
-        if(relativeMouseX >= xPos && relativeMouseY >= yPos && relativeMouseX <= xPos + 16 && relativeMouseY <= yPos + 16)
+        if (relativeMouseX >= xPos && relativeMouseY >= yPos && relativeMouseX <= xPos + 16 && relativeMouseY <= yPos + 16)
         {
             tooltipStack = stack;
 
             LexiconRecipeMappings.EntryData data = LexiconRecipeMappings.getDataForStack(tooltipStack);
-            if(data != null && (data.entry != gui.getEntry() || data.page != gui.getPageOn()))
+            if (data != null && (data.entry != gui.getEntry() || data.page != gui.getPageOn()))
             {
                 tooltipEntry = true;
 
-                if(!mouseDownLastTick && mouseDown && GuiScreen.isShiftKeyDown())
+                if (!mouseDownLastTick && mouseDown && GuiScreen.isShiftKeyDown())
                 {
                     GuiLexiconEntry newGui = new GuiLexiconEntry(data.entry, (GuiScreen) gui);
                     newGui.page = data.page;
@@ -173,10 +171,10 @@ public class PageRecipe extends LexiconPage
                 }
             }
 
-            if(accountForContainer)
+            if (accountForContainer)
             {
                 ItemStack containerStack = stack.getItem().getContainerItem(stack);
-                if(!containerStack.isEmpty() && !containerStack.isItemEqualIgnoreDurability(stack))
+                if (!containerStack.isEmpty() && !containerStack.isItemEqualIgnoreDurability(stack))
                     tooltipContainerStack = containerStack;
             }
         }

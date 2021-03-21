@@ -2,6 +2,7 @@ package pokefenn.totemic.tileentity.music;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+
 import pokefenn.totemic.tileentity.TileTotemic;
 
 public class TileDrum extends TileTotemic implements ITickable
@@ -17,19 +18,27 @@ public class TileDrum extends TileTotemic implements ITickable
          * Also a drum beater item so when you hit the drum it pounces extra music.
          */
 
-        if(!world.isRemote)
+        if (!world.isRemote)
         {
-            if(!canPlay)
+            if (!canPlay)
             {
                 currentTime++;
             }
 
-            if(currentTime > 20)
+            if (currentTime > 20)
             {
                 currentTime = 0;
                 canPlay = true;
             }
         }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbtTagCompound)
+    {
+        super.readFromNBT(nbtTagCompound);
+        currentTime = nbtTagCompound.getInteger("currentTime");
+        canPlay = nbtTagCompound.getBoolean("canPlay");
     }
 
     @Override
@@ -39,13 +48,5 @@ public class TileDrum extends TileTotemic implements ITickable
         tag.setInteger("currentTime", currentTime);
         tag.setBoolean("canPlay", canPlay);
         return tag;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbtTagCompound)
-    {
-        super.readFromNBT(nbtTagCompound);
-        currentTime = nbtTagCompound.getInteger("currentTime");
-        canPlay = nbtTagCompound.getBoolean("canPlay");
     }
 }

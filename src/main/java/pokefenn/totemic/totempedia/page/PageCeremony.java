@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -15,6 +14,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.internal.IGuiLexiconEntry;
 import pokefenn.totemic.api.music.MusicInstrument;
@@ -46,14 +46,14 @@ public class PageCeremony extends PageRecipe
         List<MusicInstrument> instruments = ceremony.getSelectors();
 
         int instrLeft = gui.getLeft() + gui.getWidth() / 2 - 10 * instruments.size();
-        for(int i = 0; i < instruments.size(); i++)
+        for (int i = 0; i < instruments.size(); i++)
         {
             ItemStack item = instruments.get(i).getItem();
-            if(!item.isEmpty())
+            if (!item.isEmpty())
                 renderItem(gui, instrLeft + 20 * i, gui.getTop() + 31, item, false);
         }
 
-        if(!tooltipStack.isEmpty())
+        if (!tooltipStack.isEmpty())
             TotemicRenderHelper.renderTooltip(mx, my, tooltipStack.getTooltip(mc.player, TooltipFlags.NORMAL));
 
         String text = I18n.format("totemicmisc.musicSelector");

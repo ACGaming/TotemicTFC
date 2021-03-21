@@ -1,13 +1,13 @@
 package pokefenn.totemic.datafix;
 
-import static pokefenn.totemic.Totemic.logger;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.datafix.IFixableData;
 import net.minecraft.world.chunk.NibbleArray;
+
+import static pokefenn.totemic.Totemic.logger;
 
 public class TotemWoodToTileEntity implements IFixableData
 {
@@ -24,11 +24,11 @@ public class TotemWoodToTileEntity implements IFixableData
         NBTTagList tiles = level.getTagList("TileEntities", 10);
         NBTTagList sections = level.getTagList("Sections", 10);
 
-        for(NBTBase t: tiles)
+        for (NBTBase t : tiles)
         {
             NBTTagCompound tile = (NBTTagCompound) t;
             String id = tile.getString("id");
-            if("totemic:totem_base".equals(id) || "totemic:totem_pole".equals(id))
+            if ("totemic:totem_base".equals(id) || "totemic:totem_pole".equals(id))
             {
                 int x = tile.getInteger("x");
                 int y = tile.getInteger("y");
@@ -55,10 +55,10 @@ public class TotemWoodToTileEntity implements IFixableData
     private NBTTagCompound getSectionForYCoord(NBTTagList sections, int y)
     {
         int sectionY = y >> 4;
-        for(NBTBase s: sections)
+        for (NBTBase s : sections)
         {
             NBTTagCompound section = (NBTTagCompound) s;
-            if(section.getInteger("Y") == sectionY)
+            if (section.getInteger("Y") == sectionY)
                 return section;
         }
         logger.warn("No section present for y coordinate {}", y);

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.block.*;
 import pokefenn.totemic.block.music.BlockDrum;
@@ -57,8 +58,16 @@ public final class ModBlocks
             new BlockCedarSapling(),
             new BlockCedarLeaves(),
             new BlockCedarStairs(plank.getDefaultState()),
-            new BlockCedarSlab() { @Override public boolean isDouble() { return false; } },
-            new BlockCedarSlab() { @Override public boolean isDouble() { return true; } },
+            new BlockCedarSlab()
+            {
+                @Override
+                public boolean isDouble() { return false; }
+            },
+            new BlockCedarSlab()
+            {
+                @Override
+                public boolean isDouble() { return true; }
+            },
             new BlockCedarFence(),
             new BlockCedarFenceGate(), //FIXME: Do we really need our own subclasses here?
             new BlockTotemBase(),

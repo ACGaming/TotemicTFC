@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.util.ResourceLocation;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.client.rendering.model.ModelBaykok;
 import pokefenn.totemic.entity.boss.EntityBaykok;

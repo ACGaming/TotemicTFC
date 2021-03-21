@@ -11,7 +11,7 @@ public class ItemUtil
     public static NBTTagCompound getOrCreateTag(ItemStack stack)
     {
         NBTTagCompound tag = stack.getTagCompound();
-        if(tag == null)
+        if (tag == null)
         {
             tag = new NBTTagCompound();
             stack.setTagCompound(tag);

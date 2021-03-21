@@ -1,7 +1,5 @@
 package pokefenn.totemic;
 
-import static pokefenn.totemic.Totemic.logger;
-
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -23,6 +21,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import pokefenn.totemic.client.rendering.entity.BaldEagleRendering;
 import pokefenn.totemic.client.rendering.entity.BaykokRendering;
 import pokefenn.totemic.client.rendering.entity.BuffaloRendering;
@@ -40,10 +39,30 @@ import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.tileentity.music.TileWindChime;
 import pokefenn.totemic.totempedia.LexiconData;
 
+import static pokefenn.totemic.Totemic.logger;
+
 @SuppressWarnings("deprecation")
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
 {
+    private static int getTotemPolePaintColor(int tintIndex)
+    {
+        switch (tintIndex)
+        {
+            case 1:
+                return 0x555555; //Black
+            case 2:
+                return 0xAA5555; //Red
+            case 3:
+                return 0xAA55EE; //Purple
+            case 4:
+                return 0xBBBB66; //Yellow
+
+            default:
+                return -1;
+        }
+    }
+
     @Override
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -69,7 +88,7 @@ public class ClientProxy extends CommonProxy
     public void postInit(FMLPostInitializationEvent event)
     {
         super.postInit(event);
-        if(ModConfig.client.removeNightVisionFlashing && !Loader.isModLoaded("nonvflash"))
+        if (ModConfig.client.removeNightVisionFlashing && !Loader.isModLoaded("nonvflash"))
             removeNightVisionFlashing();
     }
 
@@ -81,28 +100,15 @@ public class ClientProxy extends CommonProxy
         MinecraftForge.EVENT_BUS.register(new PlayerRender());
     }
 
-    private static int getTotemPolePaintColor(int tintIndex)
-    {
-        switch(tintIndex)
-        {
-        case 1: return 0x555555; //Black
-        case 2: return 0xAA5555; //Red
-        case 3: return 0xAA55EE; //Purple
-        case 4: return 0xBBBB66; //Yellow
-
-        default: return -1;
-        }
-    }
-
     private void registerBlockColors()
     {
         Minecraft mc = Minecraft.getMinecraft();
         mc.getBlockColors().registerBlockColorHandler(
-                (state, world, pos, tintIndex) -> ColorizerFoliage.getFoliageColorPine(), ModBlocks.cedar_leaves);
+            (state, world, pos, tintIndex) -> ColorizerFoliage.getFoliageColorPine(), ModBlocks.cedar_leaves);
         mc.getBlockColors().registerBlockColorHandler(
-                (state, world, pos, tintIndex) -> getTotemPolePaintColor(tintIndex), ModBlocks.totem_pole);
+            (state, world, pos, tintIndex) -> getTotemPolePaintColor(tintIndex), ModBlocks.totem_pole);
         mc.getItemColors().registerItemColorHandler(
-                (stack, tintIndex) -> getTotemPolePaintColor(tintIndex), ModBlocks.totem_pole);
+            (stack, tintIndex) -> getTotemPolePaintColor(tintIndex), ModBlocks.totem_pole);
     }
 
     private void initTESRs()
@@ -116,23 +122,23 @@ public class ClientProxy extends CommonProxy
         Minecraft minecraft = Minecraft.getMinecraft();
 
         EntityRenderer oldRenderer = minecraft.entityRenderer;
-        if(oldRenderer.getClass() != EntityRenderer.class)
+        if (oldRenderer.getClass() != EntityRenderer.class)
             logger.warn("Another mod already replaced the EntityRenderer. This might cause problems. Class name: {}", oldRenderer.getClass().getName());
 
         EntityRenderer newRenderer = new EntityRenderer(minecraft, minecraft.getResourceManager())
-                {
-                    @Override
-                    protected float getNightVisionBrightness(EntityLivingBase entity, float partialTicks)
-                    {
-                        int duration = entity.getActivePotionEffect(MobEffects.NIGHT_VISION).getDuration();
-                        if(duration > 200)
-                            return 1.0F;
-                        else if(duration > 100)
-                            return (duration - 100)/100.0F;
-                        else
-                            return 0.0F;
-                    }
-                };
+        {
+            @Override
+            protected float getNightVisionBrightness(EntityLivingBase entity, float partialTicks)
+            {
+                int duration = entity.getActivePotionEffect(MobEffects.NIGHT_VISION).getDuration();
+                if (duration > 200)
+                    return 1.0F;
+                else if (duration > 100)
+                    return (duration - 100) / 100.0F;
+                else
+                    return 0.0F;
+            }
+        };
         minecraft.entityRenderer = newRenderer;
 
         SimpleReloadableResourceManager resourceManager = (SimpleReloadableResourceManager) minecraft.getResourceManager();

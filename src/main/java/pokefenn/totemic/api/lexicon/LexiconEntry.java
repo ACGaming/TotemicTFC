@@ -23,10 +23,12 @@ public class LexiconEntry implements Comparable<LexiconEntry>
 
     private final List<LexiconPage> pages = new ArrayList<>();
     private int sortIndex = 0;
-    @Deprecated private boolean priority = false;
+    @Deprecated
+    private boolean priority = false;
 
     /**
      * Creates a new entry
+     *
      * @param unlocalizedName The unlocalized name of this entry
      */
     public LexiconEntry(String unlocalizedName)
@@ -36,13 +38,19 @@ public class LexiconEntry implements Comparable<LexiconEntry>
 
     /**
      * Creates a new entry and automatically adds it to the given category
+     *
      * @param unlocalizedName The unlocalized name of this entry
-     * @param category The category to which this entry should be added
+     * @param category        The category to which this entry should be added
      */
     public LexiconEntry(String unlocalizedName, LexiconCategory category)
     {
         this(unlocalizedName);
         category.addEntry(this);
+    }
+
+    public int getSortIndex()
+    {
+        return sortIndex;
     }
 
     /**
@@ -54,13 +62,9 @@ public class LexiconEntry implements Comparable<LexiconEntry>
         return this;
     }
 
-    public int getSortIndex()
-    {
-        return sortIndex;
-    }
-
     /**
      * Sets this page as prioritized, as in, will appear before others in the lexicon.
+     *
      * @deprecated Use {@link #setSortIndex} instead, and set the italic font manually in the localization.
      */
     @Deprecated
@@ -89,7 +93,7 @@ public class LexiconEntry implements Comparable<LexiconEntry>
         int firstIndex = this.pages.size();
         this.pages.addAll(Arrays.asList(pages));
 
-        for(int i = firstIndex; i < this.pages.size(); i++)
+        for (int i = firstIndex; i < this.pages.size(); i++)
             this.pages.get(i).onPageAdded(this, i);
 
         return this;
@@ -117,17 +121,16 @@ public class LexiconEntry implements Comparable<LexiconEntry>
     /**
      * {@inheritDoc}
      *
-     * @implSpec
-     * Override this if you want to change the order in which entries appear
+     * @implSpec Override this if you want to change the order in which entries appear
      * in a category in the Totempedia. By default, they are ordered by their
      * localized names (but prioritized entries come first).
      */
     @Override
     public int compareTo(LexiconEntry o)
     {
-        if(priority != o.priority)
+        if (priority != o.priority)
             return priority ? -1 : 1;
-        else if(sortIndex != o.sortIndex)
+        else if (sortIndex != o.sortIndex)
             return (sortIndex < o.sortIndex) ? -1 : 1;
         else
             return getLocalizedName().compareTo(o.getLocalizedName());

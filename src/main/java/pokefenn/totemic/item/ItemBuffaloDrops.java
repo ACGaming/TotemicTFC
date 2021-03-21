@@ -4,23 +4,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+
 import pokefenn.totemic.lib.Strings;
 
 public class ItemBuffaloDrops extends ItemTotemic
 {
-    public enum Type
-    {
-        hide, teeth/*, horn, hair, hoof, dung*/;
-
-        private final String fullName = "buffalo_" + name();
-
-        @Override
-        public String toString()
-        {
-            return fullName;
-        }
-    }
-
     public ItemBuffaloDrops()
     {
         super("");
@@ -38,10 +26,23 @@ public class ItemBuffaloDrops extends ItemTotemic
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
     {
-        if(isInCreativeTab(tab))
+        if (isInCreativeTab(tab))
         {
-            for(int meta = 0; meta < Type.values().length; ++meta)
+            for (int meta = 0; meta < Type.values().length; ++meta)
                 list.add(new ItemStack(this, 1, meta));
+        }
+    }
+
+    public enum Type
+    {
+        hide, teeth/*, horn, hair, hoof, dung*/;
+
+        private final String fullName = "buffalo_" + name();
+
+        @Override
+        public String toString()
+        {
+            return fullName;
         }
     }
 }

@@ -1,17 +1,18 @@
 package pokefenn.totemic.tileentity.totem;
 
-import static pokefenn.totemic.Totemic.logger;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+
 import pokefenn.totemic.api.TotemicRegistries;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
 import pokefenn.totemic.api.music.MusicInstrument;
+
+import static pokefenn.totemic.Totemic.logger;
 
 public final class StateCeremonyEffect extends TotemState implements CeremonyEffectContext
 {
@@ -36,9 +37,9 @@ public final class StateCeremonyEffect extends TotemState implements CeremonyEff
     {
         ceremony.effect(tile.getWorld(), tile.getPos(), this);
 
-        if(!tile.getWorld().isRemote)
+        if (!tile.getWorld().isRemote)
         {
-            if(time >= ceremony.getEffectTime())
+            if (time >= ceremony.getEffectTime())
             {
                 ceremony.onEffectEnd(tile.getWorld(), tile.getPos(), this);
                 tile.setState(new StateTotemEffect(tile));
@@ -47,7 +48,7 @@ public final class StateCeremonyEffect extends TotemState implements CeremonyEff
         else
         {
             //Due to network delay, we want to avoid ticking instant ceremonies more than once on the client side
-            if(ceremony.getEffectTime() == 0)
+            if (ceremony.getEffectTime() == 0)
                 tile.setState(new StateTotemEffect(tile));
 
             tile.setCeremonyOverlay();
@@ -80,7 +81,7 @@ public final class StateCeremonyEffect extends TotemState implements CeremonyEff
     void readFromNBT(NBTTagCompound tag)
     {
         ceremony = TotemicRegistries.ceremonies().getValue(new ResourceLocation(tag.getString("ceremony")));
-        if(ceremony == null)
+        if (ceremony == null)
         {
             logger.warn("Unknown ceremony: {}", tag.getString("ceremony"));
             tile.setState(new StateTotemEffect(tile));

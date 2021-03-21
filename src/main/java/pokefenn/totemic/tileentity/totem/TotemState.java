@@ -8,29 +8,30 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
+
 import pokefenn.totemic.api.music.MusicAcceptor;
 import pokefenn.totemic.api.music.MusicInstrument;
 
 public abstract class TotemState implements ITickable, MusicAcceptor
 {
-    protected final TileTotemBase tile;
-
     static TotemState fromID(int id, TileTotemBase tile)
     {
-        switch(id)
+        switch (id)
         {
-        case StateTotemEffect.ID:
-            return new StateTotemEffect(tile);
-        case StateSelection.ID:
-            return new StateSelection(tile);
-        case StateStartup.ID:
-            return new StateStartup(tile);
-        case StateCeremonyEffect.ID:
-            return new StateCeremonyEffect(tile);
-        default:
-            throw new IllegalArgumentException("Invalid Totem Base state");
+            case StateTotemEffect.ID:
+                return new StateTotemEffect(tile);
+            case StateSelection.ID:
+                return new StateSelection(tile);
+            case StateStartup.ID:
+                return new StateStartup(tile);
+            case StateCeremonyEffect.ID:
+                return new StateCeremonyEffect(tile);
+            default:
+                throw new IllegalArgumentException("Invalid Totem Base state");
         }
     }
+
+    protected final TileTotemBase tile;
 
     TotemState(TileTotemBase tile)
     {

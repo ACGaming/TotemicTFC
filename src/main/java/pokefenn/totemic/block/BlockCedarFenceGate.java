@@ -9,6 +9,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+
 import pokefenn.totemic.lib.Strings;
 
 public class BlockCedarFenceGate extends BlockFenceGate

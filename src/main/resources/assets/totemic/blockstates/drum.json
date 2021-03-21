@@ -1,5 +1,5 @@
 {
-    "variants": {
-        "normal": { "model": "totemic:drum" }
-    }
+  "variants": {
+    "normal": {"model": "totemic:drum"}
+  }
 }

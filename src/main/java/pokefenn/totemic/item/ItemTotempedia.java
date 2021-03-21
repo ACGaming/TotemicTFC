@@ -6,6 +6,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.api.lexicon.ILexicon;
 import pokefenn.totemic.lib.Strings;

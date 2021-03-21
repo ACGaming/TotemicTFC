@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+
 import pokefenn.totemic.Totemic;
 import pokefenn.totemic.client.rendering.model.ModelBaldEagle;
 import pokefenn.totemic.entity.animal.EntityBaldEagle;
@@ -20,16 +21,16 @@ public class BaldEagleRendering extends RenderLiving<EntityBaldEagle>
     }
 
     @Override
+    public float handleRotationFloat(EntityBaldEagle entity, float partialTicks)
+    {
+        return this.getCustomBob(entity, partialTicks);
+    }
+
+    @Override
     @Nullable
     protected ResourceLocation getEntityTexture(EntityBaldEagle entity)
     {
         return BALD_EAGLE_TEXTURE;
-    }
-
-    @Override
-    public float handleRotationFloat(EntityBaldEagle entity, float partialTicks)
-    {
-        return this.getCustomBob(entity, partialTicks);
     }
 
     private float getCustomBob(EntityBaldEagle eagle, float partialTicks)
