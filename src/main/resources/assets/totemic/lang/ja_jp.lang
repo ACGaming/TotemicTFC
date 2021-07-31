@@ -11,7 +11,7 @@ item.totemic:totem_whittling_knife.tooltip3=現在の文様: %s
 item.totemic:totempedia.name=トーテムペディア
 item.totemic:flute.name=フルート
 item.totemic:infused_flute.name=魔笛
-item.totemic:cedar_bark.name=赤杉の皮
+item.totemic:red_cedar_bark.name=赤杉の皮
 item.totemic:bark_stripper.name=樹皮剥ぎ
 item.totemic:jingle_dress.name=ジングルドレス
 item.totemic:rattle.name=マラカス
@@ -25,16 +25,16 @@ item.totemic:cooked_buffalo_meat.name=焼きバッファロー肉
 item.totemic:baykok_bow.name=ベイコックの弓
 
 # Block localizations
-tile.totemic:cedar_log.name=赤杉の原木
+tile.totemic:red_cedar_log.name=赤杉の原木
 tile.totemic:totem_base.name=トーテム台
 tile.totemic:totem_pole.name=トーテムポール
-tile.totemic:cedar_sapling.name=赤杉の苗木
-tile.totemic:cedar_leaves.name=赤杉の葉
+tile.totemic:red_cedar_sapling.name=赤杉の苗木
+tile.totemic:red_cedar_leaves.name=赤杉の葉
 tile.totemic:drum.name=トーテム術師のドラム
 tile.totemic:wind_chime.name=風鈴
 tile.totemic:totem_torch.name=トーテムトーチ
-tile.totemic:cedar_plank.name=赤杉の木材
-tile.totemic:stripped_cedar_log.name=白木の赤杉の丸太
+tile.totemic:red_cedar_plank.name=赤杉の木材
+tile.totemic:stripped_red_cedar_log.name=白木の赤杉の丸太
 tile.totemic:tipi.name=ティピー
 
 #Entity localizations
@@ -124,9 +124,9 @@ totemic.category.totems=トーテムと効果
 totemic.category.ceremonies=儀式
 totemic.category.instruments=楽器
 
-totemic.entry.cedarTree=赤杉
-totemic.page.cedarTree0=§1赤杉§0は魔法の特性を有する大きな木で、特にトーテムポールを彫り出すのに有用である。これは通常の苗木に§4ザフキエルのワルツの儀式§0で魔力を注ぐことで入手できる。<br>赤杉の木は普通の木と同様に利用でき、また§4樹皮剥ぎ§0を使って樹皮を取り除ける。
-totemic.page.cedarTree1=
+totemic.entry.red_cedarTree=赤杉
+totemic.page.red_cedarTree0=§1赤杉§0は魔法の特性を有する大きな木で、特にトーテムポールを彫り出すのに有用である。これは通常の苗木に§4ザフキエルのワルツの儀式§0で魔力を注ぐことで入手できる。<br>赤杉の木は普通の木と同様に利用でき、また§4樹皮剥ぎ§0を使って樹皮を取り除ける。
+totemic.page.red_cedarTree1=
 
 totemic.entry.buffaloBasic=バッファロー
 totemic.page.buffaloBasic0=大きなバッファローは、それのもたらす全ての資材のために大陸中に知れ渡っている動物である。彼らは信じられないほど丈夫で、膨大な体力を持っている。狩猟のために絶滅の危機に追いやられているが、依然§4マンダン族のバッファローの踊り§0の儀式で「創造」することができる。

@@ -34,5 +34,4 @@ public class CamelCaseNamesItems implements IFixableData
         }
         return compound;
     }
-
 }

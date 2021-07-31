@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -22,7 +19,6 @@ import net.dries007.tfc.objects.entity.animal.EntityAnimalTFC;
 import pokefenn.totemic.api.ceremony.Ceremony;
 import pokefenn.totemic.api.ceremony.CeremonyEffectContext;
 import pokefenn.totemic.api.music.MusicInstrument;
-import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.util.EntityUtil;
 
 public class CeremonyFertility extends Ceremony
@@ -64,20 +60,6 @@ public class CeremonyFertility extends Ceremony
                         world.setEntityState(villager, (byte) 12); //Spawns heart particles
                         break;
                     }
-                }
-            }
-        }
-
-        if (context.getTime() % 20 == 0)
-        {
-            for (BlockPos p : BlockPos.getAllInBoxMutable(pos.add(-radius, -radius, -radius), pos.add(radius, radius, radius)))
-            {
-                IBlockState state = world.getBlockState(p);
-                Block block = state.getBlock();
-                if (block instanceof BlockSapling && block != ModBlocks.cedar_sapling)
-                {
-                    world.setBlockState(p, ModBlocks.cedar_sapling.getDefaultState(), 3);
-                    spawnParticles(world, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5);
                 }
             }
         }

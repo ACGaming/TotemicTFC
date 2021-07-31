@@ -52,11 +52,11 @@
           "particle": "blocks/log_big_oak"
         }
       },
-      "false,wood=cedar": {
+      "false,wood=red_cedar": {
         "textures": {
-          "top": "totemic:blocks/cedar_log_top",
-          "side": "totemic:blocks/cedar_log",
-          "particle": "totemic:blocks/cedar_log"
+          "top": "totemic:blocks/red_cedar_log_top",
+          "side": "totemic:blocks/red_cedar_log",
+          "particle": "totemic:blocks/red_cedar_log"
         }
       },
       "true,wood=oak": {
@@ -101,11 +101,11 @@
           "particle": "totemic:blocks/stripped_dark_oak_log"
         }
       },
-      "true,wood=cedar": {
+      "true,wood=red_cedar": {
         "textures": {
-          "top": "totemic:blocks/cedar_log_top",
-          "side": "totemic:blocks/stripped_cedar_log",
-          "particle": "totemic:blocks/stripped_cedar_log"
+          "top": "totemic:blocks/red_cedar_log_top",
+          "side": "totemic:blocks/stripped_red_cedar_log",
+          "particle": "totemic:blocks/stripped_red_cedar_log"
         }
       }
     }

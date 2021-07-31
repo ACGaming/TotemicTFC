@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_cedar_leaves": {
+    "has_red_cedar_leaves": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "totemic:cedar_leaves"
+            "item": "totemic:red_cedar_leaves"
           }
         ]
       }
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "has_cedar_leaves",
+      "has_red_cedar_leaves",
       "performed_fertility",
       "has_the_recipe"
     ]

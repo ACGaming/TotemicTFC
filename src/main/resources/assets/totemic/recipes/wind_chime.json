@@ -15,7 +15,7 @@
       "ore": "string"
     },
     "W": {
-      "item": "totemic:cedar_log"
+      "item": "totemic:red_cedar_log"
     },
     "T": {
       "type": "forge:ore_dict",

@@ -8,16 +8,7 @@ public final class Strings
     public static final String RESOURCE_PREFIX = "totemic:";
 
     //Blocks
-    public static final String CEDAR_LOG_NAME = "cedar_log";
     public static final String STRIPPED_CEDAR_LOG_NAME = "stripped_cedar_log";
-    public static final String CEDAR_PLANK_NAME = "cedar_plank";
-    public static final String CEDAR_SAPLING_NAME = "cedar_sapling";
-    public static final String CEDAR_LEAVES_NAME = "cedar_leaves";
-    public static final String CEDAR_STAIRS_NAME = "cedar_stairs";
-    public static final String CEDAR_SLAB_NAME = "cedar_slab";
-    public static final String DOUBLE_CEDAR_SLAB_NAME = "double_cedar_slab";
-    public static final String CEDAR_FENCE_NAME = "cedar_fence";
-    public static final String CEDAR_FENCE_GATE_NAME = "cedar_fence_gate";
     public static final String TOTEM_BASE_NAME = "totem_base";
     public static final String TOTEM_POLE_NAME = "totem_pole";
     public static final String TOTEM_TORCH_NAME = "totem_torch";

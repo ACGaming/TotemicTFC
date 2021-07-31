@@ -87,5 +87,4 @@ public class CamelCaseNamesTiles implements IFixableData
         }
         return compound;
     }
-
 }

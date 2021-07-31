@@ -10,8 +10,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IStringSerializable;
 
-import pokefenn.totemic.init.ModBlocks;
-
 public enum WoodVariant implements IStringSerializable
 {
     OAK(EnumType.OAK.getMapColor()),
@@ -34,8 +32,8 @@ public enum WoodVariant implements IStringSerializable
             return values()[meta & 3]; //oak - jungle
         else if (block == Blocks.LOG2)
             return values()[4 + (meta & 3)]; //acacia - dark oak
-        else if (block == ModBlocks.cedar_log)
-            return CEDAR;
+        /*else if (block == ModBlocks.cedar_log)
+            return CEDAR;*/
         else
             return null;
     }

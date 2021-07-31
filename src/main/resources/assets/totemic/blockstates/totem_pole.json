@@ -48,11 +48,11 @@
           "particle": "totemic:blocks/stripped_dark_oak_log"
         }
       },
-      "cedar": {
+      "red_cedar": {
         "textures": {
-          "wood": "totemic:blocks/stripped_cedar_log",
-          "top": "totemic:blocks/stripped_cedar_log_top",
-          "particle": "totemic:blocks/stripped_cedar_log"
+          "wood": "totemic:blocks/stripped_red_cedar_log",
+          "top": "totemic:blocks/stripped_red_cedar_log_top",
+          "particle": "totemic:blocks/stripped_red_cedar_log"
         }
       }
     },

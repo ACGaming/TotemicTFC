@@ -1,19 +1,14 @@
 package pokefenn.totemic.block;
 
-import java.util.Random;
-
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 import pokefenn.totemic.Totemic;
-import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.lib.Strings;
 
 public class BlockCedarStripped extends BlockLog
@@ -34,23 +29,6 @@ public class BlockCedarStripped extends BlockLog
     public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         return MapColor.PINK;
-    }
-
-    @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random random)
-    {
-        if (!world.isRemote)
-        {
-            if (random.nextInt(20) == 0) //about once every 15-20 minutes
-            {
-                Material mat = world.getBlockState(pos.down()).getMaterial();
-                if (mat == Material.GROUND || mat == Material.GRASS)
-                {
-                    world.setBlockState(pos, ModBlocks.cedar_log.getDefaultState()
-                        .withProperty(LOG_AXIS, state.getValue(LOG_AXIS)));
-                }
-            }
-        }
     }
 
     @Override

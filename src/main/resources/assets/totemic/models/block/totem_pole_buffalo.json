@@ -1,9 +1,9 @@
 {
   "__createdwith": "opl's Model Creator",
   "textures": {
-    "top": "totemic:blocks/stripped_cedar_log_top",
-    "wood": "totemic:blocks/stripped_cedar_log",
-    "particle": "totemic:blocks/stripped_cedar_log"
+    "top": "totemic:blocks/stripped_red_cedar_log_top",
+    "wood": "totemic:blocks/stripped_red_cedar_log",
+    "particle": "totemic:blocks/stripped_red_cedar_log"
   },
   "elements": [
     {

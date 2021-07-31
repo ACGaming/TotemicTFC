@@ -52,7 +52,7 @@ public class EntityBaykok extends EntityMob implements IRangedAttackMob
         double dy = target.getEntityBoundingBox().minY + target.height / 3.0F - arrow.posY;
         double dz = target.posZ - this.posZ;
         double xzdist = MathHelper.sqrt(dx * dx + dz * dz);
-        float velocity = 2.0F + 1.0F * distanceFactor;
+        float velocity = 2.0F + distanceFactor;
         float inaccuracy = 4.5F - world.getDifficulty().getDifficultyId();
         arrow.shoot(dx, dy + 0.125 * xzdist, dz, velocity, inaccuracy);
         arrow.setDamage(2.0 * distanceFactor + 1.0 + 0.25 * rand.nextGaussian() + 0.4 * world.getDifficulty().getDifficultyId());

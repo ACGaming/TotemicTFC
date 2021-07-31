@@ -12,7 +12,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import pokefenn.totemic.block.BlockCedarLog;
+import net.dries007.tfc.objects.blocks.wood.BlockLogTFC;
 import pokefenn.totemic.init.ModBlocks;
 import pokefenn.totemic.item.ItemTotemic;
 import pokefenn.totemic.lib.Strings;
@@ -38,7 +38,7 @@ public class ItemBarkStripper extends ItemTotemic
         ItemStack stack = player.getHeldItem(hand);
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        if (block instanceof BlockCedarLog)
+        if (block instanceof BlockLogTFC)
         {
             NBTTagCompound tag = ItemUtil.getOrCreateTag(stack);
             int time = tag.getInteger(TIME_KEY);
@@ -48,6 +48,8 @@ public class ItemBarkStripper extends ItemTotemic
             {
                 time = 0;
                 //Random random = world.rand;
+
+                block.getUnlocalizedName();
 
                 world.setBlockState(pos, ModBlocks.stripped_cedar_log.getDefaultState()
                     .withProperty(BlockLog.LOG_AXIS, state.getValue(BlockLog.LOG_AXIS)));

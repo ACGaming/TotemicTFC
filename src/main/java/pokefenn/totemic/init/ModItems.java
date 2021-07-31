@@ -2,7 +2,10 @@ package pokefenn.totemic.init;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemMultiTexture;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -54,15 +57,7 @@ public final class ModItems
         };
 
         event.getRegistry().registerAll(
-            makeItemBlock(ModBlocks.cedar_log),
             makeItemBlock(ModBlocks.stripped_cedar_log),
-            makeItemBlock(ModBlocks.cedar_plank),
-            makeItemBlock(ModBlocks.cedar_sapling),
-            makeItemBlock(ModBlocks.cedar_leaves),
-            makeItemBlock(ModBlocks.cedar_stairs),
-            new ItemSlab(ModBlocks.cedar_slab, ModBlocks.cedar_slab, ModBlocks.double_cedar_slab).setRegistryName(ModBlocks.cedar_slab.getRegistryName()),
-            makeItemBlock(ModBlocks.cedar_fence),
-            makeItemBlock(ModBlocks.cedar_fence_gate),
             makeItemBlock(ModBlocks.totem_base).setHasSubtypes(true),
             makeItemBlock(ModBlocks.totem_pole).setHasSubtypes(true),
             makeItemBlock(ModBlocks.totem_torch),
@@ -96,15 +91,7 @@ public final class ModItems
     @SideOnly(Side.CLIENT)
     public static void setItemModels(ModelRegistryEvent event)
     {
-        setDefaultModel(ModBlocks.cedar_log);
         setDefaultModel(ModBlocks.stripped_cedar_log);
-        setDefaultModel(ModBlocks.cedar_plank);
-        setDefaultModel(ModBlocks.cedar_sapling);
-        setDefaultModel(ModBlocks.cedar_leaves);
-        setDefaultModel(ModBlocks.cedar_stairs);
-        setDefaultModel(ModBlocks.cedar_slab);
-        setDefaultModel(ModBlocks.cedar_fence);
-        setDefaultModel(ModBlocks.cedar_fence_gate);
         setDefaultModel(ModBlocks.totem_torch);
         setDefaultModel(ModBlocks.drum);
         setDefaultModel(ModBlocks.wind_chime);
@@ -144,13 +131,13 @@ public final class ModItems
         setDefaultModel(ceremony_cheat);
         setDefaultModel(nether_pipe);
 
-        setModel(sub_items, 1, Strings.RESOURCE_PREFIX + ItemTotemicItems.Type.iron_bells.toString());
+        setModel(sub_items, 1, Strings.RESOURCE_PREFIX + ItemTotemicItems.Type.iron_bells);
 
         for (ItemBuffaloDrops.Type t : ItemBuffaloDrops.Type.values())
-            setModel(buffalo_items, t.ordinal(), Strings.RESOURCE_PREFIX + t.toString());
+            setModel(buffalo_items, t.ordinal(), Strings.RESOURCE_PREFIX + t);
 
         for (ItemEagleDrops.Type t : ItemEagleDrops.Type.values())
-            setModel(eagle_drops, t.ordinal(), Strings.RESOURCE_PREFIX + t.toString());
+            setModel(eagle_drops, t.ordinal(), Strings.RESOURCE_PREFIX + t);
     }
 
     private static ItemBlock makeItemBlock(Block block)
@@ -175,5 +162,4 @@ public final class ModItems
     {
         setDefaultModel(Item.getItemFromBlock(block));
     }
-
 }

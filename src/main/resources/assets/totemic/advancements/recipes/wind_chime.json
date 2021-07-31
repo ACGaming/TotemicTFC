@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_cedar_wood": {
+    "has_red_cedar_wood": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "totemic:cedar_log"
+            "item": "totemic:red_cedar_log"
           }
         ]
       }
@@ -31,7 +31,7 @@
   },
   "requirements": [
     [
-      "has_cedar_wood",
+      "has_red_cedar_wood",
       "performed_fertility",
       "has_the_recipe"
     ]

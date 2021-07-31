@@ -3,48 +3,63 @@ package pokefenn.totemic.entity.animal;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.EntityAIFollowParent;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.monster.AbstractSkeleton;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 
+import net.dries007.tfc.ConfigTFC;
+import net.dries007.tfc.Constants;
+import net.dries007.tfc.objects.entity.animal.EntityAnimalTFC;
 import net.dries007.tfc.objects.entity.animal.EntityCowTFC;
+import net.dries007.tfc.util.calendar.CalendarTFC;
 import pokefenn.totemic.lib.Resources;
 
 public class EntityBuffalo extends EntityCowTFC
 {
-    //public boolean isSheared = false;
-
-    public EntityBuffalo(World world)
+    public EntityBuffalo(World worldIn)
     {
-        super(world);
-        setSize(1.35F, 1.95F);
+        this(worldIn, Gender.valueOf(Constants.RNG.nextBoolean()), getRandomGrowth(ConfigTFC.Animals.COW.adulthood, ConfigTFC.Animals.COW.elder));
+    }
+
+    public EntityBuffalo(World worldIn, Gender gender, int birthDay)
+    {
+        super(worldIn, gender, birthDay);
+        this.setSize(1.35F, 1.95F);
+        this.setMilkedTick(0L);
     }
 
     @Override
-    public EntityBuffalo createChild(EntityAgeable var1)
+    public int getSpawnWeight(Biome biome, float temperature, float rainfall, float floraDensity, float floraDiversity)
     {
-        return new EntityBuffalo(world);
+        return 0;
+    }
+
+    @Override
+    public void birthChildren()
+    {
+        int numberOfChildren = ConfigTFC.Animals.COW.babies;
+
+        for (int i = 0; i < numberOfChildren; ++i)
+        {
+            EntityBuffalo baby = new EntityBuffalo(this.world, Gender.valueOf(Constants.RNG.nextBoolean()), (int) CalendarTFC.PLAYER_TIME.getTotalDays());
+            baby.setLocationAndAngles(this.posX, this.posY, this.posZ, 0.0F, 0.0F);
+            baby.setFamiliarity(this.getFamiliarity() < 0.9F ? this.getFamiliarity() / 2.0F : this.getFamiliarity() * 0.9F);
+            this.world.spawnEntity(baby);
+        }
     }
 
     @Override
     protected void initEntityAI()
     {
-        tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(1, new EntityAIAttackMelee(this, 3.0D, false));
-        tasks.addTask(2, new EntityAIPanic(this, 2.0D));
-        tasks.addTask(3, new EntityAIMate(this, 1.0D));
-        tasks.addTask(4, new EntityAITempt(this, 1.25D, Items.WHEAT, false));
-        tasks.addTask(5, new EntityAIFollowParent(this, 1.25D));
-        tasks.addTask(6, new EntityAIWander(this, 1.0D));
-        tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
-        tasks.addTask(8, new EntityAILookIdle(this));
+        EntityAnimalTFC.addCommonLivestockAI(this, 1.2D);
+        EntityAnimalTFC.addCommonPreyAI(this, 1.2D);
+        this.tasks.addTask(5, new EntityAIFollowParent(this, 1.1D));
         targetTasks.addTask(1,
             new EntityAIHurtByTarget(this, false)
             {
@@ -77,48 +92,11 @@ public class EntityBuffalo extends EntityCowTFC
         return 0.4F;
     }
 
-    /*@Override
-    public void writeEntityToNBT(NBTTagCompound tag)
-    {
-        super.writeEntityToNBT(tag);
-        tag.setBoolean("isSheared", isSheared);
-    }
-
-    @Override
-    public void readEntityFromNBT(NBTTagCompound tag)
-    {
-        super.readEntityFromNBT(tag);
-        isSheared = tag.getBoolean("isSheared");
-    }*/
-
     @Override
     protected float getSoundPitch()
     {
         return super.getSoundPitch() - 0.2F;
     }
-
-    //TODO
-    /*@Override
-    public boolean interact(EntityPlayer player)
-    {
-        ItemStack itemstack = player.inventory.getCurrentItem();
-        Random rand = new Random();
-
-        if(itemstack != null)
-        {
-            if(!isSheared && itemstack.getItem() instanceof ItemShears)
-            {
-                itemstack.damageItem(1, player);
-                EntityItem entityItem = new EntityItem(world, posX, posY, posZ, new ItemStack(ModItems.buffaloItems, 2 + rand.nextInt(3), ItemBuffaloDrops.hair));
-                world.spawnEntityInWorld(entityItem);
-
-                return true;
-            }
-        }
-
-        return super.interact(player);
-
-    }*/
 
     @Override
     public boolean attackEntityAsMob(Entity entity)
@@ -132,11 +110,5 @@ public class EntityBuffalo extends EntityCowTFC
             applyEnchantments(this, entity);
         }
         return attacked;
-    }
-
-    @Override
-    protected int getExperiencePoints(EntityPlayer player)
-    {
-        return 2 + world.rand.nextInt(4);
     }
 }

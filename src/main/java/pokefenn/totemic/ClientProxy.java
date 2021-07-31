@@ -8,7 +8,6 @@ import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
-import net.minecraft.world.ColorizerFoliage;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -103,8 +102,6 @@ public class ClientProxy extends CommonProxy
     private void registerBlockColors()
     {
         Minecraft mc = Minecraft.getMinecraft();
-        mc.getBlockColors().registerBlockColorHandler(
-            (state, world, pos, tintIndex) -> ColorizerFoliage.getFoliageColorPine(), ModBlocks.cedar_leaves);
         mc.getBlockColors().registerBlockColorHandler(
             (state, world, pos, tintIndex) -> getTotemPolePaintColor(tintIndex), ModBlocks.totem_pole);
         mc.getItemColors().registerItemColorHandler(

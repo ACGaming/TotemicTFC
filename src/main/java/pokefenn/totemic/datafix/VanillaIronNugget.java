@@ -21,5 +21,4 @@ public class VanillaIronNugget implements IFixableData
         }
         return compound;
     }
-
 }

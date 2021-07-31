@@ -33,32 +33,6 @@ public class BlockDummyTipi extends Block
     }
 
     @Override
-    public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosion)
-    {
-        //find main Tipi block
-        int range = 1;
-        int height = 5;
-        for (int i = -range; i <= range; i++)
-            for (int j = 0; j >= -height; j--) //search downwards
-                for (int k = -range; k <= range; k++)
-                {
-                    BlockPos p = pos.add(i, j, k);
-                    IBlockState s = world.getBlockState(p);
-                    if (s.getBlock() == ModBlocks.tipi)
-                    {
-                        world.setBlockToAir(p);
-                        return;
-                    }
-                }
-    }
-
-    @Override
-    public EnumPushReaction getMobilityFlag(IBlockState state)
-    {
-        return EnumPushReaction.BLOCK;
-    }
-
-    @Override
     public boolean isFullCube(IBlockState state)
     {
         return false;
@@ -86,6 +60,32 @@ public class BlockDummyTipi extends Block
     public int quantityDropped(Random random)
     {
         return 0;
+    }
+
+    @Override
+    public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosion)
+    {
+        //find main Tipi block
+        int range = 1;
+        int height = 5;
+        for (int i = -range; i <= range; i++)
+            for (int j = 0; j >= -height; j--) //search downwards
+                for (int k = -range; k <= range; k++)
+                {
+                    BlockPos p = pos.add(i, j, k);
+                    IBlockState s = world.getBlockState(p);
+                    if (s.getBlock() == ModBlocks.tipi)
+                    {
+                        world.setBlockToAir(p);
+                        return;
+                    }
+                }
+    }
+
+    @Override
+    public EnumPushReaction getMobilityFlag(IBlockState state)
+    {
+        return EnumPushReaction.BLOCK;
     }
 
     @Override

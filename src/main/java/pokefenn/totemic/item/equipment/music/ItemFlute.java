@@ -64,6 +64,15 @@ public class ItemFlute extends ItemInstrument
     }
 
     @Override
+    public String getUnlocalizedName(ItemStack stack)
+    {
+        if (stack.getItemDamage() == 1)
+            return "item." + Strings.RESOURCE_PREFIX + "infused_flute";
+        else
+            return "item." + Strings.RESOURCE_PREFIX + "flute";
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
     {
@@ -94,15 +103,6 @@ public class ItemFlute extends ItemInstrument
             list.add(new ItemStack(this, 1, 0));
             list.add(new ItemStack(this, 1, 1));
         }
-    }
-
-    @Override
-    public String getUnlocalizedName(ItemStack stack)
-    {
-        if (stack.getItemDamage() == 1)
-            return "item." + Strings.RESOURCE_PREFIX + "infused_flute";
-        else
-            return "item." + Strings.RESOURCE_PREFIX + "flute";
     }
 
     @Override
