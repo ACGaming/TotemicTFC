@@ -63,7 +63,7 @@ public class BlockDecoPillar extends BlockRotatedPillar implements ITileEntityPr
                 return MapColor.STONE;
             case DARK_OAK:
                 return BlockPlanks.EnumType.DARK_OAK.getMapColor();
-            case CEDAR:
+            case RED_CEDAR:
                 return MapColor.ADOBE;
         }
     }

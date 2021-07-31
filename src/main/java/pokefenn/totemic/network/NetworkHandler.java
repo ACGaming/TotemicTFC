@@ -57,5 +57,4 @@ public class NetworkHandler
     {
         wrapper.registerMessage(handlerClass, messageClass, id++, side);
     }
-
 }

@@ -48,5 +48,4 @@ public class TotemEffectOcelot extends TotemEffect
             logger.error("Could not perform Ocelot Totem effect", e);
         }
     }
-
 }

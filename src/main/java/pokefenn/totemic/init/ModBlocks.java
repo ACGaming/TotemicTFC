@@ -22,7 +22,7 @@ import pokefenn.totemic.block.totem.BlockTotemPole;
 @ObjectHolder(Totemic.MOD_ID)
 public final class ModBlocks
 {
-    public static final BlockCedarStripped stripped_cedar_log = null;
+    public static final BlockCedarStripped stripped_red_cedar_log = null;
     public static final BlockTotemBase totem_base = null;
     public static final BlockTotemPole totem_pole = null;
     public static final BlockTotemTorch totem_torch = null;

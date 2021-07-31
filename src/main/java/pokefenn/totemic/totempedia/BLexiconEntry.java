@@ -42,5 +42,4 @@ public class BLexiconEntry extends LexiconEntry
     {
         return super.getUnlocalizedName();
     }
-
 }

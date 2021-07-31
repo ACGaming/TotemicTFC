@@ -97,5 +97,4 @@ public class EntityUtil
     {
         return Minecraft.getMinecraft().player;
     }
-
 }

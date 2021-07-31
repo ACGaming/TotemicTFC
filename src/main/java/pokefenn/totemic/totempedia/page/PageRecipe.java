@@ -179,5 +179,4 @@ public class PageRecipe extends LexiconPage
             }
         }
     }
-
 }

@@ -26,5 +26,4 @@ public class WIPLexiconEntry extends BLexiconEntry implements IAddonEntry
     {
         return "totemic.gui.lexicon.wip";
     }
-
 }

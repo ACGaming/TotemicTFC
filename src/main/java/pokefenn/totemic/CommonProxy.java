@@ -129,7 +129,7 @@ public class CommonProxy
 
     private void furnaceRecipes()
     {
-        GameRegistry.addSmelting(ModBlocks.stripped_cedar_log, new ItemStack(Items.COAL, 1, 1), 0.5F);
+        GameRegistry.addSmelting(ModBlocks.stripped_red_cedar_log, new ItemStack(Items.COAL, 1, 1), 0.5F);
         GameRegistry.addSmelting(ModItems.buffalo_meat, new ItemStack(ModItems.cooked_buffalo_meat), 0.35F);
     }
 

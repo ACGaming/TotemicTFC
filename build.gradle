@@ -1,30 +1,24 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://files.minecraftforge.net/maven" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
-
-plugins {
-    id 'com.matthewprenger.cursegradle' version '1.1.2'
-}
-
 apply plugin: 'net.minecraftforge.gradle.forge'
+//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+
 
 version = "1.12.2-TFC-0.11.7"
 group = "pokefenn.totemic"
 archivesBaseName = "TotemicTFC"
 
 minecraft {
-    version = "1.12.2-14.23.5.2768"
+    version = "1.12.2-14.23.5.2847"
     runDir = "run"
-
     mappings = "snapshot_20180529"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-
     replaceIn "Totemic.java"
     replace "\${version}", project.version
     replace '@FINGERPRINT@', project.findProperty('signSHA1')
@@ -47,19 +41,15 @@ dependencies {
 }
 
 processResources {
-    // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
 
-        // replace version and mcversion
         expand 'version': project.version, 'mcversion': project.minecraft.version
     }
 
-    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
@@ -71,7 +61,6 @@ task deobfJar(type: Jar) {
     }
 }
 
-// Create API source jar
 task apiSrcJar(type: Jar) {
     from(sourceSets.main.java) {
         include 'pokefenn/totemic/api/**'
@@ -81,14 +70,10 @@ task apiSrcJar(type: Jar) {
 }
 
 task signJar(type: SignJar, dependsOn: reobfJar) {
-    // Skips if the keyStore property is missing.
     onlyIf {
         project.hasProperty('keyStore')
     }
 
-    // findProperty allows us to reference the property without it existing.
-    // Using project.propName would cause the script to fail validation if
-    // the property did not exist.
     keyStore = project.findProperty('keyStore')
     alias = project.findProperty('keyStoreAlias')
     storePass = project.findProperty('keyStorePass')
@@ -97,23 +82,9 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     outputFile = jar.archivePath
 }
 
-// Runs this task automatically when reobfJar is ran.
 reobfJar.finalizedBy signJar
 
 artifacts {
     archives deobfJar
     archives apiSrcJar
-}
-
-curseforge {
-    apiKey = project.hasProperty('curseForgeApiKey') ? project.curseForgeApiKey : ''
-
-    project {
-        id = '237541'
-        changelog  = ''
-        releaseType = 'beta'
-
-        addArtifact deobfJar
-        addArtifact apiSrcJar
-    }
 }

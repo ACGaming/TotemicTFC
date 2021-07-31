@@ -75,5 +75,4 @@ public class TileTotemPole extends TileTotemic
     {
         readFromNBT(pkt.getNbtCompound());
     }
-
 }

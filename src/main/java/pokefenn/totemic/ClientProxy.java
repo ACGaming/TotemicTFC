@@ -13,7 +13,6 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -27,7 +26,6 @@ import pokefenn.totemic.client.rendering.entity.BuffaloRendering;
 import pokefenn.totemic.client.rendering.entity.InvisArrowRendering;
 import pokefenn.totemic.client.rendering.model.ModelTotemPole;
 import pokefenn.totemic.client.rendering.tileentity.TileWindChimeRenderer;
-import pokefenn.totemic.configuration.ModConfig;
 import pokefenn.totemic.entity.animal.EntityBaldEagle;
 import pokefenn.totemic.entity.animal.EntityBuffalo;
 import pokefenn.totemic.entity.boss.EntityBaykok;
@@ -87,8 +85,8 @@ public class ClientProxy extends CommonProxy
     public void postInit(FMLPostInitializationEvent event)
     {
         super.postInit(event);
-        if (ModConfig.client.removeNightVisionFlashing && !Loader.isModLoaded("nonvflash"))
-            removeNightVisionFlashing();
+        /*if (ModConfig.client.removeNightVisionFlashing && !Loader.isModLoaded("nonvflash"))
+            removeNightVisionFlashing();*/
     }
 
     @Override

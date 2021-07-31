@@ -107,7 +107,7 @@ public class ItemTotemWhittlingKnife extends ItemTotemic
             if (wood == null)
             {
                 //Fall back to oak if it is an unrecognized log type
-                if (state.getBlock().isWood(world, pos) && state.getBlock() != ModBlocks.stripped_cedar_log)
+                if (state.getBlock().isWood(world, pos) && state.getBlock() != ModBlocks.stripped_red_cedar_log)
                     wood = WoodVariant.OAK;
                 else
                     return EnumActionResult.FAIL;

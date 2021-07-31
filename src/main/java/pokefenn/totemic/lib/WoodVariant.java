@@ -18,7 +18,7 @@ public enum WoodVariant implements IStringSerializable
     JUNGLE(EnumType.JUNGLE.getMapColor()),
     ACACIA(EnumType.ACACIA.getMapColor()),
     DARK_OAK(EnumType.DARK_OAK.getMapColor()),
-    CEDAR(MapColor.PINK);
+    RED_CEDAR(MapColor.PINK);
 
     /**
      * @return The variant for the specified log block, or {@code null} if it is not a log in this enum
@@ -33,7 +33,7 @@ public enum WoodVariant implements IStringSerializable
         else if (block == Blocks.LOG2)
             return values()[4 + (meta & 3)]; //acacia - dark oak
         /*else if (block == ModBlocks.cedar_log)
-            return CEDAR;*/
+            return RED_CEDAR;*/
         else
             return null;
     }

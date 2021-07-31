@@ -57,7 +57,7 @@ public final class ModItems
         };
 
         event.getRegistry().registerAll(
-            makeItemBlock(ModBlocks.stripped_cedar_log),
+            makeItemBlock(ModBlocks.stripped_red_cedar_log),
             makeItemBlock(ModBlocks.totem_base).setHasSubtypes(true),
             makeItemBlock(ModBlocks.totem_pole).setHasSubtypes(true),
             makeItemBlock(ModBlocks.totem_torch),
@@ -91,7 +91,7 @@ public final class ModItems
     @SideOnly(Side.CLIENT)
     public static void setItemModels(ModelRegistryEvent event)
     {
-        setDefaultModel(ModBlocks.stripped_cedar_log);
+        setDefaultModel(ModBlocks.stripped_red_cedar_log);
         setDefaultModel(ModBlocks.totem_torch);
         setDefaultModel(ModBlocks.drum);
         setDefaultModel(ModBlocks.wind_chime);

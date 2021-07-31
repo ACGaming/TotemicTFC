@@ -51,7 +51,7 @@ public class ItemBarkStripper extends ItemTotemic
 
                 block.getUnlocalizedName();
 
-                world.setBlockState(pos, ModBlocks.stripped_cedar_log.getDefaultState()
+                world.setBlockState(pos, ModBlocks.stripped_red_cedar_log.getDefaultState()
                     .withProperty(BlockLog.LOG_AXIS, state.getValue(BlockLog.LOG_AXIS)));
                 //EntityItem bark = new EntityItem(world, block.blockX, block.blockY, block.blockZ, new ItemStack(ModItems.subItems, 1 + random.nextInt(3), ItemTotemicItems.cedarBark));
                 //world.spawnEntityInWorld(bark);
@@ -64,5 +64,4 @@ public class ItemBarkStripper extends ItemTotemic
         }
         return EnumActionResult.FAIL;
     }
-
 }
