@@ -15,7 +15,8 @@
       "ore": "string"
     },
     "W": {
-      "item": "tfc:wood/log/red_cedar"
+      "type": "forge:ore_dict",
+      "ore": "logWoodRedCedar"
     },
     "T": {
       "type": "forge:ore_dict",

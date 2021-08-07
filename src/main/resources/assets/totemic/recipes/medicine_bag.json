@@ -7,7 +7,8 @@
   ],
   "key": {
     "P": {
-      "item": "totemic:red_cedar_plank"
+      "type": "forge:ore_dict",
+      "ore": "plankWoodRedCedar"
     },
     "S": {
       "type": "forge:ore_dict",

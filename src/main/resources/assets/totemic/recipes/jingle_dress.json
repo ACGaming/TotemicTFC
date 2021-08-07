@@ -7,14 +7,16 @@
   ],
   "key": {
     "L": {
-      "item": "totemic:red_cedar_leaves"
+      "type": "forge:ore_dict",
+      "ore": "treeLeavesRedCedar"
     },
     "B": {
       "type": "forge:ore_dict",
       "ore": "bellsIron"
     },
     "H": {
-      "item": "minecraft:leather"
+      "type": "forge:ore_dict",
+      "ore": "leather"
     }
   },
   "result": {
